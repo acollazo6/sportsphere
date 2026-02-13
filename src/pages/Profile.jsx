@@ -36,9 +36,23 @@ export default function Profile() {
   const [viewingStatsProfile, setViewingStatsProfile] = useState(null);
   const [showProgramDialog, setShowProgramDialog] = useState(false);
   const [selectedProgram, setSelectedProgram] = useState(null);
+  const [showPersonalInfoDialog, setShowPersonalInfoDialog] = useState(false);
+  const [personalInfo, setPersonalInfo] = useState({});
 
   useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => base44.auth.redirectToLogin());
+    base44.auth.me().then(u => {
+      setUser(u);
+      setPersonalInfo({
+        weight: u.weight || "",
+        height: u.height || "",
+        age: u.age || "",
+        gender: u.gender || "",
+        highschool: u.highschool || "",
+        highschool_grad_year: u.highschool_grad_year || "",
+        college: u.college || "",
+        professional_team: u.professional_team || "",
+      });
+    }).catch(() => base44.auth.redirectToLogin());
   }, []);
 
   const { data: sportProfiles, isLoading: profilesLoading } = useQuery({
@@ -171,6 +185,12 @@ export default function Profile() {
     queryClient.invalidateQueries({ queryKey: ["my-highlights"] });
   };
 
+  const savePersonalInfo = async () => {
+    await base44.auth.updateMe(personalInfo);
+    setUser(prev => ({ ...prev, ...personalInfo }));
+    setShowPersonalInfoDialog(false);
+  };
+
   if (!user) return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-slate-300" /></div>;
 
   return (
@@ -197,16 +217,25 @@ export default function Profile() {
             <div className="flex-1">
               <h1 className="text-2xl font-bold text-slate-900">{user.full_name}</h1>
               <p className="text-slate-500 text-sm">{user.email}</p>
+              <div className="flex flex-wrap gap-2 mt-2 text-xs text-slate-500">
+                {user.age && <span>Age: {user.age}</span>}
+                {user.height && <span>• {user.height}</span>}
+                {user.weight && <span>• {user.weight} lbs</span>}
+                {user.highschool && <span>• 🏫 {user.highschool}</span>}
+                {user.college && <span>• 🎓 {user.college}</span>}
+                {user.professional_team && <span>• 🏆 {user.professional_team}</span>}
+              </div>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-xl gap-2"
-              onClick={() => base44.auth.logout()}
-            >
-              <LogOut className="w-4 h-4" />
-              Logout
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" className="rounded-xl gap-2" onClick={() => setShowPersonalInfoDialog(true)}>
+                <Settings className="w-4 h-4" />
+                Edit Info
+              </Button>
+              <Button variant="outline" size="sm" className="rounded-xl gap-2" onClick={() => base44.auth.logout()}>
+                <LogOut className="w-4 h-4" />
+                Logout
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -276,6 +305,66 @@ export default function Profile() {
           </div>
         )}
       </div>
+
+      {/* Personal Info Dialog */}
+      <Dialog open={showPersonalInfoDialog} onOpenChange={setShowPersonalInfoDialog}>
+        <DialogContent className="sm:max-w-lg rounded-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Personal Information</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 mt-2">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs text-slate-500">Age</Label>
+                <Input type="number" value={personalInfo.age} onChange={e => setPersonalInfo({...personalInfo, age: parseInt(e.target.value) || ""})} className="rounded-xl" placeholder="25" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs text-slate-500">Gender</Label>
+                <Select value={personalInfo.gender} onValueChange={v => setPersonalInfo({...personalInfo, gender: v})}>
+                  <SelectTrigger className="rounded-xl"><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="prefer_not_to_say">Prefer not to say</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs text-slate-500">Height</Label>
+                <Input value={personalInfo.height} onChange={e => setPersonalInfo({...personalInfo, height: e.target.value})} className="rounded-xl" placeholder="6'2&quot;" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs text-slate-500">Weight (lbs)</Label>
+                <Input type="number" value={personalInfo.weight} onChange={e => setPersonalInfo({...personalInfo, weight: parseFloat(e.target.value) || ""})} className="rounded-xl" placeholder="185" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs text-slate-500">High School</Label>
+                <Input value={personalInfo.highschool} onChange={e => setPersonalInfo({...personalInfo, highschool: e.target.value})} className="rounded-xl" placeholder="Lincoln High" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs text-slate-500">HS Grad Year</Label>
+                <Input type="number" value={personalInfo.highschool_grad_year} onChange={e => setPersonalInfo({...personalInfo, highschool_grad_year: parseInt(e.target.value) || ""})} className="rounded-xl" placeholder="2020" />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs text-slate-500">College</Label>
+              <Input value={personalInfo.college} onChange={e => setPersonalInfo({...personalInfo, college: e.target.value})} className="rounded-xl" placeholder="UCLA" />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs text-slate-500">Professional Team</Label>
+              <Input value={personalInfo.professional_team} onChange={e => setPersonalInfo({...personalInfo, professional_team: e.target.value})} className="rounded-xl" placeholder="Los Angeles Lakers" />
+            </div>
+            <Button onClick={savePersonalInfo} className="w-full rounded-xl bg-gradient-to-r from-orange-500 to-amber-400 text-white h-11">
+              Save Changes
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Sport Profile Dialog */}
       <Dialog open={showProfileForm} onOpenChange={setShowProfileForm}>
