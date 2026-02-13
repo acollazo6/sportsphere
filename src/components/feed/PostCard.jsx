@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Heart, MessageCircle, Share2, Play, MoreHorizontal, Bookmark, Flag, AlertTriangle } from "lucide-react";
+import { Heart, MessageCircle, Share2, Play, MoreHorizontal, Bookmark, Flag, AlertTriangle, Star } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,13 @@ export default function PostCard({ post, currentUser, onUpdate }) {
   const [reportDetails, setReportDetails] = useState("");
   const [submittingReport, setSubmittingReport] = useState(false);
   const [isHighlighted, setIsHighlighted] = useState(false);
+
+  useEffect(() => {
+    if (!currentUser) return;
+    base44.entities.Highlight.filter({ user_email: currentUser.email, item_type: "post", item_id: post.id })
+      .then(highlights => setIsHighlighted(highlights.length > 0))
+      .catch(() => {});
+  }, [currentUser, post.id]);
 
   const handleLike = async () => {
     const newLikes = liked
@@ -95,6 +102,24 @@ export default function PostCard({ post, currentUser, onUpdate }) {
     alert("Report submitted. Our team will review it shortly.");
   };
 
+  const toggleHighlight = async () => {
+    if (isHighlighted) {
+      const highlights = await base44.entities.Highlight.filter({ user_email: currentUser.email, item_type: "post", item_id: post.id });
+      if (highlights[0]) {
+        await base44.entities.Highlight.delete(highlights[0].id);
+        setIsHighlighted(false);
+      }
+    } else {
+      await base44.entities.Highlight.create({
+        user_email: currentUser.email,
+        item_type: "post",
+        item_id: post.id,
+        item_data: post,
+      });
+      setIsHighlighted(true);
+    }
+  };
+
   return (
     <article className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
       {/* Header */}
@@ -120,7 +145,7 @@ export default function PostCard({ post, currentUser, onUpdate }) {
           {post.category && (
             <span className="text-sm">{categoryIcons[post.category]}</span>
           )}
-          {currentUser && currentUser.email !== post.author_email && (
+          {currentUser && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors">
@@ -129,13 +154,16 @@ export default function PostCard({ post, currentUser, onUpdate }) {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 {currentUser.email === post.author_email && (
-                  <DropdownMenuItem onClick={() => {}} className="gap-2">
-                    <Star className="w-4 h-4" /> {isHighlighted ? "Remove from" : "Add to"} Highlights
+                  <DropdownMenuItem onClick={toggleHighlight} className="gap-2">
+                    <Star className={`w-4 h-4 ${isHighlighted ? "fill-amber-500 text-amber-500" : ""}`} />
+                    {isHighlighted ? "Remove from" : "Add to"} Highlights
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem onClick={() => setShowReportDialog(true)} className="text-red-600 gap-2">
-                  <Flag className="w-4 h-4" /> Report Post
-                </DropdownMenuItem>
+                {currentUser.email !== post.author_email && (
+                  <DropdownMenuItem onClick={() => setShowReportDialog(true)} className="text-red-600 gap-2">
+                    <Flag className="w-4 h-4" /> Report Post
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           )}

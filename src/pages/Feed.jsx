@@ -3,17 +3,19 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import PostCard from "../components/feed/PostCard";
 import SportFilter from "../components/feed/SportFilter";
-import { Loader2 } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 export default function Feed() {
   const [user, setUser] = useState(null);
   const [sportFilter, setSportFilter] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
   }, []);
 
-  const { data: posts, isLoading, refetch } = useQuery({
+  const { data: allPosts, isLoading, refetch } = useQuery({
     queryKey: ["feed-posts", sportFilter],
     queryFn: () => {
       if (sportFilter) {
@@ -21,6 +23,17 @@ export default function Feed() {
       }
       return base44.entities.Post.list("-created_date", 50);
     },
+  });
+
+  const posts = allPosts?.filter(post => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      post.content?.toLowerCase().includes(query) ||
+      post.author_name?.toLowerCase().includes(query) ||
+      post.sport?.toLowerCase().includes(query) ||
+      post.category?.toLowerCase().includes(query)
+    );
   });
 
   return (
@@ -33,6 +46,17 @@ export default function Feed() {
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Your Sports Feed</h1>
           <p className="text-slate-300 mt-2 text-sm md:text-base">Discover training, highlights, and motivation from athletes worldwide.</p>
         </div>
+      </div>
+
+      {/* Search Bar */}
+      <div className="relative">
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+        <Input
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          placeholder="Search posts, users, sports..."
+          className="pl-12 rounded-xl bg-white border-slate-200 h-12"
+        />
       </div>
 
       {/* Sport Filter */}
