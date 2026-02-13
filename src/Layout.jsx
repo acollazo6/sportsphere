@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "./utils";
 import { base44 } from "@/api/base44Client";
-import { Home, User, MessageCircle, Search, Bell, Plus, Menu, X, Trophy, Flame, Globe, Sparkles } from "lucide-react";
+import { Home, User, MessageCircle, Search, Bell, Plus, Menu, X, Trophy, Flame, Globe, Sparkles, Radio } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -38,6 +38,7 @@ export default function Layout({ children, currentPageName }) {
 
   const navItems = [
     { name: t("feed"), page: "Feed", icon: Home },
+    { name: "Reels", page: "Reels", icon: Flame },
     { name: t("explore"), page: "Explore", icon: Search },
     { name: "Groups", page: "Groups", icon: Globe },
     { name: "AI Coach", page: "Coach", icon: Sparkles },
@@ -114,12 +115,20 @@ export default function Layout({ children, currentPageName }) {
                 <SelectItem value="ru"><span className="flex items-center gap-2"><span>🇷🇺</span> Русский</span></SelectItem>
               </SelectContent>
             </Select>
-            <Link to={createPageUrl("CreatePost")}>
-              <Button className="bg-gradient-to-r from-orange-500 to-amber-400 hover:from-orange-600 hover:to-amber-500 text-white rounded-xl shadow-lg shadow-orange-500/25 gap-2 hidden sm:flex">
-                <Plus className="w-4 h-4" />
-                {t("post")}
-              </Button>
-            </Link>
+            <div className="flex gap-2">
+              <Link to={createPageUrl("Live")}>
+                <Button variant="outline" className="rounded-xl gap-2 hidden sm:flex border-red-200 text-red-600 hover:bg-red-50">
+                  <Radio className="w-4 h-4" />
+                  Live
+                </Button>
+              </Link>
+              <Link to={createPageUrl("CreatePost")}>
+                <Button className="bg-gradient-to-r from-orange-500 to-amber-400 hover:from-orange-600 hover:to-amber-500 text-white rounded-xl shadow-lg shadow-orange-500/25 gap-2 hidden sm:flex">
+                  <Plus className="w-4 h-4" />
+                  {t("post")}
+                </Button>
+              </Link>
+            </div>
             {user && (
               <Link to={createPageUrl("Profile")}>
                 <Avatar className="w-9 h-9 ring-2 ring-slate-100">

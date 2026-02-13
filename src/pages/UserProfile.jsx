@@ -26,6 +26,15 @@ export default function UserProfile() {
     base44.auth.me().then(setCurrentUser).catch(() => {});
   }, []);
 
+  useEffect(() => {
+    if (currentUser && viewedEmail) {
+      base44.entities.Follow.filter({ 
+        follower_email: currentUser.email, 
+        following_email: viewedEmail 
+      }).then(follows => setIsFollowing(follows.length > 0));
+    }
+  }, [currentUser, viewedEmail]);
+
   const { data: profiles } = useQuery({
     queryKey: ["user-profiles", profileEmail],
     queryFn: () => base44.entities.SportProfile.filter({ user_email: profileEmail }),
