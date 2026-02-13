@@ -1,12 +1,21 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Heart, MessageCircle, Share2, Play, MoreHorizontal, Bookmark } from "lucide-react";
+import { Heart, MessageCircle, Share2, Play, MoreHorizontal, Bookmark, Flag, AlertTriangle } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../../utils";
 import moment from "moment";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 const categoryIcons = {
   training: "🏋️",
@@ -26,6 +35,10 @@ export default function PostCard({ post, currentUser, onUpdate }) {
   const [newComment, setNewComment] = useState("");
   const [loadingComments, setLoadingComments] = useState(false);
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+  const [showReportDialog, setShowReportDialog] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const [reportDetails, setReportDetails] = useState("");
+  const [submittingReport, setSubmittingReport] = useState(false);
 
   const handleLike = async () => {
     const newLikes = liked
@@ -63,6 +76,24 @@ export default function PostCard({ post, currentUser, onUpdate }) {
 
   const isVideo = (url) => url && (url.includes('.mp4') || url.includes('.mov') || url.includes('.webm') || url.includes('video'));
 
+  const submitReport = async () => {
+    if (!reportReason) return;
+    setSubmittingReport(true);
+    await base44.entities.Report.create({
+      reporter_email: currentUser.email,
+      reported_item_type: "post",
+      reported_item_id: post.id,
+      reason: reportReason,
+      details: reportDetails,
+      status: "pending",
+    });
+    setShowReportDialog(false);
+    setReportReason("");
+    setReportDetails("");
+    setSubmittingReport(false);
+    alert("Report submitted. Our team will review it shortly.");
+  };
+
   return (
     <article className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
       {/* Header */}
@@ -87,6 +118,20 @@ export default function PostCard({ post, currentUser, onUpdate }) {
           )}
           {post.category && (
             <span className="text-sm">{categoryIcons[post.category]}</span>
+          )}
+          {currentUser && currentUser.email !== post.author_email && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors">
+                  <MoreHorizontal className="w-4 h-4 text-slate-400" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setShowReportDialog(true)} className="text-red-600 gap-2">
+                  <Flag className="w-4 h-4" /> Report Post
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </div>
       </div>
@@ -192,6 +237,55 @@ export default function PostCard({ post, currentUser, onUpdate }) {
           )}
         </div>
       )}
+
+      {/* Report Dialog */}
+      <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
+        <DialogContent className="sm:max-w-md rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-orange-500" />
+              Report Post
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 mt-2">
+            <p className="text-sm text-slate-500">Help us keep SportHub safe and focused on sports.</p>
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-slate-600">Reason</label>
+              <Select value={reportReason} onValueChange={setReportReason}>
+                <SelectTrigger className="rounded-xl">
+                  <SelectValue placeholder="Select reason" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="politics">Political Content</SelectItem>
+                  <SelectItem value="profanity">Profanity / Offensive Language</SelectItem>
+                  <SelectItem value="cyberbullying">Cyberbullying</SelectItem>
+                  <SelectItem value="harassment">Harassment</SelectItem>
+                  <SelectItem value="spam">Spam</SelectItem>
+                  <SelectItem value="inappropriate">Inappropriate Content</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-slate-600">Additional Details (Optional)</label>
+              <Textarea
+                value={reportDetails}
+                onChange={e => setReportDetails(e.target.value)}
+                placeholder="Provide more context..."
+                className="rounded-xl resize-none"
+                rows={3}
+              />
+            </div>
+            <Button
+              onClick={submitReport}
+              disabled={!reportReason || submittingReport}
+              className="w-full rounded-xl bg-red-600 hover:bg-red-700 text-white"
+            >
+              {submittingReport ? "Submitting..." : "Submit Report"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </article>
   );
 }

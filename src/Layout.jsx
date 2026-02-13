@@ -5,8 +5,11 @@ import { base44 } from "@/api/base44Client";
 import { Home, User, MessageCircle, Search, Bell, Plus, Menu, X, Trophy, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useLanguage } from "./components/LanguageContext";
+import LanguageSelector from "./components/LanguageSelector";
 
 export default function Layout({ children, currentPageName }) {
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -23,11 +26,11 @@ export default function Layout({ children, currentPageName }) {
   }, [user]);
 
   const navItems = [
-    { name: "Feed", page: "Feed", icon: Home },
-    { name: "Explore", page: "Explore", icon: Search },
-    { name: "Messages", page: "Messages", icon: MessageCircle, badge: unreadCount },
-    { name: "Advice", page: "Advice", icon: Trophy },
-    { name: "Profile", page: "Profile", icon: User },
+    { name: t("feed"), page: "Feed", icon: Home },
+    { name: t("explore"), page: "Explore", icon: Search },
+    { name: t("messages"), page: "Messages", icon: MessageCircle, badge: unreadCount },
+    { name: t("advice"), page: "Advice", icon: Trophy },
+    { name: t("profile"), page: "Profile", icon: User },
   ];
 
   if (currentPageName === "Login") return <>{children}</>;
@@ -49,7 +52,7 @@ export default function Layout({ children, currentPageName }) {
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center">
               <Flame className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold tracking-tight text-slate-900 hidden sm:block">SportHub</span>
+            <span className="text-xl font-bold tracking-tight text-slate-900 hidden sm:block">{t("appName")}</span>
           </Link>
 
           {/* Desktop nav */}
@@ -80,10 +83,11 @@ export default function Layout({ children, currentPageName }) {
           </nav>
 
           <div className="flex items-center gap-3">
+            <LanguageSelector />
             <Link to={createPageUrl("CreatePost")}>
               <Button className="bg-gradient-to-r from-orange-500 to-amber-400 hover:from-orange-600 hover:to-amber-500 text-white rounded-xl shadow-lg shadow-orange-500/25 gap-2 hidden sm:flex">
                 <Plus className="w-4 h-4" />
-                Post
+                {t("post")}
               </Button>
             </Link>
             {user && (

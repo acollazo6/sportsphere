@@ -64,6 +64,32 @@ export default function CreatePost() {
     if (!content.trim() && mediaFiles.length === 0) return;
     setPosting(true);
     
+    // Content moderation check
+    try {
+      const moderationResult = await base44.integrations.Core.InvokeLLM({
+        prompt: `Analyze this post content for inappropriate material. Check for: politics, profanity, cyberbullying, hate speech, harassment, or discriminatory language. Return JSON with "safe" (boolean) and "reason" (string if unsafe).
+
+Content to check: "${content}"
+
+Return ONLY JSON format: {"safe": true/false, "reason": "explanation if unsafe"}`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            safe: { type: "boolean" },
+            reason: { type: "string" }
+          }
+        }
+      });
+
+      if (!moderationResult.safe) {
+        alert(`Content blocked: ${moderationResult.reason}\n\nPlease keep SportHub focused on sports, training, and positive motivation.`);
+        setPosting(false);
+        return;
+      }
+    } catch (error) {
+      console.error("Moderation check failed:", error);
+    }
+    
     const hasVideo = mediaPreviews.some(m => m.type === "video");
     const hasImage = mediaPreviews.some(m => m.type === "image");
     
