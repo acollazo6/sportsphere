@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "./utils";
 import { base44 } from "@/api/base44Client";
-import { Home, User, MessageCircle, Search, Bell, Plus, Menu, X, Trophy, Flame, Globe } from "lucide-react";
+import { Home, User, MessageCircle, Search, Bell, Plus, Menu, X, Trophy, Flame, Globe, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -39,6 +39,7 @@ export default function Layout({ children, currentPageName }) {
   const navItems = [
     { name: t("feed"), page: "Feed", icon: Home },
     { name: t("explore"), page: "Explore", icon: Search },
+    { name: "AI Coach", page: "Coach", icon: Sparkles },
     { name: t("messages"), page: "Messages", icon: MessageCircle, badge: unreadCount },
     { name: t("advice"), page: "Advice", icon: Trophy },
     { name: t("profile"), page: "Profile", icon: User },

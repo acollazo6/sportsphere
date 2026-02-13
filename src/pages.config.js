@@ -54,6 +54,7 @@ import Feed from './pages/Feed';
 import Messages from './pages/Messages';
 import Profile from './pages/Profile';
 import UserProfile from './pages/UserProfile';
+import Coach from './pages/Coach';
 import __Layout from './Layout.jsx';
 
 
@@ -65,6 +66,7 @@ export const PAGES = {
     "Messages": Messages,
     "Profile": Profile,
     "UserProfile": UserProfile,
+    "Coach": Coach,
 }
 
 export const pagesConfig = {
