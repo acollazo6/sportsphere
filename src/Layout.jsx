@@ -2,17 +2,28 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "./utils";
 import { base44 } from "@/api/base44Client";
-import { Home, User, MessageCircle, Search, Bell, Plus, Menu, X, Trophy, Flame } from "lucide-react";
+import { Home, User, MessageCircle, Search, Bell, Plus, Menu, X, Trophy, Flame, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useLanguage } from "./components/LanguageContext";
-import LanguageSelector from "./components/LanguageSelector";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { translations } from "./components/translations";
 
 export default function Layout({ children, currentPageName }) {
-  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [language, setLanguage] = useState(() => {
+    const saved = localStorage.getItem("sporthub_language");
+    return saved || navigator.language.split("-")[0] || "en";
+  });
+
+  const t = (key) => translations[language]?.[key] || translations["en"]?.[key] || key;
+
+  useEffect(() => {
+    localStorage.setItem("sporthub_language", language);
+    document.documentElement.lang = language;
+    document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
+  }, [language]);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
@@ -83,7 +94,24 @@ export default function Layout({ children, currentPageName }) {
           </nav>
 
           <div className="flex items-center gap-3">
-            <LanguageSelector />
+            <Select value={language} onValueChange={setLanguage}>
+              <SelectTrigger className="w-[140px] h-9 rounded-xl border-slate-200 gap-2 hidden sm:flex">
+                <Globe className="w-4 h-4 text-slate-500" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="en"><span className="flex items-center gap-2"><span>🇬🇧</span> English</span></SelectItem>
+                <SelectItem value="es"><span className="flex items-center gap-2"><span>🇪🇸</span> Español</span></SelectItem>
+                <SelectItem value="fr"><span className="flex items-center gap-2"><span>🇫🇷</span> Français</span></SelectItem>
+                <SelectItem value="de"><span className="flex items-center gap-2"><span>🇩🇪</span> Deutsch</span></SelectItem>
+                <SelectItem value="pt"><span className="flex items-center gap-2"><span>🇧🇷</span> Português</span></SelectItem>
+                <SelectItem value="zh"><span className="flex items-center gap-2"><span>🇨🇳</span> 中文</span></SelectItem>
+                <SelectItem value="ja"><span className="flex items-center gap-2"><span>🇯🇵</span> 日本語</span></SelectItem>
+                <SelectItem value="ar"><span className="flex items-center gap-2"><span>🇸🇦</span> العربية</span></SelectItem>
+                <SelectItem value="hi"><span className="flex items-center gap-2"><span>🇮🇳</span> हिन्दी</span></SelectItem>
+                <SelectItem value="ru"><span className="flex items-center gap-2"><span>🇷🇺</span> Русский</span></SelectItem>
+              </SelectContent>
+            </Select>
             <Link to={createPageUrl("CreatePost")}>
               <Button className="bg-gradient-to-r from-orange-500 to-amber-400 hover:from-orange-600 hover:to-amber-500 text-white rounded-xl shadow-lg shadow-orange-500/25 gap-2 hidden sm:flex">
                 <Plus className="w-4 h-4" />
