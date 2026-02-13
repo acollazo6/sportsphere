@@ -11,8 +11,10 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Edit2, Trophy, MapPin, Clock, Star, Trash2, Loader2, Camera, LogOut, Settings } from "lucide-react";
+import { Plus, Edit2, Trophy, MapPin, Clock, Star, Trash2, Loader2, Camera, LogOut, Settings, TrendingUp, BarChart3 } from "lucide-react";
 import PostCard from "../components/feed/PostCard";
+import StatInputDialog from "../components/stats/StatInputDialog";
+import StatsChart from "../components/stats/StatsChart";
 
 const SPORTS = ["Basketball", "Soccer", "Football", "Baseball", "Tennis", "Golf", "Swimming", "Boxing", "MMA", "Track", "Volleyball", "Hockey", "Cycling", "Yoga", "CrossFit", "Other"];
 const ROLES = ["athlete", "coach", "trainer", "instructor", "fan"];
@@ -26,6 +28,9 @@ export default function Profile() {
   const [formData, setFormData] = useState({});
   const [saving, setSaving] = useState(false);
   const [avatarUploading, setAvatarUploading] = useState(false);
+  const [selectedProfileForStats, setSelectedProfileForStats] = useState(null);
+  const [showStatsDialog, setShowStatsDialog] = useState(false);
+  const [viewingStatsProfile, setViewingStatsProfile] = useState(null);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => base44.auth.redirectToLogin());
@@ -40,6 +45,17 @@ export default function Profile() {
   const { data: myPosts } = useQuery({
     queryKey: ["my-posts", user?.email],
     queryFn: () => base44.entities.Post.filter({ author_email: user.email }, "-created_date", 20),
+    enabled: !!user,
+  });
+
+  const { data: statEntries } = useQuery({
+    queryKey: ["my-stats", user?.email, viewingStatsProfile?.id],
+    queryFn: () => {
+      if (viewingStatsProfile) {
+        return base44.entities.StatEntry.filter({ sport_profile_id: viewingStatsProfile.id }, "-date", 50);
+      }
+      return base44.entities.StatEntry.filter({ user_email: user.email }, "-date", 50);
+    },
     enabled: !!user,
   });
 
@@ -85,6 +101,27 @@ export default function Profile() {
   const deleteProfile = async (id) => {
     await base44.entities.SportProfile.delete(id);
     queryClient.invalidateQueries({ queryKey: ["my-sport-profiles"] });
+  };
+
+  const handleSaveStats = async (statsData) => {
+    await base44.entities.StatEntry.create({
+      user_email: user.email,
+      sport_profile_id: selectedProfileForStats.id,
+      sport: selectedProfileForStats.sport,
+      ...statsData,
+    });
+    queryClient.invalidateQueries({ queryKey: ["my-stats"] });
+    setShowStatsDialog(false);
+    setSelectedProfileForStats(null);
+  };
+
+  const openStatsInput = (profile) => {
+    setSelectedProfileForStats(profile);
+    setShowStatsDialog(true);
+  };
+
+  const viewStats = (profile) => {
+    setViewingStatsProfile(profile);
   };
 
   if (!user) return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-slate-300" /></div>;
@@ -152,6 +189,12 @@ export default function Profile() {
                 <div className="flex items-start justify-between mb-3">
                   <Badge className="bg-orange-50 text-orange-700 text-sm rounded-lg">{profile.sport}</Badge>
                   <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onClick={() => openStatsInput(profile)} className="p-1.5 rounded-lg hover:bg-orange-50" title="Log Stats">
+                      <TrendingUp className="w-3.5 h-3.5 text-orange-500" />
+                    </button>
+                    <button onClick={() => viewStats(profile)} className="p-1.5 rounded-lg hover:bg-blue-50" title="View Analytics">
+                      <BarChart3 className="w-3.5 h-3.5 text-blue-500" />
+                    </button>
                     <button onClick={() => openEditProfile(profile)} className="p-1.5 rounded-lg hover:bg-slate-100"><Edit2 className="w-3.5 h-3.5 text-slate-400" /></button>
                     <button onClick={() => deleteProfile(profile.id)} className="p-1.5 rounded-lg hover:bg-red-50"><Trash2 className="w-3.5 h-3.5 text-red-400" /></button>
                   </div>
@@ -249,6 +292,48 @@ export default function Profile() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Stats Input Dialog */}
+      <StatInputDialog
+        open={showStatsDialog}
+        onClose={() => {
+          setShowStatsDialog(false);
+          setSelectedProfileForStats(null);
+        }}
+        sportProfile={selectedProfileForStats}
+        onSave={handleSaveStats}
+      />
+
+      {/* Stats Analytics Section */}
+      {viewingStatsProfile && (
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-slate-900">{viewingStatsProfile.sport} Analytics</h2>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => openStatsInput(viewingStatsProfile)}
+                size="sm"
+                className="rounded-xl gap-2 bg-orange-500 hover:bg-orange-600"
+              >
+                <Plus className="w-4 h-4" />
+                Log Stats
+              </Button>
+              <Button
+                onClick={() => setViewingStatsProfile(null)}
+                size="sm"
+                variant="outline"
+                className="rounded-xl"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+          <StatsChart
+            stats={statEntries?.filter(s => s.sport === viewingStatsProfile.sport)}
+            sport={viewingStatsProfile.sport}
+          />
+        </div>
+      )}
 
       {/* My Posts */}
       <div>
