@@ -182,7 +182,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Mobile bottom nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-t border-slate-100">
         <div className="flex items-center justify-around py-2">
-          {navItems.map(item => {
+          {navItems.filter(item => ["Feed", "Reels", "Explore", "Groups", "Coach"].includes(item.page)).map(item => {
             const Icon = item.icon;
             const isActive = currentPageName === item.page;
             return (
@@ -203,14 +203,6 @@ export default function Layout({ children, currentPageName }) {
               </Link>
             );
           })}
-          <Link
-            to={createPageUrl("CreatePost")}
-            className="flex flex-col items-center gap-0.5 px-3 py-1.5"
-          >
-            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-orange-500 to-amber-400 flex items-center justify-center">
-              <Plus className="w-4 h-4 text-white" />
-            </div>
-          </Link>
         </div>
       </nav>
     </div>
