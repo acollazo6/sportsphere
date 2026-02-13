@@ -186,9 +186,32 @@ export default function CoachPage() {
                         <Sparkles className="w-8 h-8 text-white" />
                       </div>
                       <h3 className="text-lg font-semibold text-slate-900 mb-2">Ready to level up your training?</h3>
-                      <p className="text-slate-500 text-sm max-w-md mx-auto">
+                      <p className="text-slate-500 text-sm max-w-md mx-auto mb-4">
                         Ask me to analyze your stats, create a custom training plan, upload a video for technique analysis, or get advice on improving your performance!
                       </p>
+                      <div className="flex flex-wrap gap-2 justify-center max-w-2xl mx-auto">
+                        <Button
+                          onClick={() => setInput("Create a personalized weekly workout plan for me based on my sport and current performance level")}
+                          variant="outline"
+                          className="rounded-xl text-xs"
+                        >
+                          📋 Generate Workout Plan
+                        </Button>
+                        <Button
+                          onClick={() => setInput("Analyze my recent stats and suggest areas for improvement")}
+                          variant="outline"
+                          className="rounded-xl text-xs"
+                        >
+                          📊 Analyze My Stats
+                        </Button>
+                        <Button
+                          onClick={() => setInput("Based on my recent training intensity, do I need a rest day? What recovery strategies should I use?")}
+                          variant="outline"
+                          className="rounded-xl text-xs"
+                        >
+                          😴 Recovery Advice
+                        </Button>
+                      </div>
                     </div>
                   )}
                   {messages.map((msg, idx) => (
