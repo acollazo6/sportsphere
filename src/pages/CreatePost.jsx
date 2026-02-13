@@ -90,10 +90,14 @@ Return ONLY JSON format: {"safe": true/false, "reason": "explanation if unsafe"}
       console.error("Moderation check failed:", error);
     }
     
+    // Extract mentions
+    const mentionRegex = /@(\w+(?:\s+\w+)*)/g;
+    const mentions = [...content.matchAll(mentionRegex)].map(m => m[1]);
+    
     const hasVideo = mediaPreviews.some(m => m.type === "video");
     const hasImage = mediaPreviews.some(m => m.type === "image");
     
-    await base44.entities.Post.create({
+    const post = await base44.entities.Post.create({
       author_email: user.email,
       author_name: user.full_name,
       author_avatar: user.avatar_url,
@@ -104,7 +108,29 @@ Return ONLY JSON format: {"safe": true/false, "reason": "explanation if unsafe"}
       media_type: hasVideo && hasImage ? "mixed" : hasVideo ? "video" : hasImage ? "image" : undefined,
       likes: [],
       comments_count: 0,
+      views: 0,
+      shares: 0,
+      mentioned_users: mentions.length > 0 ? mentions : [],
     });
+    
+    // Notify mentioned users
+    if (mentions.length > 0) {
+      const allUsers = await base44.entities.User.list();
+      for (const mention of mentions) {
+        const mentionedUser = allUsers.find(u => u.full_name?.toLowerCase() === mention.toLowerCase());
+        if (mentionedUser && mentionedUser.email !== user.email) {
+          await base44.entities.Notification.create({
+            recipient_email: mentionedUser.email,
+            actor_email: user.email,
+            actor_name: user.full_name,
+            actor_avatar: user.avatar_url,
+            type: "mention",
+            post_id: post.id,
+            message: "mentioned you in a post",
+          });
+        }
+      }
+    }
     
     navigate(createPageUrl("Feed"));
   };
@@ -119,12 +145,15 @@ Return ONLY JSON format: {"safe": true/false, "reason": "explanation if unsafe"}
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-5">
-        <Textarea
-          value={content}
-          onChange={e => setContent(e.target.value)}
-          placeholder="Share your training, highlight, or motivation..."
-          className="min-h-[120px] border-0 bg-slate-50 rounded-xl text-sm resize-none focus:ring-2 focus:ring-orange-200"
-        />
+        <div className="space-y-2">
+          <Textarea
+            value={content}
+            onChange={e => setContent(e.target.value)}
+            placeholder="Share your training, highlight, or motivation... (type @ to mention users)"
+            className="min-h-[120px] border-0 bg-slate-50 rounded-xl text-sm resize-none focus:ring-2 focus:ring-orange-200"
+          />
+          <p className="text-xs text-slate-400">Tip: Type @ to mention other athletes</p>
+        </div>
 
         {/* Media previews */}
         {mediaPreviews.length > 0 && (
