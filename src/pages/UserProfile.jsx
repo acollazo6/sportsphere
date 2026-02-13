@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { MessageCircle, Trophy, MapPin, Clock, Send, Loader2, ArrowLeft, Lightbulb } from "lucide-react";
+import { MessageCircle, Trophy, MapPin, Clock, Send, Loader2, ArrowLeft, Lightbulb, Users } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import PostCard from "../components/feed/PostCard";
@@ -21,19 +21,20 @@ export default function UserProfile() {
   const [adviceTopic, setAdviceTopic] = useState("");
   const [adviceMessage, setAdviceMessage] = useState("");
   const [sending, setSending] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
 
   useEffect(() => {
     base44.auth.me().then(setCurrentUser).catch(() => {});
   }, []);
 
   useEffect(() => {
-    if (currentUser && viewedEmail) {
+    if (currentUser && profileEmail) {
       base44.entities.Follow.filter({ 
         follower_email: currentUser.email, 
-        following_email: viewedEmail 
+        following_email: profileEmail 
       }).then(follows => setIsFollowing(follows.length > 0));
     }
-  }, [currentUser, viewedEmail]);
+  }, [currentUser, profileEmail]);
 
   const { data: profiles } = useQuery({
     queryKey: ["user-profiles", profileEmail],
@@ -82,6 +83,25 @@ export default function UserProfile() {
     setSending(false);
   };
 
+  const toggleFollow = async () => {
+    if (isFollowing) {
+      const follows = await base44.entities.Follow.filter({ 
+        follower_email: currentUser.email, 
+        following_email: profileEmail 
+      });
+      if (follows[0]) {
+        await base44.entities.Follow.delete(follows[0].id);
+        setIsFollowing(false);
+      }
+    } else {
+      await base44.entities.Follow.create({
+        follower_email: currentUser.email,
+        following_email: profileEmail,
+      });
+      setIsFollowing(true);
+    }
+  };
+
   if (!profile) return (
     <div className="flex justify-center py-20">
       <Loader2 className="w-8 h-8 animate-spin text-slate-300" />
@@ -113,6 +133,15 @@ export default function UserProfile() {
             </div>
             {currentUser && currentUser.email !== profileEmail && (
               <div className="flex gap-2">
+                <Button 
+                  onClick={toggleFollow} 
+                  variant={isFollowing ? "outline" : "default"}
+                  className="rounded-xl gap-2"
+                  size="sm"
+                >
+                  <Users className="w-4 h-4" />
+                  {isFollowing ? "Following" : "Follow"}
+                </Button>
                 <Button onClick={startConversation} variant="outline" className="rounded-xl gap-2" size="sm">
                   <MessageCircle className="w-4 h-4" /> Message
                 </Button>
