@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Heart, MessageCircle, Share2, Play, MoreHorizontal, Bookmark, Flag, AlertTriangle, Star } from "lucide-react";
+import { Heart, MessageCircle, Share2, Play, MoreHorizontal, Bookmark, Flag, AlertTriangle, Star, Eye } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+import MentionInput from "./MentionInput";
 
 const categoryIcons = {
   training: "🏋️",
@@ -46,7 +46,16 @@ export default function PostCard({ post, currentUser, onUpdate }) {
     base44.entities.Highlight.filter({ user_email: currentUser.email, item_type: "post", item_id: post.id })
       .then(highlights => setIsHighlighted(highlights.length > 0))
       .catch(() => {});
+    
+    // Track view
+    trackView();
   }, [currentUser, post.id]);
+
+  const trackView = async () => {
+    if (!currentUser) return;
+    const newViews = (post.views || 0) + 1;
+    await base44.entities.Post.update(post.id, { views: newViews });
+  };
 
   const handleLike = async () => {
     const newLikes = liked
@@ -56,6 +65,19 @@ export default function PostCard({ post, currentUser, onUpdate }) {
     setLiked(!liked);
     setLikeCount(prev => liked ? prev - 1 : prev + 1);
     await base44.entities.Post.update(post.id, { likes: newLikes });
+    
+    // Create notification
+    if (!liked && post.author_email !== currentUser.email) {
+      await base44.entities.Notification.create({
+        recipient_email: post.author_email,
+        actor_email: currentUser.email,
+        actor_name: currentUser.full_name,
+        actor_avatar: currentUser.avatar_url,
+        type: "like",
+        post_id: post.id,
+        message: "liked your post",
+      });
+    }
   };
 
   const loadComments = async () => {
@@ -70,6 +92,11 @@ export default function PostCard({ post, currentUser, onUpdate }) {
 
   const addComment = async () => {
     if (!newComment.trim()) return;
+    
+    // Extract mentions (@username)
+    const mentionRegex = /@(\w+(?:\s+\w+)*)/g;
+    const mentions = [...newComment.matchAll(mentionRegex)].map(m => m[1]);
+    
     const comment = await base44.entities.Comment.create({
       post_id: post.id,
       author_email: currentUser.email,
@@ -80,6 +107,40 @@ export default function PostCard({ post, currentUser, onUpdate }) {
     setComments(prev => [comment, ...prev]);
     setNewComment("");
     await base44.entities.Post.update(post.id, { comments_count: (post.comments_count || 0) + 1 });
+    
+    // Create notifications
+    if (post.author_email !== currentUser.email) {
+      await base44.entities.Notification.create({
+        recipient_email: post.author_email,
+        actor_email: currentUser.email,
+        actor_name: currentUser.full_name,
+        actor_avatar: currentUser.avatar_url,
+        type: "comment",
+        post_id: post.id,
+        comment_id: comment.id,
+        message: "commented on your post",
+      });
+    }
+    
+    // Notify mentioned users
+    if (mentions.length > 0) {
+      const allUsers = await base44.entities.User.list();
+      for (const mention of mentions) {
+        const mentionedUser = allUsers.find(u => u.full_name?.toLowerCase() === mention.toLowerCase());
+        if (mentionedUser && mentionedUser.email !== currentUser.email) {
+          await base44.entities.Notification.create({
+            recipient_email: mentionedUser.email,
+            actor_email: currentUser.email,
+            actor_name: currentUser.full_name,
+            actor_avatar: currentUser.avatar_url,
+            type: "mention",
+            post_id: post.id,
+            comment_id: comment.id,
+            message: "mentioned you in a comment",
+          });
+        }
+      }
+    }
   };
 
   const isVideo = (url) => url && (url.includes('.mp4') || url.includes('.mov') || url.includes('.webm') || url.includes('video'));
@@ -172,7 +233,15 @@ export default function PostCard({ post, currentUser, onUpdate }) {
 
       {/* Content */}
       {post.content && (
-        <p className="px-4 pb-3 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{post.content}</p>
+        <p className="px-4 pb-3 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
+          {post.content.split(/(@\w+(?:\s+\w+)*)/g).map((part, i) => 
+            part.startsWith('@') ? (
+              <span key={i} className="text-orange-500 font-medium">{part}</span>
+            ) : (
+              part
+            )
+          )}
+        </p>
       )}
 
       {/* Media */}
@@ -228,6 +297,22 @@ export default function PostCard({ post, currentUser, onUpdate }) {
             <MessageCircle className="w-5 h-5 text-slate-400 group-hover:text-slate-600 transition-colors" />
             <span className="text-sm font-medium text-slate-500">{post.comments_count || 0}</span>
           </button>
+
+          <button
+            onClick={async () => {
+              await base44.entities.Post.update(post.id, { shares: (post.shares || 0) + 1 });
+              navigator.share?.({ title: post.content, url: window.location.href });
+            }}
+            className="flex items-center gap-1.5 group"
+          >
+            <Share2 className="w-5 h-5 text-slate-400 group-hover:text-slate-600 transition-colors" />
+            <span className="text-sm font-medium text-slate-500">{post.shares || 0}</span>
+          </button>
+
+          <div className="flex items-center gap-1.5">
+            <Eye className="w-5 h-5 text-slate-300" />
+            <span className="text-sm font-medium text-slate-400">{post.views || 0}</span>
+          </div>
         </div>
         <Bookmark className="w-5 h-5 text-slate-300 hover:text-slate-600 cursor-pointer transition-colors" />
       </div>
@@ -236,12 +321,11 @@ export default function PostCard({ post, currentUser, onUpdate }) {
       {showComments && (
         <div className="border-t border-slate-100 p-4 space-y-3">
           <div className="flex gap-2">
-            <input
+            <MentionInput
               value={newComment}
-              onChange={e => setNewComment(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && addComment()}
-              placeholder="Add a comment..."
-              className="flex-1 text-sm bg-slate-50 rounded-xl px-4 py-2.5 border-0 focus:ring-2 focus:ring-orange-200 outline-none"
+              onChange={setNewComment}
+              placeholder="Add a comment... (type @ to mention)"
+              className="flex-1 text-sm bg-slate-50 rounded-xl px-4 py-2.5 border-0 focus:ring-2 focus:ring-orange-200 resize-none min-h-[42px] max-h-[120px]"
             />
             <Button
               onClick={addComment}
@@ -263,7 +347,15 @@ export default function PostCard({ post, currentUser, onUpdate }) {
                   </Avatar>
                   <div className="bg-slate-50 rounded-xl px-3 py-2 flex-1">
                     <p className="text-xs font-semibold text-slate-700">{c.author_name}</p>
-                    <p className="text-sm text-slate-600">{c.content}</p>
+                    <p className="text-sm text-slate-600">
+                      {c.content.split(/(@\w+(?:\s+\w+)*)/g).map((part, i) => 
+                        part.startsWith('@') ? (
+                          <span key={i} className="text-orange-500 font-medium">{part}</span>
+                        ) : (
+                          part
+                        )
+                      )}
+                    </p>
                   </div>
                 </div>
               ))}

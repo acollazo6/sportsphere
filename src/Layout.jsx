@@ -36,6 +36,15 @@ export default function Layout({ children, currentPageName }) {
     });
   }, [user]);
 
+  const [notifCount, setNotifCount] = useState(0);
+
+  useEffect(() => {
+    if (!user) return;
+    base44.entities.Notification.filter({ recipient_email: user.email, is_read: false }).then(notifs => {
+      setNotifCount(notifs.length);
+    });
+  }, [user]);
+
   const navItems = [
     { name: t("feed"), page: "Feed", icon: Home },
     { name: "Reels", page: "Reels", icon: Flame },
@@ -43,6 +52,7 @@ export default function Layout({ children, currentPageName }) {
     { name: "Groups", page: "Groups", icon: Globe },
     { name: "AI Coach", page: "Coach", icon: Sparkles },
     { name: t("messages"), page: "Messages", icon: MessageCircle, badge: unreadCount },
+    { name: "Notifications", page: "Notifications", icon: Bell, badge: notifCount },
     { name: t("advice"), page: "Advice", icon: Trophy },
     { name: t("profile"), page: "Profile", icon: User },
   ];
