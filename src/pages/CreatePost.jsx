@@ -1,0 +1,181 @@
+import React, { useState, useEffect } from "react";
+import { base44 } from "@/api/base44Client";
+import { useNavigate } from "react-router-dom";
+import { createPageUrl } from "../utils";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { ImagePlus, Video, X, Loader2, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
+
+const SPORTS = ["Basketball", "Soccer", "Football", "Baseball", "Tennis", "Golf", "Swimming", "Boxing", "MMA", "Track", "Volleyball", "Hockey", "Cycling", "Yoga", "CrossFit", "Other"];
+const CATEGORIES = [
+  { value: "training", label: "Training", icon: "🏋️" },
+  { value: "game", label: "Game / Match", icon: "🏟️" },
+  { value: "coaching", label: "Coaching", icon: "📋" },
+  { value: "instruction", label: "Instruction", icon: "📚" },
+  { value: "motivation", label: "Motivation", icon: "🔥" },
+  { value: "highlight", label: "Highlight", icon: "⭐" },
+  { value: "other", label: "Other", icon: "💬" },
+];
+
+export default function CreatePost() {
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [content, setContent] = useState("");
+  const [sport, setSport] = useState("");
+  const [category, setCategory] = useState("");
+  const [mediaFiles, setMediaFiles] = useState([]);
+  const [mediaPreviews, setMediaPreviews] = useState([]);
+  const [uploading, setUploading] = useState(false);
+  const [posting, setPosting] = useState(false);
+
+  useEffect(() => {
+    base44.auth.me().then(setUser).catch(() => base44.auth.redirectToLogin());
+  }, []);
+
+  const handleMediaAdd = async (e) => {
+    const files = Array.from(e.target.files);
+    setUploading(true);
+    
+    const newPreviews = [];
+    const newUrls = [];
+    
+    for (const file of files) {
+      const preview = URL.createObjectURL(file);
+      newPreviews.push({ url: preview, type: file.type.startsWith("video") ? "video" : "image" });
+      
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      newUrls.push(file_url);
+    }
+    
+    setMediaPreviews(prev => [...prev, ...newPreviews]);
+    setMediaFiles(prev => [...prev, ...newUrls]);
+    setUploading(false);
+  };
+
+  const removeMedia = (index) => {
+    setMediaPreviews(prev => prev.filter((_, i) => i !== index));
+    setMediaFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handlePost = async () => {
+    if (!content.trim() && mediaFiles.length === 0) return;
+    setPosting(true);
+    
+    const hasVideo = mediaPreviews.some(m => m.type === "video");
+    const hasImage = mediaPreviews.some(m => m.type === "image");
+    
+    await base44.entities.Post.create({
+      author_email: user.email,
+      author_name: user.full_name,
+      author_avatar: user.avatar_url,
+      content,
+      sport: sport || undefined,
+      category: category || undefined,
+      media_urls: mediaFiles,
+      media_type: hasVideo && hasImage ? "mixed" : hasVideo ? "video" : hasImage ? "image" : undefined,
+      likes: [],
+      comments_count: 0,
+    });
+    
+    navigate(createPageUrl("Feed"));
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto px-4 py-6">
+      <div className="flex items-center gap-3 mb-6">
+        <Link to={createPageUrl("Feed")} className="p-2 rounded-xl hover:bg-slate-100 transition-colors">
+          <ArrowLeft className="w-5 h-5 text-slate-600" />
+        </Link>
+        <h1 className="text-xl font-bold text-slate-900">Create Post</h1>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-5">
+        <Textarea
+          value={content}
+          onChange={e => setContent(e.target.value)}
+          placeholder="Share your training, highlight, or motivation..."
+          className="min-h-[120px] border-0 bg-slate-50 rounded-xl text-sm resize-none focus:ring-2 focus:ring-orange-200"
+        />
+
+        {/* Media previews */}
+        {mediaPreviews.length > 0 && (
+          <div className="grid grid-cols-2 gap-3">
+            {mediaPreviews.map((m, i) => (
+              <div key={i} className="relative rounded-xl overflow-hidden bg-slate-100 aspect-video">
+                {m.type === "video" ? (
+                  <video src={m.url} className="w-full h-full object-cover" />
+                ) : (
+                  <img src={m.url} alt="" className="w-full h-full object-cover" />
+                )}
+                <button
+                  onClick={() => removeMedia(i)}
+                  className="absolute top-2 right-2 w-7 h-7 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80 transition"
+                >
+                  <X className="w-4 h-4 text-white" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1.5">
+            <Label className="text-xs text-slate-500 font-medium">Sport</Label>
+            <Select value={sport} onValueChange={setSport}>
+              <SelectTrigger className="rounded-xl bg-slate-50 border-0">
+                <SelectValue placeholder="Select sport" />
+              </SelectTrigger>
+              <SelectContent>
+                {SPORTS.map(s => (
+                  <SelectItem key={s} value={s}>{s}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label className="text-xs text-slate-500 font-medium">Category</Label>
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger className="rounded-xl bg-slate-50 border-0">
+                <SelectValue placeholder="Select type" />
+              </SelectTrigger>
+              <SelectContent>
+                {CATEGORIES.map(c => (
+                  <SelectItem key={c.value} value={c.value}>
+                    <span className="flex items-center gap-2">{c.icon} {c.label}</span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Media buttons */}
+        <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
+          <label className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 cursor-pointer transition-colors text-sm font-medium text-slate-600">
+            <ImagePlus className="w-4 h-4" />
+            Photo
+            <input type="file" accept="image/*" multiple onChange={handleMediaAdd} className="hidden" />
+          </label>
+          <label className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 cursor-pointer transition-colors text-sm font-medium text-slate-600">
+            <Video className="w-4 h-4" />
+            Video
+            <input type="file" accept="video/*" multiple onChange={handleMediaAdd} className="hidden" />
+          </label>
+          {uploading && <Loader2 className="w-5 h-5 animate-spin text-orange-500" />}
+        </div>
+
+        <Button
+          onClick={handlePost}
+          disabled={posting || (!content.trim() && mediaFiles.length === 0)}
+          className="w-full rounded-xl bg-gradient-to-r from-orange-500 to-amber-400 hover:from-orange-600 hover:to-amber-500 text-white font-semibold h-12 shadow-lg shadow-orange-500/25"
+        >
+          {posting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Publish Post"}
+        </Button>
+      </div>
+    </div>
+  );
+}
