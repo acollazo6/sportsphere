@@ -60,6 +60,7 @@ import UserProfile from './pages/UserProfile';
 import Reels from './pages/Reels';
 import Live from './pages/Live';
 import ViewLive from './pages/ViewLive';
+import Notifications from './pages/Notifications';
 import __Layout from './Layout.jsx';
 
 
@@ -77,6 +78,7 @@ export const PAGES = {
     "Reels": Reels,
     "Live": Live,
     "ViewLive": ViewLive,
+    "Notifications": Notifications,
 }
 
 export const pagesConfig = {
