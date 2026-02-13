@@ -11,10 +11,13 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Edit2, Trophy, MapPin, Clock, Star, Trash2, Loader2, Camera, LogOut, Settings, TrendingUp, BarChart3 } from "lucide-react";
+import { Plus, Edit2, Trophy, MapPin, Clock, Star, Trash2, Loader2, Camera, LogOut, Settings, TrendingUp, BarChart3, Dumbbell, Sparkles } from "lucide-react";
 import PostCard from "../components/feed/PostCard";
 import StatInputDialog from "../components/stats/StatInputDialog";
 import StatsChart from "../components/stats/StatsChart";
+import ProgramCard from "../components/training/ProgramCard";
+import ProgramDialog from "../components/training/ProgramDialog";
+import ProgramDetailDialog from "../components/training/ProgramDetailDialog";
 
 const SPORTS = ["Basketball", "Soccer", "Football", "Baseball", "Tennis", "Golf", "Swimming", "Boxing", "MMA", "Track", "Volleyball", "Hockey", "Cycling", "Yoga", "CrossFit", "Other"];
 const ROLES = ["athlete", "coach", "trainer", "instructor", "fan"];
@@ -31,6 +34,8 @@ export default function Profile() {
   const [selectedProfileForStats, setSelectedProfileForStats] = useState(null);
   const [showStatsDialog, setShowStatsDialog] = useState(false);
   const [viewingStatsProfile, setViewingStatsProfile] = useState(null);
+  const [showProgramDialog, setShowProgramDialog] = useState(false);
+  const [selectedProgram, setSelectedProgram] = useState(null);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => base44.auth.redirectToLogin());
@@ -56,6 +61,18 @@ export default function Profile() {
       }
       return base44.entities.StatEntry.filter({ user_email: user.email }, "-date", 50);
     },
+    enabled: !!user,
+  });
+
+  const { data: myPrograms } = useQuery({
+    queryKey: ["my-programs", user?.email],
+    queryFn: () => base44.entities.TrainingProgram.filter({ creator_email: user.email }, "-created_date"),
+    enabled: !!user,
+  });
+
+  const { data: highlights } = useQuery({
+    queryKey: ["my-highlights", user?.email],
+    queryFn: () => base44.entities.Highlight.filter({ user_email: user.email }, "-created_date"),
     enabled: !!user,
   });
 
@@ -122,6 +139,36 @@ export default function Profile() {
 
   const viewStats = (profile) => {
     setViewingStatsProfile(profile);
+  };
+
+  const handleSaveProgram = async (programData) => {
+    await base44.entities.TrainingProgram.create(programData);
+    queryClient.invalidateQueries({ queryKey: ["my-programs"] });
+    setShowProgramDialog(false);
+  };
+
+  const handleFollowProgram = async (program) => {
+    const isFollowing = program.followers?.includes(user.email);
+    const newFollowers = isFollowing
+      ? program.followers.filter(e => e !== user.email)
+      : [...(program.followers || []), user.email];
+    await base44.entities.TrainingProgram.update(program.id, { followers: newFollowers });
+    queryClient.invalidateQueries({ queryKey: ["my-programs"] });
+  };
+
+  const toggleHighlight = async (itemType, itemId, itemData) => {
+    const existing = highlights?.find(h => h.item_type === itemType && h.item_id === itemId);
+    if (existing) {
+      await base44.entities.Highlight.delete(existing.id);
+    } else {
+      await base44.entities.Highlight.create({
+        user_email: user.email,
+        item_type: itemType,
+        item_id: itemId,
+        item_data: itemData,
+      });
+    }
+    queryClient.invalidateQueries({ queryKey: ["my-highlights"] });
   };
 
   if (!user) return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-slate-300" /></div>;
@@ -303,6 +350,71 @@ export default function Profile() {
         sportProfile={selectedProfileForStats}
         onSave={handleSaveStats}
       />
+
+      {/* Training Programs */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <Dumbbell className="w-5 h-5 text-orange-500" />
+            Training Programs
+          </h2>
+          <Button onClick={() => setShowProgramDialog(true)} className="rounded-xl gap-2 bg-slate-900 hover:bg-slate-800" size="sm">
+            <Plus className="w-4 h-4" />
+            Create Program
+          </Button>
+        </div>
+        {myPrograms?.length === 0 ? (
+          <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-8 text-center">
+            <p className="text-4xl mb-3">💪</p>
+            <p className="text-slate-500 font-medium">No training programs yet</p>
+            <p className="text-slate-400 text-sm mt-1">Create structured training plans</p>
+          </div>
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-2">
+            {myPrograms?.map(prog => (
+              <ProgramCard
+                key={prog.id}
+                program={prog}
+                currentUser={user}
+                onFollow={handleFollowProgram}
+                onView={setSelectedProgram}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      <ProgramDialog
+        open={showProgramDialog}
+        onClose={() => setShowProgramDialog(false)}
+        onSave={handleSaveProgram}
+        user={user}
+      />
+
+      <ProgramDetailDialog
+        open={!!selectedProgram}
+        onClose={() => setSelectedProgram(null)}
+        program={selectedProgram}
+      />
+
+      {/* Highlights */}
+      {highlights?.length > 0 && (
+        <div>
+          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2 mb-4">
+            <Sparkles className="w-5 h-5 text-amber-500" />
+            Highlights
+          </h2>
+          <div className="space-y-4">
+            {highlights.map(h => (
+              <div key={h.id} className="relative">
+                {h.item_type === "post" && h.item_data && (
+                  <PostCard post={h.item_data} currentUser={user} />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Stats Analytics Section */}
       {viewingStatsProfile && (

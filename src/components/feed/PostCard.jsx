@@ -39,6 +39,7 @@ export default function PostCard({ post, currentUser, onUpdate }) {
   const [reportReason, setReportReason] = useState("");
   const [reportDetails, setReportDetails] = useState("");
   const [submittingReport, setSubmittingReport] = useState(false);
+  const [isHighlighted, setIsHighlighted] = useState(false);
 
   const handleLike = async () => {
     const newLikes = liked
@@ -127,6 +128,11 @@ export default function PostCard({ post, currentUser, onUpdate }) {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                {currentUser.email === post.author_email && (
+                  <DropdownMenuItem onClick={() => {}} className="gap-2">
+                    <Star className="w-4 h-4" /> {isHighlighted ? "Remove from" : "Add to"} Highlights
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem onClick={() => setShowReportDialog(true)} className="text-red-600 gap-2">
                   <Flag className="w-4 h-4" /> Report Post
                 </DropdownMenuItem>
