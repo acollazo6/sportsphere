@@ -27,6 +27,8 @@ export default function CoachPage() {
       if (convos.length > 0 && !currentConversation) {
         loadConversation(convos[0].id);
       }
+    }).catch(err => {
+      console.error("Failed to load conversations:", err);
     });
   }, [user]);
 
