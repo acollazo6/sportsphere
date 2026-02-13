@@ -99,6 +99,16 @@ export default function UserProfile() {
         following_email: profileEmail,
       });
       setIsFollowing(true);
+      
+      // Create notification
+      await base44.entities.Notification.create({
+        recipient_email: profileEmail,
+        actor_email: currentUser.email,
+        actor_name: currentUser.full_name,
+        actor_avatar: currentUser.avatar_url,
+        type: "follow",
+        message: "started following you",
+      });
     }
   };
 
