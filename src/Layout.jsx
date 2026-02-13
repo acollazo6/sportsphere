@@ -39,6 +39,7 @@ export default function Layout({ children, currentPageName }) {
   const navItems = [
     { name: t("feed"), page: "Feed", icon: Home },
     { name: t("explore"), page: "Explore", icon: Search },
+    { name: "Groups", page: "Groups", icon: Globe },
     { name: "AI Coach", page: "Coach", icon: Sparkles },
     { name: t("messages"), page: "Messages", icon: MessageCircle, badge: unreadCount },
     { name: t("advice"), page: "Advice", icon: Trophy },

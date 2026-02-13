@@ -55,6 +55,8 @@ import Messages from './pages/Messages';
 import Profile from './pages/Profile';
 import UserProfile from './pages/UserProfile';
 import Coach from './pages/Coach';
+import Groups from './pages/Groups';
+import GroupDetail from './pages/GroupDetail';
 import __Layout from './Layout.jsx';
 
 
@@ -67,6 +69,8 @@ export const PAGES = {
     "Profile": Profile,
     "UserProfile": UserProfile,
     "Coach": Coach,
+    "Groups": Groups,
+    "GroupDetail": GroupDetail,
 }
 
 export const pagesConfig = {
