@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Heart, MessageCircle, Share2, Play, MoreHorizontal, Bookmark, Flag, AlertTriangle, Star, Eye, Crown, DollarSign, Sparkles } from "lucide-react";
 import TipButton from "../monetization/TipButton";
 import ContentSummary from "../content/ContentSummary";
+import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -109,6 +110,39 @@ export default function PostCard({ post, currentUser, onUpdate }) {
 
   const addComment = async () => {
     if (!newComment.trim()) return;
+    
+    // AI Content moderation for comments
+    try {
+      const moderation = await base44.integrations.Core.InvokeLLM({
+        prompt: `Analyze this comment for inappropriate content (profanity, harassment, spam, hate speech): "${newComment}". Return JSON: {"is_appropriate": boolean, "reason": string, "action": "allow"|"flag"|"block"}`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            is_appropriate: { type: "boolean" },
+            reason: { type: "string" },
+            action: { type: "string", enum: ["allow", "flag", "block"] }
+          }
+        }
+      });
+
+      if (moderation.action === "block") {
+        toast.error(`Comment blocked: ${moderation.reason}`);
+        return;
+      }
+
+      if (moderation.action === "flag") {
+        await base44.entities.Report.create({
+          reporter_email: "system",
+          reported_item_type: "comment",
+          reported_item_id: "pending",
+          reason: "inappropriate",
+          details: `AI flagged comment: ${moderation.reason}`,
+          status: "pending"
+        });
+      }
+    } catch (error) {
+      console.error("Moderation failed:", error);
+    }
     
     // Extract mentions (@username)
     const mentionRegex = /@(\w+(?:\s+\w+)*)/g;

@@ -153,6 +153,39 @@ export default function ViewLive() {
   const sendMessage = async () => {
     if (!message.trim() || !user) return;
 
+    // AI Content moderation for live chat
+    try {
+      const moderation = await base44.integrations.Core.InvokeLLM({
+        prompt: `Analyze this live chat message for inappropriate content (profanity, harassment, spam, hate speech): "${message.trim()}". Return JSON: {"is_appropriate": boolean, "reason": string, "action": "allow"|"flag"|"block"}`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            is_appropriate: { type: "boolean" },
+            reason: { type: "string" },
+            action: { type: "string", enum: ["allow", "flag", "block"] }
+          }
+        }
+      });
+
+      if (moderation.action === "block") {
+        toast.error(`Message blocked: ${moderation.reason}`);
+        return;
+      }
+
+      if (moderation.action === "flag") {
+        await base44.entities.Report.create({
+          reporter_email: "system",
+          reported_item_type: "message",
+          reported_item_id: streamId,
+          reason: "inappropriate",
+          details: `AI flagged live chat: ${moderation.reason}`,
+          status: "pending"
+        });
+      }
+    } catch (error) {
+      console.error("Moderation failed:", error);
+    }
+
     await base44.entities.LiveChat.create({
       stream_id: streamId,
       sender_email: user.email,
