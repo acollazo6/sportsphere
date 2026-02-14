@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Edit2, Trophy, MapPin, Clock, Star, Trash2, Loader2, Camera, LogOut, Settings, TrendingUp, BarChart3, Dumbbell, Sparkles } from "lucide-react";
+import { Plus, Edit2, Trophy, MapPin, Clock, Star, Trash2, Loader2, Camera, LogOut, Settings, TrendingUp, BarChart3, Dumbbell, Sparkles, DollarSign, Crown } from "lucide-react";
 import PostCard from "../components/feed/PostCard";
 import StatInputDialog from "../components/stats/StatInputDialog";
 import StatsChart from "../components/stats/StatsChart";
@@ -45,6 +45,7 @@ export default function Profile() {
     base44.auth.me().then(u => {
       setUser(u);
       setPersonalInfo({
+        bio: u.bio || "",
         weight: u.weight || "",
         height: u.height || "",
         age: u.age || "",
@@ -89,6 +90,12 @@ export default function Profile() {
   const { data: highlights } = useQuery({
     queryKey: ["my-highlights", user?.email],
     queryFn: () => base44.entities.Highlight.filter({ user_email: user.email }, "-created_date"),
+    enabled: !!user,
+  });
+
+  const { data: subscriptions } = useQuery({
+    queryKey: ["my-subscriptions", user?.email],
+    queryFn: () => base44.entities.Subscription.filter({ subscriber_email: user.email, status: "active" }),
     enabled: !!user,
   });
 
@@ -219,6 +226,7 @@ export default function Profile() {
             <div className="flex-1">
               <h1 className="text-2xl font-bold text-slate-900">{user.full_name}</h1>
               <p className="text-slate-500 text-sm">{user.email}</p>
+              {user.bio && <p className="text-sm text-slate-600 mt-2">{user.bio}</p>}
               <div className="flex flex-wrap gap-2 mt-2 text-xs text-slate-500">
                 {user.age && <span>Age: {user.age}</span>}
                 {user.height && <span>• {user.height}</span>}
@@ -244,6 +252,29 @@ export default function Profile() {
           </div>
         </div>
       </div>
+
+      {/* Subscription Status */}
+      {subscriptions?.length > 0 && (
+        <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border border-purple-200 p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <Crown className="w-5 h-5 text-purple-600" />
+            <h2 className="text-lg font-bold text-slate-900">Active Subscriptions</h2>
+          </div>
+          <div className="space-y-2">
+            {subscriptions.map(sub => (
+              <div key={sub.id} className="bg-white rounded-xl p-3 flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-sm text-slate-800">{sub.creator_email}</p>
+                  <p className="text-xs text-slate-500">
+                    ${sub.amount}/month · Renews {new Date(sub.current_period_end).toLocaleDateString()}
+                  </p>
+                </div>
+                <Badge className="bg-green-100 text-green-700">Active</Badge>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Sport Profiles */}
       <div>
@@ -318,6 +349,10 @@ export default function Profile() {
             <DialogTitle>Edit Personal Information</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 mt-2">
+            <div className="space-y-1.5">
+              <Label className="text-xs text-slate-500">Bio</Label>
+              <Textarea value={personalInfo.bio} onChange={e => setPersonalInfo({...personalInfo, bio: e.target.value})} className="rounded-xl resize-none" rows={3} placeholder="Tell us about yourself..." />
+            </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs text-slate-500">Age</Label>
