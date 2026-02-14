@@ -12,7 +12,7 @@ import { Loader2, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 const SPORTS = ["Basketball", "Soccer", "Football", "Tennis", "Running", "Cycling", "Gym/Fitness", "Yoga", "Swimming", "Boxing", "Other"];
-const SESSION_TYPES = ["coaching", "workshop", "qa", "training", "masterclass"];
+const SESSION_TYPES = ["coaching", "workshop", "qa", "training", "masterclass", "one-on-one"];
 
 export default function CreateSessionDialog({ user, onClose }) {
   const queryClient = useQueryClient();
@@ -30,7 +30,11 @@ export default function CreateSessionDialog({ user, onClose }) {
     max_participants: null,
     image_url: "",
     meeting_link: "",
+    is_one_on_one: false,
+    available_slots: [],
+    resources: [],
   });
+  const [uploadingResource, setUploadingResource] = useState(false);
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];

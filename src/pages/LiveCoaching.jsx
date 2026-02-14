@@ -182,14 +182,19 @@ export default function LiveCoaching() {
                         <p className="font-semibold text-gray-900 text-sm">{session.host_name}</p>
                       </div>
                     </div>
-                    {session.is_paid ? (
-                      <div className="flex items-center gap-1 text-red-900 font-bold">
-                        <DollarSign className="w-4 h-4" />
-                        {session.price}
-                      </div>
-                    ) : (
-                      <Badge className="bg-green-100 text-green-700">Free</Badge>
-                    )}
+                    <div className="text-right">
+                      {session.is_paid ? (
+                        <div className="flex items-center gap-1 text-red-900 font-bold">
+                          <DollarSign className="w-4 h-4" />
+                          {session.price}
+                        </div>
+                      ) : (
+                        <Badge className="bg-green-100 text-green-700">Free</Badge>
+                      )}
+                      {session.is_one_on_one && (
+                        <p className="text-xs text-gray-500 mt-1">1-on-1 Coaching</p>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>

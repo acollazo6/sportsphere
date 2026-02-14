@@ -6,7 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Calendar, Clock, Users, DollarSign, Video, Loader2, Send, MessageCircle, HelpCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ArrowLeft, Calendar, Clock, Users, DollarSign, Video, Loader2, Send, MessageCircle, HelpCircle, Download, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import moment from "moment";
@@ -19,6 +23,10 @@ export default function CoachingSessionDetail() {
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState("");
   const [isQuestion, setIsQuestion] = useState(false);
+  const [showBookingDialog, setShowBookingDialog] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState("");
+  const [bookingNotes, setBookingNotes] = useState("");
+  const [isBooking, setIsBooking] = useState(false);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
@@ -35,6 +43,12 @@ export default function CoachingSessionDetail() {
     queryFn: () => base44.entities.SessionMessage.filter({ session_id: sessionId }, "-created_date"),
     enabled: !!sessionId,
     refetchInterval: session?.status === "live" ? 3000 : false,
+  });
+
+  const { data: bookings = [] } = useQuery({
+    queryKey: ["session-bookings", sessionId],
+    queryFn: () => base44.entities.SessionBooking.filter({ session_id: sessionId }),
+    enabled: !!sessionId && session?.is_one_on_one,
   });
 
   const isRegistered = session?.participants?.includes(user?.email);
@@ -74,6 +88,50 @@ export default function CoachingSessionDetail() {
 
     queryClient.invalidateQueries({ queryKey: ["coaching-session"] });
     toast.success("Successfully registered!");
+  };
+
+  const handleBookSlot = async () => {
+    if (!selectedSlot || !user) return;
+    setIsBooking(true);
+    try {
+      await base44.entities.SessionBooking.create({
+        session_id: sessionId,
+        coach_email: session.host_email,
+        client_email: user.email,
+        client_name: user.full_name,
+        booking_date: selectedSlot,
+        duration_minutes: session.duration_minutes,
+        amount_paid: session.price || 0,
+        status: "confirmed",
+        notes: bookingNotes,
+      });
+
+      if (session.is_paid && session.price > 0) {
+        await base44.entities.Transaction.create({
+          from_email: user.email,
+          to_email: session.host_email,
+          type: "coaching_session",
+          amount: session.price,
+          status: "completed",
+        });
+      }
+
+      await base44.entities.Notification.create({
+        recipient_email: session.host_email,
+        actor_email: user.email,
+        actor_name: user.full_name,
+        actor_avatar: user.avatar_url,
+        type: "subscription",
+        message: `booked a 1-on-1 coaching slot with you`,
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["session-bookings"] });
+      setShowBookingDialog(false);
+      toast.success("Booking confirmed!");
+    } catch (error) {
+      toast.error("Failed to book slot");
+    }
+    setIsBooking(false);
   };
 
   const handleSendMessage = async () => {
@@ -184,8 +242,45 @@ export default function CoachingSessionDetail() {
                 </div>
               </div>
 
+              {/* Resources */}
+              {session.resources && session.resources.length > 0 && hasAccess && (
+                <div className="space-y-3 mb-6">
+                  <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-red-900" />
+                    Downloadable Resources
+                  </h3>
+                  {session.resources.map((resource, idx) => (
+                    <a
+                      key={idx}
+                      href={resource.file_url}
+                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors border border-gray-200"
+                    >
+                      <div>
+                        <p className="font-semibold text-gray-900">{resource.name}</p>
+                        {resource.description && (
+                          <p className="text-sm text-gray-600">{resource.description}</p>
+                        )}
+                      </div>
+                      <Download className="w-5 h-5 text-red-900" />
+                    </a>
+                  ))}
+                </div>
+              )}
+
               {/* Actions */}
-              {user && !isRegistered && session.status === "scheduled" && (
+              {user && session.is_one_on_one && !bookings.some(b => b.client_email === user.email) && (
+                <Button
+                  onClick={() => setShowBookingDialog(true)}
+                  className="w-full bg-gradient-to-r from-red-900 to-red-800 hover:from-red-800 hover:to-red-700 h-12"
+                >
+                  Book 1-on-1 Slot {session.is_paid ? `- $${session.price}` : "- Free"}
+                </Button>
+              )}
+
+              {user && !isRegistered && session.status === "scheduled" && !session.is_one_on_one && (
                 <Button
                   onClick={handleRegister}
                   disabled={isFull}
@@ -269,6 +364,58 @@ export default function CoachingSessionDetail() {
           </Card>
         </div>
       </div>
+
+      {/* Booking Dialog */}
+      <Dialog open={showBookingDialog} onOpenChange={setShowBookingDialog}>
+        <DialogContent className="bg-white border-gray-200">
+          <DialogHeader>
+            <DialogTitle className="text-gray-900">Book 1-on-1 Coaching Session</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-gray-700">Select Time Slot</Label>
+              <Select value={selectedSlot} onValueChange={setSelectedSlot}>
+                <SelectTrigger className="border-gray-300">
+                  <SelectValue placeholder="Choose a time slot" />
+                </SelectTrigger>
+                <SelectContent>
+                  {session?.available_slots
+                    ?.filter(slot => !bookings.some(b => b.booking_date === slot))
+                    .map((slot, idx) => (
+                      <SelectItem key={idx} value={slot}>
+                        {moment(slot).format("MMM D, YYYY [at] h:mm A")}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-gray-700">Notes / Goals (Optional)</Label>
+              <Textarea
+                value={bookingNotes}
+                onChange={(e) => setBookingNotes(e.target.value)}
+                placeholder="Share your goals or what you'd like to focus on..."
+                className="border-gray-300 resize-none"
+                rows={3}
+              />
+            </div>
+            {session?.is_paid && session?.price > 0 && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-sm text-red-900">
+                  <strong>Total: ${session.price}</strong> for {session.duration_minutes} minutes
+                </p>
+              </div>
+            )}
+            <Button
+              onClick={handleBookSlot}
+              disabled={!selectedSlot || isBooking}
+              className="w-full bg-gradient-to-r from-red-900 to-red-800 hover:from-red-800 hover:to-red-700"
+            >
+              {isBooking ? <Loader2 className="w-5 h-5 animate-spin" /> : "Confirm Booking"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
