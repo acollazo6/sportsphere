@@ -67,6 +67,8 @@ import SavedContent from './pages/SavedContent';
 import Premium from './pages/Premium';
 import CreatorShop from './pages/CreatorShop';
 import Discover from './pages/Discover';
+import Challenges from './pages/Challenges';
+import ChallengeDetail from './pages/ChallengeDetail';
 import __Layout from './Layout.jsx';
 
 
@@ -91,6 +93,8 @@ export const PAGES = {
     "Premium": Premium,
     "CreatorShop": CreatorShop,
     "Discover": Discover,
+    "Challenges": Challenges,
+    "ChallengeDetail": ChallengeDetail,
 }
 
 export const pagesConfig = {

@@ -52,6 +52,7 @@ export default function Layout({ children, currentPageName }) {
     { name: "Discover", page: "Discover", icon: Sparkles },
     { name: t("explore"), page: "Explore", icon: Search },
     { name: "Groups", page: "Groups", icon: Globe },
+    { name: "Challenges", page: "Challenges", icon: Trophy },
     { name: "AI Coach", page: "Coach", icon: Sparkles },
     { name: "Creator AI", page: "CreatorAI", icon: Sparkles },
     { name: "Analytics", page: "Analytics", icon: Activity },
