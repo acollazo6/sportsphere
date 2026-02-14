@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { translations } from "./components/translations";
+import RecommendationNotification from "./components/notifications/RecommendationNotification";
 
 export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
@@ -48,6 +49,7 @@ export default function Layout({ children, currentPageName }) {
   const navItems = [
     { name: t("feed"), page: "Feed", icon: Home },
     { name: "Reels", page: "Reels", icon: Flame },
+    { name: "Discover", page: "Discover", icon: Sparkles },
     { name: t("explore"), page: "Explore", icon: Search },
     { name: "Groups", page: "Groups", icon: Globe },
     { name: "AI Coach", page: "Coach", icon: Sparkles },
@@ -65,6 +67,7 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+      <RecommendationNotification user={user} />
       <style>{`
         :root {
           --brand: #0f172a;
@@ -208,7 +211,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Mobile bottom nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-2xl border-t border-cyan-500/20 shadow-2xl shadow-cyan-500/10">
         <div className="flex items-center justify-around py-2">
-          {navItems.filter(item => ["Feed", "Reels", "Explore", "Groups", "Coach"].includes(item.page)).map(item => {
+          {navItems.filter(item => ["Feed", "Discover", "Reels", "Explore", "Messages"].includes(item.page)).map(item => {
             const Icon = item.icon;
             const isActive = currentPageName === item.page;
             return (
