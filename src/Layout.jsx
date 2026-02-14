@@ -68,36 +68,36 @@ export default function Layout({ children, currentPageName }) {
   if (currentPageName === "Login") return <>{children}</>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-50">
       <RecommendationNotification user={user} />
       <style>{`
         :root {
-          --brand: #0f172a;
-          --brand-accent: #06b6d4;
-          --brand-light: #1e293b;
+          --brand: #7f1d1d;
+          --brand-accent: #991b1b;
+          --brand-light: #dc2626;
         }
         @keyframes float {
           0%, 100% { transform: translateY(0px); }
           50% { transform: translateY(-10px); }
         }
         @keyframes glow {
-          0%, 100% { box-shadow: 0 0 20px rgba(6, 182, 212, 0.4); }
-          50% { box-shadow: 0 0 40px rgba(6, 182, 212, 0.7); }
+          0%, 100% { box-shadow: 0 0 20px rgba(127, 29, 29, 0.4); }
+          50% { box-shadow: 0 0 40px rgba(127, 29, 29, 0.7); }
         }
         @keyframes neon-pulse {
-          0%, 100% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.5), 0 0 30px rgba(6, 182, 212, 0.3); }
-          50% { box-shadow: 0 0 25px rgba(6, 182, 212, 0.7), 0 0 50px rgba(6, 182, 212, 0.5); }
+          0%, 100% { box-shadow: 0 0 15px rgba(127, 29, 29, 0.5), 0 0 30px rgba(127, 29, 29, 0.3); }
+          50% { box-shadow: 0 0 25px rgba(127, 29, 29, 0.7), 0 0 50px rgba(127, 29, 29, 0.5); }
         }
       `}</style>
 
       {/* Top navbar */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-slate-900/90 backdrop-blur-2xl border-b border-cyan-400/20 shadow-lg shadow-cyan-400/10">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-2xl border-b border-gray-200 shadow-lg">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link to={createPageUrl("Feed")} className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-500 flex items-center justify-center shadow-lg shadow-cyan-500/40 group-hover:shadow-xl group-hover:shadow-cyan-500/60 transition-all duration-300 group-hover:scale-110 animate-pulse">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-red-900 via-red-800 to-red-900 flex items-center justify-center shadow-lg shadow-red-900/40 group-hover:shadow-xl group-hover:shadow-red-900/60 transition-all duration-300 group-hover:scale-110">
               <Flame className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-black tracking-tight bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent hidden sm:block">{t("appName")}</span>
+            <span className="text-xl font-black tracking-tight text-red-900 hidden sm:block">{t("appName")}</span>
           </Link>
 
           {/* Desktop nav */}
@@ -111,14 +111,14 @@ export default function Layout({ children, currentPageName }) {
                   to={createPageUrl(item.page)}
                   className={`relative flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 ${
                     isActive
-                      ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-xl shadow-cyan-400/50 scale-105"
-                      : "text-slate-400 hover:text-cyan-400 hover:bg-slate-800/60 hover:scale-105"
+                      ? "bg-gradient-to-r from-red-900 to-red-800 text-white shadow-xl shadow-red-900/50 scale-105"
+                      : "text-gray-600 hover:text-red-900 hover:bg-gray-100 hover:scale-105"
                   }`}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{item.name}</span>
                   {item.badge > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-pink-500 to-orange-500 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-lg shadow-pink-500/50 animate-pulse">
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-900 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-lg">
                       {item.badge}
                     </span>
                   )}
@@ -129,8 +129,8 @@ export default function Layout({ children, currentPageName }) {
 
           <div className="flex items-center gap-3">
             <Select value={language} onValueChange={setLanguage}>
-              <SelectTrigger className="w-[140px] h-9 rounded-xl border-slate-200 gap-2 hidden sm:flex">
-                <Globe className="w-4 h-4 text-slate-500" />
+              <SelectTrigger className="w-[140px] h-9 rounded-xl border-gray-300 gap-2 hidden sm:flex">
+                <Globe className="w-4 h-4 text-gray-500" />
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -148,13 +148,13 @@ export default function Layout({ children, currentPageName }) {
             </Select>
             <div className="flex gap-2">
               <Link to={createPageUrl("Live")}>
-                  <Button variant="outline" className="rounded-2xl gap-2 hidden sm:flex border-red-500/50 bg-red-950/50 text-red-400 hover:bg-red-900/50 hover:border-red-400 font-bold shadow-lg shadow-red-500/20 hover:shadow-xl hover:shadow-red-500/30 transition-all">
-                    <Radio className="w-4 h-4 animate-pulse" />
+                  <Button variant="outline" className="rounded-2xl gap-2 hidden sm:flex border-red-300 text-red-900 hover:bg-red-50 hover:border-red-900 font-bold shadow transition-all">
+                    <Radio className="w-4 h-4" />
                     Live
                   </Button>
                 </Link>
                 <Link to={createPageUrl("CreatePost")}>
-                  <Button className="bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 hover:from-cyan-500 hover:via-blue-500 hover:to-purple-500 text-white rounded-2xl shadow-xl shadow-cyan-500/40 hover:shadow-2xl hover:shadow-cyan-500/60 gap-2 hidden sm:flex font-bold transition-all duration-300 hover:scale-105">
+                  <Button className="bg-gradient-to-r from-red-900 to-red-800 hover:from-red-800 hover:to-red-700 text-white rounded-2xl shadow-xl hover:shadow-2xl gap-2 hidden sm:flex font-bold transition-all duration-300 hover:scale-105">
                     <Plus className="w-4 h-4" />
                     {t("post")}
                   </Button>
@@ -162,9 +162,9 @@ export default function Layout({ children, currentPageName }) {
             </div>
             {user && (
               <Link to={createPageUrl("Profile")}>
-                <Avatar className="w-9 h-9 ring-2 ring-slate-100">
+                <Avatar className="w-9 h-9 ring-2 ring-gray-300">
                   <AvatarImage src={user.avatar_url} />
-                  <AvatarFallback className="bg-slate-200 text-slate-600 text-sm font-semibold">
+                  <AvatarFallback className="bg-gray-200 text-gray-700 text-sm font-semibold">
                     {user.full_name?.[0] || user.email?.[0]?.toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -178,7 +178,7 @@ export default function Layout({ children, currentPageName }) {
 
         {/* Mobile menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-slate-900/95 backdrop-blur-xl border-t border-cyan-400/20 p-4 space-y-1">
+          <div className="md:hidden bg-white border-t border-gray-200 p-4 space-y-1">
             {navItems.map(item => {
               const Icon = item.icon;
               const isActive = currentPageName === item.page;
@@ -188,13 +188,13 @@ export default function Layout({ children, currentPageName }) {
                   to={createPageUrl(item.page)}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                    isActive ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-400/30" : "text-slate-400 hover:bg-slate-800/60 hover:text-cyan-400"
+                    isActive ? "bg-gradient-to-r from-red-900 to-red-800 text-white shadow-lg" : "text-gray-600 hover:bg-gray-100 hover:text-red-900"
                   }`}
                 >
                   <Icon className="w-5 h-5" />
                   {item.name}
                   {item.badge > 0 && (
-                    <span className="ml-auto w-5 h-5 bg-orange-500 text-white text-xs rounded-full flex items-center justify-center">
+                    <span className="ml-auto w-5 h-5 bg-red-900 text-white text-xs rounded-full flex items-center justify-center">
                       {item.badge}
                     </span>
                   )}
@@ -211,7 +211,7 @@ export default function Layout({ children, currentPageName }) {
       </main>
 
       {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-900/90 backdrop-blur-2xl border-t border-cyan-400/20 shadow-2xl shadow-cyan-400/10">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white backdrop-blur-2xl border-t border-gray-200 shadow-2xl">
         <div className="flex items-center justify-around py-2">
           {navItems.filter(item => ["Feed", "Discover", "Reels", "Explore", "Messages"].includes(item.page)).map(item => {
             const Icon = item.icon;
@@ -221,13 +221,13 @@ export default function Layout({ children, currentPageName }) {
               key={item.page}
               to={createPageUrl(item.page)}
               className={`relative flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-300 ${
-                isActive ? "text-cyan-400 scale-110" : "text-slate-500 hover:text-cyan-400"
+                isActive ? "text-red-900 scale-110" : "text-gray-500 hover:text-red-900"
               }`}
               >
                 <Icon className={`w-5 h-5 ${isActive ? "drop-shadow-lg" : ""}`} />
-                <span className={`text-[10px] font-bold ${isActive ? "text-cyan-400" : ""}`}>{item.name}</span>
+                <span className={`text-[10px] font-bold ${isActive ? "text-red-900" : ""}`}>{item.name}</span>
                 {item.badge > 0 && (
-                  <span className="absolute -top-0.5 right-1 w-4 h-4 bg-gradient-to-br from-pink-500 to-orange-500 text-white text-[9px] rounded-full flex items-center justify-center font-bold shadow-lg animate-pulse">
+                  <span className="absolute -top-0.5 right-1 w-4 h-4 bg-red-900 text-white text-[9px] rounded-full flex items-center justify-center font-bold shadow-lg">
                     {item.badge}
                   </span>
                 )}

@@ -48,57 +48,57 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import Advice from './pages/Advice';
+import Analytics from './pages/Analytics';
+import ChallengeDetail from './pages/ChallengeDetail';
+import Challenges from './pages/Challenges';
 import Coach from './pages/Coach';
 import CreatePost from './pages/CreatePost';
+import CreatorAI from './pages/CreatorAI';
+import CreatorShop from './pages/CreatorShop';
+import Discover from './pages/Discover';
 import Explore from './pages/Explore';
 import Feed from './pages/Feed';
+import ForYou from './pages/ForYou';
 import GroupDetail from './pages/GroupDetail';
 import Groups from './pages/Groups';
 import Live from './pages/Live';
 import Messages from './pages/Messages';
 import Notifications from './pages/Notifications';
+import Premium from './pages/Premium';
 import Profile from './pages/Profile';
 import Reels from './pages/Reels';
+import SavedContent from './pages/SavedContent';
+import TrendingChallenges from './pages/TrendingChallenges';
 import UserProfile from './pages/UserProfile';
 import ViewLive from './pages/ViewLive';
-import Analytics from './pages/Analytics';
-import CreatorAI from './pages/CreatorAI';
-import SavedContent from './pages/SavedContent';
-import Premium from './pages/Premium';
-import CreatorShop from './pages/CreatorShop';
-import Discover from './pages/Discover';
-import Challenges from './pages/Challenges';
-import ChallengeDetail from './pages/ChallengeDetail';
-import ForYou from './pages/ForYou';
-import TrendingChallenges from './pages/TrendingChallenges';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Advice": Advice,
+    "Analytics": Analytics,
+    "ChallengeDetail": ChallengeDetail,
+    "Challenges": Challenges,
     "Coach": Coach,
     "CreatePost": CreatePost,
+    "CreatorAI": CreatorAI,
+    "CreatorShop": CreatorShop,
+    "Discover": Discover,
     "Explore": Explore,
     "Feed": Feed,
+    "ForYou": ForYou,
     "GroupDetail": GroupDetail,
     "Groups": Groups,
     "Live": Live,
     "Messages": Messages,
     "Notifications": Notifications,
+    "Premium": Premium,
     "Profile": Profile,
     "Reels": Reels,
+    "SavedContent": SavedContent,
+    "TrendingChallenges": TrendingChallenges,
     "UserProfile": UserProfile,
     "ViewLive": ViewLive,
-    "Analytics": Analytics,
-    "CreatorAI": CreatorAI,
-    "SavedContent": SavedContent,
-    "Premium": Premium,
-    "CreatorShop": CreatorShop,
-    "Discover": Discover,
-    "Challenges": Challenges,
-    "ChallengeDetail": ChallengeDetail,
-    "ForYou": ForYou,
-    "TrendingChallenges": TrendingChallenges,
 }
 
 export const pagesConfig = {
