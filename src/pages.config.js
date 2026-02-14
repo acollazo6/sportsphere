@@ -69,6 +69,8 @@ import CreatorShop from './pages/CreatorShop';
 import Discover from './pages/Discover';
 import Challenges from './pages/Challenges';
 import ChallengeDetail from './pages/ChallengeDetail';
+import ForYou from './pages/ForYou';
+import TrendingChallenges from './pages/TrendingChallenges';
 import __Layout from './Layout.jsx';
 
 
@@ -95,6 +97,8 @@ export const PAGES = {
     "Discover": Discover,
     "Challenges": Challenges,
     "ChallengeDetail": ChallengeDetail,
+    "ForYou": ForYou,
+    "TrendingChallenges": TrendingChallenges,
 }
 
 export const pagesConfig = {
