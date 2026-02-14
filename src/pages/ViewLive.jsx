@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { toast } from "sonner";
 import TipButton from "../components/monetization/TipButton";
+import ContentSummary from "../components/content/ContentSummary";
 
 export default function ViewLive() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -257,6 +258,9 @@ export default function ViewLive() {
                     </div>
                     {stream.description && (
                       <p className="text-slate-600 leading-relaxed">{stream.description}</p>
+                    )}
+                    {stream.status === "ended" && stream.ai_summary && (
+                      <ContentSummary summary={stream.ai_summary} type="stream" />
                     )}
                   </div>
                 </>

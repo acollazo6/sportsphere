@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Heart, MessageCircle, Share2, Play, MoreHorizontal, Bookmark, Flag, AlertTriangle, Star, Eye, Crown, DollarSign } from "lucide-react";
+import { Heart, MessageCircle, Share2, Play, MoreHorizontal, Bookmark, Flag, AlertTriangle, Star, Eye, Crown, DollarSign, Sparkles } from "lucide-react";
 import TipButton from "../monetization/TipButton";
+import ContentSummary from "../content/ContentSummary";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -43,6 +44,8 @@ export default function PostCard({ post, currentUser, onUpdate }) {
   const [submittingReport, setSubmittingReport] = useState(false);
   const [isHighlighted, setIsHighlighted] = useState(false);
   const [hasAccess, setHasAccess] = useState(false);
+  const [generatingSummary, setGeneratingSummary] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -195,6 +198,38 @@ export default function PostCard({ post, currentUser, onUpdate }) {
     }
   };
 
+  const generateSummary = async () => {
+    if (!hasVideoContent()) return;
+    
+    setGeneratingSummary(true);
+    try {
+      const summaryPrompt = `Summarize this sports video post in 3-4 concise sentences. Focus on what the video shows, key techniques or moments, and main takeaways.
+
+Title/Content: ${post.content}
+Sport: ${post.sport || "General"}
+Category: ${post.category || "Unknown"}
+
+Provide a brief, engaging summary that helps viewers decide if they want to watch the video.`;
+
+      const summary = await base44.integrations.Core.InvokeLLM({
+        prompt: summaryPrompt,
+      });
+
+      await base44.entities.Post.update(post.id, { ai_summary: summary });
+      post.ai_summary = summary;
+      setShowSummary(true);
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      console.error("Failed to generate summary:", error);
+    } finally {
+      setGeneratingSummary(false);
+    }
+  };
+
+  const hasVideoContent = () => {
+    return post.media_urls?.some(url => isVideo(url));
+  };
+
   return (
     <article className="bg-slate-900/80 backdrop-blur-xl rounded-3xl border-2 border-cyan-500/20 overflow-hidden shadow-2xl shadow-cyan-500/10 hover:shadow-cyan-500/20 hover:border-cyan-500/40 transition-all duration-300 hover:scale-[1.01]">
       {/* Header */}
@@ -228,6 +263,12 @@ export default function PostCard({ post, currentUser, onUpdate }) {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                {hasVideoContent() && !post.ai_summary && (
+                  <DropdownMenuItem onClick={generateSummary} disabled={generatingSummary} className="gap-2">
+                    <Sparkles className="w-4 h-4" />
+                    Generate Summary
+                  </DropdownMenuItem>
+                )}
                 {currentUser.email === post.author_email && (
                   <DropdownMenuItem onClick={toggleHighlight} className="gap-2">
                     <Star className={`w-4 h-4 ${isHighlighted ? "fill-amber-500 text-amber-500" : ""}`} />
@@ -272,6 +313,33 @@ export default function PostCard({ post, currentUser, onUpdate }) {
               )
             )}
           </p>
+        </div>
+      )}
+
+      {/* AI Summary for Video Posts */}
+      {hasVideoContent() && hasAccess && (showSummary || post.ai_summary) && (
+        <div className="px-4 pb-3">
+          {post.ai_summary ? (
+            <ContentSummary summary={post.ai_summary} type="post" />
+          ) : (
+            <button
+              onClick={generateSummary}
+              disabled={generatingSummary}
+              className="w-full bg-gradient-to-r from-purple-950/50 to-blue-950/50 border border-purple-500/30 rounded-xl p-3 flex items-center justify-center gap-2 text-purple-300 hover:text-purple-200 transition-colors"
+            >
+              {generatingSummary ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
+                  Generating summary...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4" />
+                  Generate AI Summary
+                </>
+              )}
+            </button>
+          )}
         </div>
       )}
 
