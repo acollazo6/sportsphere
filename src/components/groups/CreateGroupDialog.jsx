@@ -18,6 +18,7 @@ export default function CreateGroupDialog({ open, onOpenChange, user, onSuccess 
     category: "sport_specific",
     location: "",
     is_public: true,
+    membership_fee: 0,
   });
   const [creating, setCreating] = useState(false);
 
@@ -32,13 +33,14 @@ export default function CreateGroupDialog({ open, onOpenChange, user, onSuccess 
     try {
       await base44.entities.Group.create({
         ...formData,
+        membership_fee: parseFloat(formData.membership_fee) || 0,
         creator_email: user.email,
         admins: [user.email],
         members: [user.email],
       });
       toast.success("Group created successfully!");
       onOpenChange(false);
-      setFormData({ name: "", description: "", sport: "", category: "sport_specific", location: "", is_public: true });
+      setFormData({ name: "", description: "", sport: "", category: "sport_specific", location: "", is_public: true, membership_fee: 0 });
       onSuccess?.();
     } catch (err) {
       toast.error("Failed to create group");
@@ -117,6 +119,20 @@ export default function CreateGroupDialog({ open, onOpenChange, user, onSuccess 
               placeholder="e.g., New York, NY"
               className="rounded-xl"
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Membership Fee (USD)</Label>
+            <Input
+              type="number"
+              step="0.01"
+              min="0"
+              value={formData.membership_fee}
+              onChange={e => setFormData({ ...formData, membership_fee: e.target.value })}
+              placeholder="0.00 (Free)"
+              className="rounded-xl"
+            />
+            <p className="text-xs text-slate-500">One-time fee to join (0 for free)</p>
           </div>
 
           <Button

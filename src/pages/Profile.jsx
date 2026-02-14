@@ -18,6 +18,7 @@ import StatsChart from "../components/stats/StatsChart";
 import ProgramCard from "../components/training/ProgramCard";
 import ProgramDialog from "../components/training/ProgramDialog";
 import ProgramDetailDialog from "../components/training/ProgramDetailDialog";
+import MonetizationSetup from "../components/monetization/MonetizationSetup";
 
 const SPORTS = ["Basketball", "Soccer", "Football", "Baseball", "Tennis", "Golf", "Swimming", "Boxing", "MMA", "Track", "Volleyball", "Hockey", "Cycling", "Yoga", "CrossFit", "Other"];
 const ROLES = ["athlete", "coach", "trainer", "instructor", "fan"];
@@ -38,6 +39,7 @@ export default function Profile() {
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [showPersonalInfoDialog, setShowPersonalInfoDialog] = useState(false);
   const [personalInfo, setPersonalInfo] = useState({});
+  const [showMonetization, setShowMonetization] = useState(false);
 
   useEffect(() => {
     base44.auth.me().then(u => {
@@ -229,7 +231,10 @@ export default function Profile() {
             <div className="flex gap-2">
               <Button variant="outline" size="sm" className="rounded-xl gap-2" onClick={() => setShowPersonalInfoDialog(true)}>
                 <Settings className="w-4 h-4" />
-                Edit Info
+                Edit
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => setShowMonetization(true)} className="rounded-xl gap-2 border-green-200 text-green-700 hover:bg-green-50">
+                <DollarSign className="w-4 h-4" /> Monetization
               </Button>
               <Button variant="outline" size="sm" className="rounded-xl gap-2" onClick={() => base44.auth.logout()}>
                 <LogOut className="w-4 h-4" />
@@ -484,6 +489,13 @@ export default function Profile() {
         open={!!selectedProgram}
         onClose={() => setSelectedProgram(null)}
         program={selectedProgram}
+      />
+
+      <MonetizationSetup
+        open={showMonetization}
+        onOpenChange={setShowMonetization}
+        user={user}
+        onSuccess={() => base44.auth.me().then(setUser)}
       />
 
       {/* Highlights */}
