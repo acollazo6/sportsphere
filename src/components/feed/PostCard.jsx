@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Heart, MessageCircle, Share2, Play, MoreHorizontal, Bookmark, Flag, AlertTriangle, Star, Eye, Crown } from "lucide-react";
+import { Heart, MessageCircle, Share2, Play, MoreHorizontal, Bookmark, Flag, AlertTriangle, Star, Eye, Crown, DollarSign } from "lucide-react";
+import TipButton from "../monetization/TipButton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -343,6 +344,16 @@ export default function PostCard({ post, currentUser, onUpdate }) {
             <Eye className="w-5 h-5 text-slate-600" />
             <span className="text-sm font-medium text-slate-500">{post.views || 0}</span>
           </div>
+
+          {currentUser && post.author_email !== currentUser.email && (
+            <TipButton
+              creator={{ email: post.author_email, name: post.author_name }}
+              contextType="post"
+              contextId={post.id}
+              variant="ghost"
+              size="sm"
+            />
+          )}
         </div>
         <Bookmark className="w-5 h-5 text-slate-600 hover:text-cyan-400 cursor-pointer transition-colors" />
       </div>

@@ -9,6 +9,7 @@ import { Radio, Users, ArrowLeft, Send, Crown, DollarSign, Loader2, Pin } from "
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { toast } from "sonner";
+import TipButton from "../components/monetization/TipButton";
 
 export default function ViewLive() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -243,6 +244,15 @@ export default function ViewLive() {
                       </Link>
                       {stream.sport && (
                         <Badge className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-bold">{stream.sport}</Badge>
+                      )}
+                      {user && stream.host_email !== user.email && (
+                        <TipButton
+                          creator={{ email: stream.host_email, name: stream.host_name }}
+                          contextType="stream"
+                          contextId={stream.id}
+                          variant="outline"
+                          size="sm"
+                        />
                       )}
                     </div>
                     {stream.description && (
