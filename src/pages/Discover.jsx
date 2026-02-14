@@ -5,7 +5,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Sparkles, TrendingUp, Radio, Calendar, Users, Loader2, ExternalLink, Play, Crown } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Sparkles, TrendingUp, Radio, Calendar, Users, Loader2, ExternalLink, Play, Crown, Filter, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import moment from "moment";
@@ -14,6 +16,10 @@ export default function Discover() {
   const [user, setUser] = useState(null);
   const [recommendations, setRecommendations] = useState(null);
   const [loadingRecs, setLoadingRecs] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sportFilter, setSportFilter] = useState("all");
+  const [contentTypeFilter, setContentTypeFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("relevance");
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
@@ -121,7 +127,8 @@ Based on the user's interests, provide personalized recommendations. Return a JS
         fromFollowed: {
           streams: liveStreams.filter(s => followedCreators.includes(s.host_email)),
           posts: posts.filter(p => followedCreators.includes(p.author_email)).slice(0, 3)
-        }
+        },
+        allContent: { liveStreams, events, groups, posts }
       };
 
       setRecommendations(recs);
@@ -157,6 +164,56 @@ Based on the user's interests, provide personalized recommendations. Return a JS
     );
   }
 
+  // Filter content based on search and filters
+  const filterContent = (items, type) => {
+    if (!items) return [];
+    
+    let filtered = items;
+    
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(item => {
+        if (type === "stream") return item.title?.toLowerCase().includes(query) || item.host_name?.toLowerCase().includes(query);
+        if (type === "event") return item.title?.toLowerCase().includes(query) || item.description?.toLowerCase().includes(query);
+        if (type === "group") return item.name?.toLowerCase().includes(query) || item.description?.toLowerCase().includes(query);
+        if (type === "post") return item.content?.toLowerCase().includes(query) || item.author_name?.toLowerCase().includes(query);
+        return true;
+      });
+    }
+    
+    // Sport filter
+    if (sportFilter !== "all") {
+      filtered = filtered.filter(item => item.sport === sportFilter);
+    }
+    
+    // Sort
+    if (sortBy === "popularity") {
+      filtered = filtered.sort((a, b) => {
+        const scoreA = (a.likes?.length || 0) + (a.comments_count || 0) + (a.views || 0) * 0.1 + (a.participants_count || 0) * 10;
+        const scoreB = (b.likes?.length || 0) + (b.comments_count || 0) + (b.views || 0) * 0.1 + (b.participants_count || 0) * 10;
+        return scoreB - scoreA;
+      });
+    } else if (sortBy === "recent") {
+      filtered = filtered.sort((a, b) => new Date(b.created_date || b.date) - new Date(a.created_date || a.date));
+    }
+    
+    return filtered;
+  };
+
+  const filteredStreams = filterContent(recommendations?.allContent?.liveStreams, "stream");
+  const filteredEvents = filterContent(recommendations?.allContent?.events, "event");
+  const filteredGroups = filterContent(recommendations?.allContent?.groups, "group");
+  const filteredPosts = filterContent(recommendations?.allContent?.posts, "post");
+
+  const allSports = [...new Set([
+    ...(recommendations?.allContent?.posts || []).map(p => p.sport).filter(Boolean),
+    ...(recommendations?.allContent?.events || []).map(e => e.sport).filter(Boolean),
+    ...(recommendations?.allContent?.groups || []).map(g => g.sport).filter(Boolean)
+  ])];
+
+  const hasFilters = searchQuery || sportFilter !== "all" || contentTypeFilter !== "all";
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -169,15 +226,196 @@ Based on the user's interests, provide personalized recommendations. Return a JS
             Discover
           </h1>
           <p className="text-slate-400 text-lg">Personalized recommendations just for you</p>
-          {recommendations?.reasoning && (
+          {!hasFilters && recommendations?.reasoning && (
             <p className="text-sm text-slate-500 mt-2 max-w-2xl mx-auto">
               {recommendations.reasoning}
             </p>
           )}
         </div>
 
+        {/* Advanced Filters */}
+        <Card className="bg-slate-900/60 backdrop-blur-xl border-cyan-500/20">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Filter className="w-5 h-5 text-cyan-400" />
+              <h3 className="font-bold text-white">Advanced Filters</h3>
+            </div>
+            <div className="grid md:grid-cols-4 gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Input
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search content..."
+                  className="pl-10 bg-slate-800 border-cyan-400/20 text-white"
+                />
+              </div>
+              <Select value={sportFilter} onValueChange={setSportFilter}>
+                <SelectTrigger className="bg-slate-800 border-cyan-400/20 text-white">
+                  <SelectValue placeholder="All Sports" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Sports</SelectItem>
+                  {allSports.map(sport => (
+                    <SelectItem key={sport} value={sport}>{sport}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={contentTypeFilter} onValueChange={setContentTypeFilter}>
+                <SelectTrigger className="bg-slate-800 border-cyan-400/20 text-white">
+                  <SelectValue placeholder="Content Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  <SelectItem value="posts">Posts</SelectItem>
+                  <SelectItem value="streams">Live Streams</SelectItem>
+                  <SelectItem value="events">Events</SelectItem>
+                  <SelectItem value="groups">Groups</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="bg-slate-800 border-cyan-400/20 text-white">
+                  <SelectValue placeholder="Sort By" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="relevance">Relevance</SelectItem>
+                  <SelectItem value="popularity">Popularity</SelectItem>
+                  <SelectItem value="recent">Most Recent</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {hasFilters && (
+              <Button
+                onClick={() => {
+                  setSearchQuery("");
+                  setSportFilter("all");
+                  setContentTypeFilter("all");
+                  setSortBy("relevance");
+                }}
+                variant="outline"
+                size="sm"
+                className="mt-4 border-cyan-500/30 text-cyan-400"
+              >
+                Clear Filters
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Filtered Content Display */}
+        {hasFilters && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-white">Search Results</h2>
+            
+            {(contentTypeFilter === "all" || contentTypeFilter === "streams") && filteredStreams.length > 0 && (
+              <div>
+                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                  <Radio className="w-5 h-5 text-red-400" />
+                  Live Streams ({filteredStreams.length})
+                </h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {filteredStreams.map(stream => (
+                    <Link key={stream.id} to={createPageUrl("ViewLive") + `?id=${stream.id}`}>
+                      <Card className="bg-slate-900/60 backdrop-blur-xl border-cyan-500/20 hover:border-cyan-500/50 transition-all">
+                        <CardContent className="p-4">
+                          <Badge className="bg-red-600 text-white mb-2">
+                            <Radio className="w-3 h-3 mr-1 animate-pulse" />
+                            LIVE
+                          </Badge>
+                          <h3 className="font-bold text-white mb-2">{stream.title}</h3>
+                          <div className="flex items-center gap-2">
+                            <Avatar className="w-6 h-6">
+                              <AvatarImage src={stream.host_avatar} />
+                              <AvatarFallback className="text-xs">{stream.host_name?.[0]}</AvatarFallback>
+                            </Avatar>
+                            <span className="text-sm text-slate-400">{stream.host_name}</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {(contentTypeFilter === "all" || contentTypeFilter === "events") && filteredEvents.length > 0 && (
+              <div>
+                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-blue-400" />
+                  Events ({filteredEvents.length})
+                </h3>
+                <div className="grid md:grid-cols-3 gap-4">
+                  {filteredEvents.map(event => (
+                    <Card key={event.id} className="bg-slate-900/60 backdrop-blur-xl border-cyan-500/20 hover:border-cyan-500/50 transition-all">
+                      <CardContent className="p-4 space-y-3">
+                        <Badge className="bg-blue-600 text-white capitalize">{event.event_type}</Badge>
+                        <h3 className="font-bold text-white line-clamp-2">{event.title}</h3>
+                        <div className="space-y-1 text-sm text-slate-400">
+                          <p>{moment(event.date).format("MMM D, YYYY")}</p>
+                          <p>{event.location || event.city}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {(contentTypeFilter === "all" || contentTypeFilter === "groups") && filteredGroups.length > 0 && (
+              <div>
+                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                  <Users className="w-5 h-5 text-green-400" />
+                  Groups ({filteredGroups.length})
+                </h3>
+                <div className="grid md:grid-cols-3 gap-4">
+                  {filteredGroups.map(group => (
+                    <Link key={group.id} to={createPageUrl("GroupDetail") + `?id=${group.id}`}>
+                      <Card className="bg-slate-900/60 backdrop-blur-xl border-cyan-500/20 hover:border-cyan-500/50 transition-all">
+                        <CardContent className="p-4 space-y-3">
+                          <Badge className="bg-green-600 text-white">{group.sport}</Badge>
+                          <h3 className="font-bold text-white line-clamp-2">{group.name}</h3>
+                          <p className="text-sm text-slate-400 line-clamp-2">{group.description}</p>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {(contentTypeFilter === "all" || contentTypeFilter === "posts") && filteredPosts.length > 0 && (
+              <div>
+                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-orange-400" />
+                  Posts ({filteredPosts.length})
+                </h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {filteredPosts.map(post => (
+                    <Card key={post.id} className="bg-slate-900/60 backdrop-blur-xl border-cyan-500/20 hover:border-cyan-500/50 transition-all">
+                      <CardContent className="p-4 space-y-3">
+                        <div className="flex items-center gap-2">
+                          <Avatar className="w-10 h-10">
+                            <AvatarImage src={post.author_avatar} />
+                            <AvatarFallback>{post.author_name?.[0]}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <p className="font-semibold text-white text-sm">{post.author_name}</p>
+                            <p className="text-xs text-slate-500">{moment(post.created_date).fromNow()}</p>
+                          </div>
+                          {post.sport && <Badge className="bg-cyan-600 text-white">{post.sport}</Badge>}
+                        </div>
+                        <p className="text-slate-300 text-sm line-clamp-3">{post.content}</p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Featured Live Stream */}
-        {recommendations?.featuredStream && (
+        {!hasFilters && recommendations?.featuredStream && (
           <Card className="bg-slate-900/60 backdrop-blur-xl border-red-500/30 overflow-hidden">
             <CardContent className="p-0">
               <div className="flex items-center gap-2 px-4 py-2 bg-red-950/50 border-b border-red-500/20">
@@ -218,7 +456,7 @@ Based on the user's interests, provide personalized recommendations. Return a JS
         )}
 
         {/* From Creators You Follow */}
-        {recommendations?.fromFollowed && (recommendations.fromFollowed.streams.length > 0 || recommendations.fromFollowed.posts.length > 0) && (
+        {!hasFilters && recommendations?.fromFollowed && (recommendations.fromFollowed.streams.length > 0 || recommendations.fromFollowed.posts.length > 0) && (
           <div>
             <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
               <Crown className="w-5 h-5 text-yellow-400" />
@@ -265,7 +503,7 @@ Based on the user's interests, provide personalized recommendations. Return a JS
         )}
 
         {/* Recommended Events */}
-        {recommendations?.events && recommendations.events.length > 0 && (
+        {!hasFilters && recommendations?.events && recommendations.events.length > 0 && (
           <div>
             <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
               <Calendar className="w-5 h-5 text-blue-400" />
@@ -294,7 +532,7 @@ Based on the user's interests, provide personalized recommendations. Return a JS
         )}
 
         {/* Recommended Groups */}
-        {recommendations?.groups && recommendations.groups.length > 0 && (
+        {!hasFilters && recommendations?.groups && recommendations.groups.length > 0 && (
           <div>
             <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
               <Users className="w-5 h-5 text-green-400" />
@@ -321,7 +559,7 @@ Based on the user's interests, provide personalized recommendations. Return a JS
         )}
 
         {/* Trending Posts */}
-        {recommendations?.posts && recommendations.posts.length > 0 && (
+        {!hasFilters && recommendations?.posts && recommendations.posts.length > 0 && (
           <div>
             <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-orange-400" />
