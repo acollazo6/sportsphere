@@ -1,189 +1,167 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { Heart, MessageCircle, Share2, Volume2, VolumeX, Play, Loader2 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { createPageUrl } from "../utils";
-import moment from "moment";
+import ReelCard from "../components/reels/ReelCard";
+import { Loader2, Sparkles } from "lucide-react";
 
 export default function Reels() {
   const [user, setUser] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [muted, setMuted] = useState(true);
-  const videoRefs = useRef([]);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
   }, []);
 
-  const { data: following } = useQuery({
-    queryKey: ["following", user?.email],
+  // Fetch user's engagement data for personalization
+  const { data: follows = [] } = useQuery({
+    queryKey: ["user-follows", user?.email],
     queryFn: () => base44.entities.Follow.filter({ follower_email: user.email }),
     enabled: !!user,
   });
 
-  const { data: allPosts, isLoading } = useQuery({
-    queryKey: ["video-posts"],
-    queryFn: () => base44.entities.Post.filter({ media_type: "video" }, "-created_date", 100),
+  const { data: likedPosts = [] } = useQuery({
+    queryKey: ["user-likes", user?.email],
+    queryFn: () => base44.entities.Post.list("-created_date", 500).then(posts => 
+      posts.filter(p => p.likes?.includes(user.email))
+    ),
+    enabled: !!user,
   });
 
-  const followingEmails = following?.map(f => f.following_email) || [];
-  const videoPosts = allPosts?.filter(post => 
-    followingEmails.includes(post.author_email) || post.author_email === user?.email
-  ) || [];
+  const { data: userProfiles = [] } = useQuery({
+    queryKey: ["user-sport-profiles", user?.email],
+    queryFn: () => base44.entities.SportProfile.filter({ user_email: user.email }),
+    enabled: !!user,
+  });
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const video = entry.target;
-          if (entry.isIntersecting) {
-            video.play().catch(() => {});
-          } else {
-            video.pause();
-          }
-        });
-      },
-      { threshold: 0.7 }
-    );
+  // Fetch all content
+  const { data: allPosts = [], isLoading: postsLoading } = useQuery({
+    queryKey: ["all-posts"],
+    queryFn: () => base44.entities.Post.list("-created_date", 100),
+  });
 
-    videoRefs.current.forEach((video) => {
-      if (video) observer.observe(video);
+  const { data: liveStreams = [] } = useQuery({
+    queryKey: ["live-streams-reels"],
+    queryFn: () => base44.entities.LiveStream.filter({ status: "live" }),
+    refetchInterval: 10000,
+  });
+
+  // Personalization algorithm
+  const recommendedContent = React.useMemo(() => {
+    if (!user || allPosts.length === 0) return allPosts;
+
+    // Get user's preferred sports
+    const userSports = userProfiles.map(p => p.sport);
+    const likedSports = likedPosts.map(p => p.sport).filter(Boolean);
+    const preferredSports = [...new Set([...userSports, ...likedSports])];
+
+    // Get followed users
+    const followedEmails = follows.map(f => f.following_email);
+
+    // Score posts
+    const scoredPosts = allPosts.map(post => {
+      let score = 0;
+
+      // Following bonus (highest priority)
+      if (followedEmails.includes(post.author_email)) score += 100;
+
+      // Sport preference bonus
+      if (post.sport && preferredSports.includes(post.sport)) score += 50;
+
+      // Category preference (based on liked posts)
+      const likedCategories = likedPosts.map(p => p.category).filter(Boolean);
+      if (post.category && likedCategories.includes(post.category)) score += 30;
+
+      // Engagement score (quality indicator)
+      const engagementRate = ((post.likes?.length || 0) + (post.comments_count || 0)) / Math.max(post.views || 1, 1);
+      score += engagementRate * 20;
+
+      // Recency bonus (newer content)
+      const daysSincePost = (Date.now() - new Date(post.created_date)) / (1000 * 60 * 60 * 24);
+      score += Math.max(0, 20 - daysSincePost);
+
+      // Media bonus (posts with media are more engaging)
+      if (post.media_urls?.length > 0) score += 15;
+
+      // Don't show user's own posts
+      if (post.author_email === user.email) score -= 1000;
+
+      return { ...post, score };
     });
 
-    return () => observer.disconnect();
-  }, [videoPosts]);
+    // Sort by score and return
+    return scoredPosts.sort((a, b) => b.score - a.score);
+  }, [allPosts, user, userProfiles, likedPosts, follows]);
 
-  const handleLike = async (post) => {
-    const liked = post.likes?.includes(user?.email);
-    const newLikes = liked
-      ? post.likes.filter(e => e !== user.email)
-      : [...(post.likes || []), user.email];
+  // Combine posts and live streams
+  const feedItems = React.useMemo(() => {
+    const items = [...recommendedContent];
     
-    await base44.entities.Post.update(post.id, { likes: newLikes });
-  };
+    // Insert live streams at strategic positions
+    liveStreams.forEach((stream, idx) => {
+      const position = idx * 5; // Insert every 5 posts
+      if (position < items.length) {
+        items.splice(position, 0, { ...stream, type: "stream" });
+      } else {
+        items.push({ ...stream, type: "stream" });
+      }
+    });
 
-  if (isLoading) {
+    return items;
+  }, [recommendedContent, liveStreams]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "ArrowUp" && currentIndex > 0) {
+        setCurrentIndex(prev => prev - 1);
+      } else if (e.key === "ArrowDown" && currentIndex < feedItems.length - 1) {
+        setCurrentIndex(prev => prev + 1);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentIndex, feedItems.length]);
+
+  if (postsLoading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-black">
-        <Loader2 className="w-8 h-8 animate-spin text-white" />
+      <div className="h-screen bg-slate-950 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
       </div>
     );
   }
 
-  if (videoPosts.length === 0) {
+  if (feedItems.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-black text-white px-4">
-        <Play className="w-16 h-16 mb-4 text-slate-400" />
-        <h2 className="text-xl font-bold mb-2">No Reels Yet</h2>
-        <p className="text-slate-400 text-center">Follow athletes to see their training videos</p>
+      <div className="h-screen bg-slate-950 flex items-center justify-center">
+        <div className="text-center text-slate-500">
+          <Sparkles className="w-12 h-12 mx-auto mb-3 opacity-30" />
+          <p>No content available yet</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="h-screen overflow-y-scroll snap-y snap-mandatory bg-black">
-      {videoPosts.map((post, index) => {
-        const liked = post.likes?.includes(user?.email);
-        const isVideo = post.media_urls?.[0];
-        
-        return (
-          <div key={post.id} className="h-screen snap-start relative flex items-center justify-center">
-            {/* Video */}
-            <video
-              ref={(el) => (videoRefs.current[index] = el)}
-              src={isVideo}
-              loop
-              muted={muted}
-              playsInline
-              className="absolute inset-0 w-full h-full object-cover"
+    <div className="fixed inset-0 bg-slate-950 overflow-hidden">
+      <div className="h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide">
+        {feedItems.map((item, index) => (
+          <div key={item.id} className="snap-start h-screen">
+            <ReelCard 
+              item={item} 
+              currentUser={user}
+              isActive={index === currentIndex}
             />
-
-            {/* Overlay gradient */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
-
-            {/* Top info */}
-            <div className="absolute top-4 left-4 right-20 z-10">
-              <Link 
-                to={createPageUrl("UserProfile") + `?email=${post.author_email}`}
-                className="flex items-center gap-3"
-              >
-                <Avatar className="w-11 h-11 ring-2 ring-white/30">
-                  <AvatarImage src={post.author_avatar} />
-                  <AvatarFallback className="bg-slate-800 text-white">
-                    {post.author_name?.[0]?.toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-bold text-white drop-shadow-lg">{post.author_name}</p>
-                  <p className="text-xs text-white/80">{moment(post.created_date).fromNow()}</p>
-                </div>
-              </Link>
-            </div>
-
-            {/* Right actions */}
-            <div className="absolute right-4 bottom-24 z-10 flex flex-col gap-6">
-              <button
-                onClick={() => handleLike(post)}
-                className="flex flex-col items-center gap-1"
-              >
-                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                  <Heart
-                    className={`w-6 h-6 transition-all ${
-                      liked ? "fill-red-500 text-red-500" : "text-white"
-                    }`}
-                  />
-                </div>
-                <span className="text-xs text-white font-semibold drop-shadow-lg">
-                  {post.likes?.length || 0}
-                </span>
-              </button>
-
-              <button className="flex flex-col items-center gap-1">
-                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                  <MessageCircle className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-xs text-white font-semibold drop-shadow-lg">
-                  {post.comments_count || 0}
-                </span>
-              </button>
-
-              <button className="flex flex-col items-center gap-1">
-                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                  <Share2 className="w-6 h-6 text-white" />
-                </div>
-              </button>
-
-              <button
-                onClick={() => setMuted(!muted)}
-                className="flex flex-col items-center gap-1"
-              >
-                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                  {muted ? (
-                    <VolumeX className="w-6 h-6 text-white" />
-                  ) : (
-                    <Volume2 className="w-6 h-6 text-white" />
-                  )}
-                </div>
-              </button>
-            </div>
-
-            {/* Bottom caption */}
-            <div className="absolute bottom-20 left-4 right-20 z-10">
-              {post.content && (
-                <p className="text-white text-sm drop-shadow-lg line-clamp-3">
-                  {post.content}
-                </p>
-              )}
-              {post.sport && (
-                <p className="text-white/80 text-xs mt-1">#{post.sport}</p>
-              )}
-            </div>
           </div>
-        );
-      })}
+        ))}
+      </div>
+
+      {/* Personalization indicator */}
+      {user && (
+        <div className="fixed top-4 left-4 z-50 bg-slate-900/80 backdrop-blur-xl border border-cyan-500/30 rounded-2xl px-4 py-2 flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-cyan-400 animate-pulse" />
+          <span className="text-sm font-bold text-cyan-400">For You</span>
+        </div>
+      )}
     </div>
   );
 }
