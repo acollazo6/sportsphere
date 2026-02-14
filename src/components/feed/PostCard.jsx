@@ -195,24 +195,24 @@ export default function PostCard({ post, currentUser, onUpdate }) {
   };
 
   return (
-    <article className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+    <article className="bg-slate-900/80 backdrop-blur-xl rounded-3xl border-2 border-cyan-500/20 overflow-hidden shadow-2xl shadow-cyan-500/10 hover:shadow-cyan-500/20 hover:border-cyan-500/40 transition-all duration-300 hover:scale-[1.01]">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 pb-3">
-        <Link to={createPageUrl("UserProfile") + `?email=${post.author_email}`} className="flex items-center gap-3">
-          <Avatar className="w-11 h-11 ring-2 ring-orange-100">
+      <div className="flex items-center justify-between p-4 pb-3 bg-gradient-to-r from-slate-900/90 to-slate-800/50 backdrop-blur-sm border-b border-cyan-500/10">
+        <Link to={createPageUrl("UserProfile") + `?email=${post.author_email}`} className="flex items-center gap-3 group">
+          <Avatar className="w-11 h-11 ring-2 ring-cyan-500/30 group-hover:ring-cyan-500/60 transition-all">
             <AvatarImage src={post.author_avatar} />
-            <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white font-bold">
+            <AvatarFallback className="bg-gradient-to-br from-cyan-500 to-blue-500 text-white font-bold">
               {post.author_name?.[0]?.toUpperCase() || "?"}
             </AvatarFallback>
           </Avatar>
           <div>
-            <p className="font-semibold text-sm text-slate-900">{post.author_name || "Anonymous"}</p>
-            <p className="text-xs text-slate-400">{moment(post.created_date).fromNow()}</p>
+            <p className="font-semibold text-sm text-slate-200 group-hover:text-cyan-400 transition-colors">{post.author_name || "Anonymous"}</p>
+            <p className="text-xs text-slate-500">{moment(post.created_date).fromNow()}</p>
           </div>
         </Link>
         <div className="flex items-center gap-2">
           {post.sport && (
-            <Badge variant="secondary" className="bg-slate-100 text-slate-600 text-xs font-medium rounded-lg">
+            <Badge className="bg-gradient-to-r from-cyan-950 to-blue-950 border border-cyan-500/30 text-cyan-400 text-xs font-bold rounded-lg">
               {post.sport}
             </Badge>
           )}
@@ -222,8 +222,8 @@ export default function PostCard({ post, currentUser, onUpdate }) {
           {currentUser && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors">
-                  <MoreHorizontal className="w-4 h-4 text-slate-400" />
+                <button className="p-1.5 hover:bg-slate-800 rounded-lg transition-colors">
+                  <MoreHorizontal className="w-4 h-4 text-slate-500 hover:text-cyan-400" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -247,9 +247,9 @@ export default function PostCard({ post, currentUser, onUpdate }) {
       {/* Premium Badge */}
       {post.is_premium && !hasAccess && (
         <div className="px-4 pb-3">
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-3 flex items-center gap-2">
-            <Crown className="w-4 h-4 text-amber-600" />
-            <span className="text-sm font-medium text-amber-800">Premium Content</span>
+          <div className="bg-gradient-to-r from-amber-950/50 to-orange-950/50 border border-amber-500/30 rounded-xl p-3 flex items-center gap-2">
+            <Crown className="w-4 h-4 text-amber-400" />
+            <span className="text-sm font-medium text-amber-400">Premium Content</span>
           </div>
         </div>
       )}
@@ -260,12 +260,12 @@ export default function PostCard({ post, currentUser, onUpdate }) {
           {post.is_premium && !hasAccess && (
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white z-10" />
           )}
-          <p className={`px-4 pb-3 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap ${
+          <p className={`px-4 pb-3 text-sm text-slate-300 leading-relaxed whitespace-pre-wrap ${
             post.is_premium && !hasAccess ? "line-clamp-2 blur-sm" : ""
           }`}>
             {post.content.split(/(@\w+(?:\s+\w+)*)/g).map((part, i) => 
               part.startsWith('@') ? (
-                <span key={i} className="text-orange-500 font-medium">{part}</span>
+                <span key={i} className="text-cyan-400 font-medium">{part}</span>
               ) : (
                 part
               )
@@ -307,7 +307,7 @@ export default function PostCard({ post, currentUser, onUpdate }) {
       )}
 
       {/* Actions */}
-      <div className="flex items-center justify-between px-4 py-3 border-t border-slate-50">
+      <div className="flex items-center justify-between px-4 py-3 border-t border-cyan-500/10 bg-gradient-to-r from-slate-900/50 to-slate-800/30">
         <div className="flex items-center gap-4">
           <button
             onClick={handleLike}
@@ -315,16 +315,16 @@ export default function PostCard({ post, currentUser, onUpdate }) {
           >
             <Heart
               className={`w-5 h-5 transition-all duration-200 ${
-                liked ? "fill-red-500 text-red-500 scale-110" : "text-slate-400 group-hover:text-red-400"
+                liked ? "fill-cyan-400 text-cyan-400 scale-110" : "text-slate-500 group-hover:text-cyan-400"
               }`}
             />
-            <span className={`text-sm font-medium ${liked ? "text-red-500" : "text-slate-500"}`}>
+            <span className={`text-sm font-medium ${liked ? "text-cyan-400" : "text-slate-500"}`}>
               {likeCount}
             </span>
           </button>
 
           <button onClick={loadComments} className="flex items-center gap-1.5 group">
-            <MessageCircle className="w-5 h-5 text-slate-400 group-hover:text-slate-600 transition-colors" />
+            <MessageCircle className="w-5 h-5 text-slate-500 group-hover:text-blue-400 transition-colors" />
             <span className="text-sm font-medium text-slate-500">{post.comments_count || 0}</span>
           </button>
 
@@ -335,52 +335,52 @@ export default function PostCard({ post, currentUser, onUpdate }) {
             }}
             className="flex items-center gap-1.5 group"
           >
-            <Share2 className="w-5 h-5 text-slate-400 group-hover:text-slate-600 transition-colors" />
+            <Share2 className="w-5 h-5 text-slate-500 group-hover:text-emerald-400 transition-colors" />
             <span className="text-sm font-medium text-slate-500">{post.shares || 0}</span>
           </button>
 
           <div className="flex items-center gap-1.5">
-            <Eye className="w-5 h-5 text-slate-300" />
-            <span className="text-sm font-medium text-slate-400">{post.views || 0}</span>
+            <Eye className="w-5 h-5 text-slate-600" />
+            <span className="text-sm font-medium text-slate-500">{post.views || 0}</span>
           </div>
         </div>
-        <Bookmark className="w-5 h-5 text-slate-300 hover:text-slate-600 cursor-pointer transition-colors" />
+        <Bookmark className="w-5 h-5 text-slate-600 hover:text-cyan-400 cursor-pointer transition-colors" />
       </div>
 
       {/* Comments section */}
       {showComments && (
-        <div className="border-t border-slate-100 p-4 space-y-3">
+        <div className="border-t border-cyan-500/10 p-4 space-y-3 bg-gradient-to-br from-slate-900/30 to-slate-800/20">
           <div className="flex gap-2">
             <MentionInput
               value={newComment}
               onChange={setNewComment}
               placeholder="Add a comment... (type @ to mention)"
-              className="flex-1 text-sm bg-slate-50 rounded-xl px-4 py-2.5 border-0 focus:ring-2 focus:ring-orange-200 resize-none min-h-[42px] max-h-[120px]"
+              className="flex-1 text-sm bg-slate-800/80 text-slate-200 placeholder:text-slate-600 rounded-xl px-4 py-2.5 border border-cyan-500/20 focus:ring-2 focus:ring-cyan-500/40 resize-none min-h-[42px] max-h-[120px]"
             />
             <Button
               onClick={addComment}
               size="sm"
-              className="rounded-xl bg-slate-900 hover:bg-slate-800"
+              className="rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 shadow-lg shadow-cyan-500/30"
             >
               Post
             </Button>
           </div>
           {loadingComments ? (
-            <div className="text-center py-4 text-sm text-slate-400">Loading...</div>
+            <div className="text-center py-4 text-sm text-slate-500">Loading...</div>
           ) : (
             <div className="space-y-3 max-h-60 overflow-y-auto">
               {comments.map(c => (
                 <div key={c.id} className="flex gap-2.5">
-                  <Avatar className="w-7 h-7">
+                  <Avatar className="w-7 h-7 ring-1 ring-cyan-500/20">
                     <AvatarImage src={c.author_avatar} />
-                    <AvatarFallback className="text-xs bg-slate-200">{c.author_name?.[0]}</AvatarFallback>
+                    <AvatarFallback className="text-xs bg-slate-700 text-slate-300">{c.author_name?.[0]}</AvatarFallback>
                   </Avatar>
-                  <div className="bg-slate-50 rounded-xl px-3 py-2 flex-1">
-                    <p className="text-xs font-semibold text-slate-700">{c.author_name}</p>
-                    <p className="text-sm text-slate-600">
+                  <div className="bg-slate-800/80 backdrop-blur-sm rounded-xl px-3 py-2 flex-1 border border-cyan-500/20">
+                    <p className="text-xs font-semibold text-slate-200">{c.author_name}</p>
+                    <p className="text-sm text-slate-400">
                       {c.content.split(/(@\w+(?:\s+\w+)*)/g).map((part, i) => 
                         part.startsWith('@') ? (
-                          <span key={i} className="text-orange-500 font-medium">{part}</span>
+                          <span key={i} className="text-cyan-400 font-medium">{part}</span>
                         ) : (
                           part
                         )
