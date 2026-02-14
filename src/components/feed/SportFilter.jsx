@@ -26,10 +26,10 @@ export default function SportFilter({ selected, onSelect }) {
         <button
           key={sport.name}
           onClick={() => onSelect(sport.name === "All" ? null : sport.name)}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-200 ${
+          className={`flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-bold whitespace-nowrap transition-all duration-300 ${
             (selected === null && sport.name === "All") || selected === sport.name
-              ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20"
-              : "bg-white text-slate-500 hover:bg-slate-100 border border-slate-100"
+              ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-xl shadow-purple-500/50 scale-110"
+              : "bg-white/80 backdrop-blur-sm text-slate-600 hover:bg-white hover:shadow-lg hover:scale-105 border-2 border-purple-100"
           }`}
         >
           <span>{sport.emoji}</span>
