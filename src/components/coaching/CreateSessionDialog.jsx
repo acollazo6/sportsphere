@@ -219,6 +219,117 @@ export default function CreateSessionDialog({ user, onClose }) {
             </div>
           )}
 
+          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+            <div>
+              <Label className="text-gray-700">1-on-1 Coaching</Label>
+              <p className="text-xs text-gray-500">Enable bookable time slots</p>
+            </div>
+            <Switch
+              checked={formData.is_one_on_one}
+              onCheckedChange={v => setFormData({ ...formData, is_one_on_one: v })}
+            />
+          </div>
+
+          {formData.is_one_on_one && (
+            <div className="space-y-2">
+              <Label className="text-gray-700">Available Time Slots</Label>
+              <p className="text-xs text-gray-500 mb-2">Add multiple slots for clients to book</p>
+              {formData.available_slots.map((slot, idx) => (
+                <div key={idx} className="flex gap-2">
+                  <Input
+                    type="datetime-local"
+                    value={slot}
+                    onChange={e => {
+                      const newSlots = [...formData.available_slots];
+                      newSlots[idx] = e.target.value;
+                      setFormData({ ...formData, available_slots: newSlots });
+                    }}
+                    className="flex-1 border-gray-300"
+                  />
+                  <Button
+                    onClick={() => setFormData({ 
+                      ...formData, 
+                      available_slots: formData.available_slots.filter((_, i) => i !== idx) 
+                    })}
+                    variant="outline"
+                    size="sm"
+                    className="border-red-300 text-red-600"
+                  >
+                    Remove
+                  </Button>
+                </div>
+              ))}
+              <Button
+                onClick={() => setFormData({ 
+                  ...formData, 
+                  available_slots: [...formData.available_slots, ""] 
+                })}
+                variant="outline"
+                className="w-full border-gray-300"
+              >
+                Add Time Slot
+              </Button>
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <Label className="text-gray-700">Downloadable Resources</Label>
+            <p className="text-xs text-gray-500 mb-2">Upload workout plans, guides, or other materials</p>
+            {formData.resources.map((resource, idx) => (
+              <div key={idx} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-gray-900">{resource.name}</p>
+                  <p className="text-xs text-gray-500">{resource.description}</p>
+                </div>
+                <Button
+                  onClick={() => setFormData({ 
+                    ...formData, 
+                    resources: formData.resources.filter((_, i) => i !== idx) 
+                  })}
+                  variant="outline"
+                  size="sm"
+                  className="border-red-300 text-red-600"
+                >
+                  Remove
+                </Button>
+              </div>
+            ))}
+            <label className="flex items-center justify-center gap-2 px-4 py-3 bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl hover:border-red-900 cursor-pointer transition-colors">
+              {uploadingResource ? (
+                <Loader2 className="w-5 h-5 animate-spin text-red-900" />
+              ) : (
+                <>
+                  <Upload className="w-5 h-5 text-red-900" />
+                  <span className="text-sm text-gray-600">Upload Resource</span>
+                </>
+              )}
+              <input 
+                type="file" 
+                accept=".pdf,.doc,.docx,.txt" 
+                onChange={async (e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+                  setUploadingResource(true);
+                  try {
+                    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+                    const name = prompt("Resource name:", file.name);
+                    const description = prompt("Resource description (optional):", "");
+                    if (name) {
+                      setFormData({ 
+                        ...formData, 
+                        resources: [...formData.resources, { name, file_url, description }] 
+                      });
+                    }
+                  } catch (error) {
+                    toast.error("Failed to upload resource");
+                  }
+                  setUploadingResource(false);
+                }} 
+                className="hidden" 
+              />
+            </label>
+          </div>
+
           <div className="flex gap-3 pt-4">
             <Button
               onClick={onClose}
