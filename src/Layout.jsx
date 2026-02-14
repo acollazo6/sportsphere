@@ -212,6 +212,21 @@ export default function Layout({ children, currentPageName }) {
         {children}
       </main>
 
+      {/* Footer Links */}
+      <footer className="hidden md:block max-w-6xl mx-auto px-4 py-6 text-center space-y-2 border-t border-gray-200 mt-8">
+        <div className="flex justify-center gap-6 text-sm text-gray-500">
+          <Link to={createPageUrl("Terms")} className="hover:text-red-900 transition-colors">
+            Terms of Service
+          </Link>
+          <Link to={createPageUrl("Guidelines")} className="hover:text-red-900 transition-colors">
+            Community Guidelines
+          </Link>
+        </div>
+        <p className="text-xs text-gray-400">
+          SportHub is for sports-related content only. No politics, religion, sexual content, or discrimination.
+        </p>
+      </footer>
+
       {/* Mobile bottom nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white backdrop-blur-2xl border-t border-gray-200 shadow-2xl">
         <div className="flex items-center justify-around py-2">

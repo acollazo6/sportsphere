@@ -52,8 +52,10 @@ import Analytics from './pages/Analytics';
 import ChallengeDetail from './pages/ChallengeDetail';
 import Challenges from './pages/Challenges';
 import Coach from './pages/Coach';
+import CoachingSessionDetail from './pages/CoachingSessionDetail';
 import CreatePost from './pages/CreatePost';
 import CreatorAI from './pages/CreatorAI';
+import CreatorHub from './pages/CreatorHub';
 import CreatorShop from './pages/CreatorShop';
 import Discover from './pages/Discover';
 import Explore from './pages/Explore';
@@ -62,6 +64,7 @@ import ForYou from './pages/ForYou';
 import GroupDetail from './pages/GroupDetail';
 import Groups from './pages/Groups';
 import Live from './pages/Live';
+import LiveCoaching from './pages/LiveCoaching';
 import Messages from './pages/Messages';
 import Notifications from './pages/Notifications';
 import Premium from './pages/Premium';
@@ -71,9 +74,8 @@ import SavedContent from './pages/SavedContent';
 import TrendingChallenges from './pages/TrendingChallenges';
 import UserProfile from './pages/UserProfile';
 import ViewLive from './pages/ViewLive';
-import CreatorHub from './pages/CreatorHub';
-import LiveCoaching from './pages/LiveCoaching';
-import CoachingSessionDetail from './pages/CoachingSessionDetail';
+import Terms from './pages/Terms';
+import Guidelines from './pages/Guidelines';
 import __Layout from './Layout.jsx';
 
 
@@ -83,8 +85,10 @@ export const PAGES = {
     "ChallengeDetail": ChallengeDetail,
     "Challenges": Challenges,
     "Coach": Coach,
+    "CoachingSessionDetail": CoachingSessionDetail,
     "CreatePost": CreatePost,
     "CreatorAI": CreatorAI,
+    "CreatorHub": CreatorHub,
     "CreatorShop": CreatorShop,
     "Discover": Discover,
     "Explore": Explore,
@@ -93,6 +97,7 @@ export const PAGES = {
     "GroupDetail": GroupDetail,
     "Groups": Groups,
     "Live": Live,
+    "LiveCoaching": LiveCoaching,
     "Messages": Messages,
     "Notifications": Notifications,
     "Premium": Premium,
@@ -102,9 +107,8 @@ export const PAGES = {
     "TrendingChallenges": TrendingChallenges,
     "UserProfile": UserProfile,
     "ViewLive": ViewLive,
-    "CreatorHub": CreatorHub,
-    "LiveCoaching": LiveCoaching,
-    "CoachingSessionDetail": CoachingSessionDetail,
+    "Terms": Terms,
+    "Guidelines": Guidelines,
 }
 
 export const pagesConfig = {
