@@ -265,9 +265,9 @@ Provide a brief, engaging summary that helps viewers decide if they want to watc
   };
 
   return (
-    <article className="bg-slate-900/80 backdrop-blur-xl rounded-3xl border-2 border-cyan-500/20 overflow-hidden shadow-2xl shadow-cyan-500/10 hover:shadow-cyan-500/20 hover:border-cyan-500/40 transition-all duration-300 hover:scale-[1.01]">
+    <article className="bg-white/90 backdrop-blur-xl rounded-3xl border-2 border-cyan-500/20 overflow-hidden shadow-2xl shadow-cyan-500/10 hover:shadow-cyan-500/20 hover:border-cyan-500/40 transition-all duration-300 hover:scale-[1.01]">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 pb-3 bg-gradient-to-r from-slate-900/90 to-slate-800/50 backdrop-blur-sm border-b border-cyan-500/10">
+      <div className="flex items-center justify-between p-4 pb-3 bg-gradient-to-r from-cyan-50 to-blue-50 backdrop-blur-sm border-b border-cyan-500/10">
         <Link to={createPageUrl("UserProfile") + `?email=${post.author_email}`} className="flex items-center gap-3 group">
           <Avatar className="w-11 h-11 ring-2 ring-cyan-500/30 group-hover:ring-cyan-500/60 transition-all">
             <AvatarImage src={post.author_avatar} />
@@ -276,7 +276,7 @@ Provide a brief, engaging summary that helps viewers decide if they want to watc
             </AvatarFallback>
           </Avatar>
           <div>
-            <p className="font-semibold text-sm text-slate-200 group-hover:text-cyan-400 transition-colors">{post.author_name || "Anonymous"}</p>
+            <p className="font-semibold text-sm text-slate-800 group-hover:text-cyan-600 transition-colors">{post.author_name || "Anonymous"}</p>
             <p className="text-xs text-slate-500">{moment(post.created_date).fromNow()}</p>
           </div>
         </Link>
@@ -336,7 +336,7 @@ Provide a brief, engaging summary that helps viewers decide if they want to watc
           {post.is_premium && !hasAccess && (
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white z-10" />
           )}
-          <p className={`px-4 pb-3 text-sm text-slate-300 leading-relaxed whitespace-pre-wrap ${
+          <p className={`px-4 pb-3 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap ${
             post.is_premium && !hasAccess ? "line-clamp-2 blur-sm" : ""
           }`}>
             {post.content.split(/(@\w+(?:\s+\w+)*)/g).map((part, i) => 
@@ -390,7 +390,7 @@ Provide a brief, engaging summary that helps viewers decide if they want to watc
       )}
 
       {/* Actions */}
-      <div className="flex items-center justify-between px-4 py-3 border-t border-cyan-500/10 bg-gradient-to-r from-slate-900/50 to-slate-800/30">
+      <div className="flex items-center justify-between px-4 py-3 border-t border-cyan-500/10 bg-gradient-to-r from-cyan-50/50 to-blue-50/30">
         <div className="flex items-center gap-4">
           <button
             onClick={handleLike}
@@ -442,13 +442,13 @@ Provide a brief, engaging summary that helps viewers decide if they want to watc
 
       {/* Comments section */}
       {showComments && (
-        <div className="border-t border-cyan-500/10 p-4 space-y-3 bg-gradient-to-br from-slate-900/30 to-slate-800/20">
+        <div className="border-t border-cyan-500/10 p-4 space-y-3 bg-gradient-to-br from-cyan-50/30 to-blue-50/20">
           <div className="flex gap-2">
             <MentionInput
               value={newComment}
               onChange={setNewComment}
               placeholder="Add a comment... (type @ to mention)"
-              className="flex-1 text-sm bg-slate-800/80 text-slate-200 placeholder:text-slate-600 rounded-xl px-4 py-2.5 border border-cyan-500/20 focus:ring-2 focus:ring-cyan-500/40 resize-none min-h-[42px] max-h-[120px]"
+              className="flex-1 text-sm bg-white text-slate-800 placeholder:text-slate-400 rounded-xl px-4 py-2.5 border border-cyan-500/20 focus:ring-2 focus:ring-cyan-500/40 resize-none min-h-[42px] max-h-[120px]"
             />
             <Button
               onClick={addComment}
@@ -468,9 +468,9 @@ Provide a brief, engaging summary that helps viewers decide if they want to watc
                     <AvatarImage src={c.author_avatar} />
                     <AvatarFallback className="text-xs bg-slate-700 text-slate-300">{c.author_name?.[0]}</AvatarFallback>
                   </Avatar>
-                  <div className="bg-slate-800/80 backdrop-blur-sm rounded-xl px-3 py-2 flex-1 border border-cyan-500/20">
-                    <p className="text-xs font-semibold text-slate-200">{c.author_name}</p>
-                    <p className="text-sm text-slate-400">
+                  <div className="bg-white backdrop-blur-sm rounded-xl px-3 py-2 flex-1 border border-cyan-500/20">
+                    <p className="text-xs font-semibold text-slate-800">{c.author_name}</p>
+                    <p className="text-sm text-slate-600">
                       {c.content.split(/(@\w+(?:\s+\w+)*)/g).map((part, i) => 
                         part.startsWith('@') ? (
                           <span key={i} className="text-cyan-400 font-medium">{part}</span>
