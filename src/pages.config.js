@@ -61,6 +61,7 @@ import Profile from './pages/Profile';
 import Reels from './pages/Reels';
 import UserProfile from './pages/UserProfile';
 import ViewLive from './pages/ViewLive';
+import Analytics from './pages/Analytics';
 import __Layout from './Layout.jsx';
 
 
@@ -79,6 +80,7 @@ export const PAGES = {
     "Reels": Reels,
     "UserProfile": UserProfile,
     "ViewLive": ViewLive,
+    "Analytics": Analytics,
 }
 
 export const pagesConfig = {

@@ -51,6 +51,7 @@ export default function Layout({ children, currentPageName }) {
     { name: t("explore"), page: "Explore", icon: Search },
     { name: "Groups", page: "Groups", icon: Globe },
     { name: "AI Coach", page: "Coach", icon: Sparkles },
+    { name: "Analytics", page: "Analytics", icon: Activity },
     { name: t("messages"), page: "Messages", icon: MessageCircle, badge: unreadCount },
     { name: "Notifications", page: "Notifications", icon: Bell, badge: notifCount },
     { name: t("advice"), page: "Advice", icon: Trophy },
