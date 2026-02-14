@@ -58,6 +58,7 @@ export default function Layout({ children, currentPageName }) {
     { name: "Creator AI", page: "CreatorAI", icon: Sparkles },
     { name: "Analytics", page: "Analytics", icon: Activity },
     { name: "Saved", page: "SavedContent", icon: Bookmark },
+    { name: "Creator Hub", page: "CreatorHub", icon: Crown },
     { name: "Premium", page: "Premium", icon: Crown },
     { name: t("messages"), page: "Messages", icon: MessageCircle, badge: unreadCount },
     { name: "Notifications", page: "Notifications", icon: Bell, badge: notifCount },
