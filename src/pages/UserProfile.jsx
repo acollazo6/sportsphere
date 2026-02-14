@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { MessageCircle, Trophy, MapPin, Clock, Send, Loader2, ArrowLeft, Lightbulb, Users, DollarSign, Heart, Crown } from "lucide-react";
+import { MessageCircle, Trophy, MapPin, Clock, Send, Loader2, ArrowLeft, Lightbulb, Users, DollarSign, Heart, Crown, ShoppingBag } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import PostCard from "../components/feed/PostCard";
-import SubscribeButton from "../components/monetization/SubscribeButton";
-import DonateButton from "../components/monetization/DonateButton";
+import SubscriptionTiers from "../components/monetization/SubscriptionTiers";
+import TipButton from "../components/monetization/TipButton";
 
 export default function UserProfile() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -160,21 +160,18 @@ export default function UserProfile() {
                 <Button onClick={() => setShowAdviceDialog(true)} variant="outline" className="rounded-xl gap-2" size="sm">
                   <Lightbulb className="w-4 h-4" /> Advice
                 </Button>
-                {profile?.user?.subscription_price > 0 && (
-                  <SubscribeButton 
-                    creatorEmail={profileEmail}
-                    creatorName={profile.user_name}
-                    price={profile.user?.subscription_price}
-                    currentUser={currentUser}
-                  />
-                )}
-                {profile?.user?.is_accepting_donations && (
-                  <DonateButton
-                    recipientEmail={profileEmail}
-                    recipientName={profile.user_name}
-                    currentUser={currentUser}
-                  />
-                )}
+                <TipButton
+                  creator={{ email: profileEmail, name: profile.user_name }}
+                  contextType="profile"
+                  contextId={profileEmail}
+                  variant="outline"
+                  size="sm"
+                />
+                <Link to={createPageUrl("CreatorShop") + `?creator=${profileEmail}`}>
+                  <Button variant="outline" className="rounded-xl gap-2" size="sm">
+                    <ShoppingBag className="w-4 h-4" /> Shop
+                  </Button>
+                </Link>
               </div>
             )}
           </div>
@@ -205,6 +202,14 @@ export default function UserProfile() {
           </div>
         ))}
       </div>
+
+      {/* Subscription Tiers */}
+      {currentUser && currentUser.email !== profileEmail && (
+        <SubscriptionTiers
+          creator={{ email: profileEmail, name: profile.user_name }}
+          currentUser={currentUser}
+        />
+      )}
 
       {/* Posts */}
       <div>
