@@ -66,27 +66,40 @@ export default function CreatePost() {
     if (!content.trim() && mediaFiles.length === 0) return;
     setPosting(true);
     
-    // Content moderation check
+    // AI Content moderation check
     try {
       const moderationResult = await base44.integrations.Core.InvokeLLM({
-        prompt: `Analyze this post content for inappropriate material. Check for: politics, profanity, cyberbullying, hate speech, harassment, or discriminatory language. Return JSON with "safe" (boolean) and "reason" (string if unsafe).
+        prompt: `Analyze this post content for inappropriate material. Check for: politics, profanity, cyberbullying, hate speech, harassment, or discriminatory language. Return JSON with "safe" (boolean), "reason" (string if unsafe), and "severity" (low/medium/high).
 
 Content to check: "${content}"
 
-Return ONLY JSON format: {"safe": true/false, "reason": "explanation if unsafe"}`,
+Return ONLY JSON format: {"safe": true/false, "reason": "explanation if unsafe", "severity": "low|medium|high", "action": "allow|flag|block"}`,
         response_json_schema: {
           type: "object",
           properties: {
             safe: { type: "boolean" },
-            reason: { type: "string" }
+            reason: { type: "string" },
+            severity: { type: "string", enum: ["low", "medium", "high"] },
+            action: { type: "string", enum: ["allow", "flag", "block"] }
           }
         }
       });
 
-      if (!moderationResult.safe) {
+      if (moderationResult.action === "block") {
         alert(`Content blocked: ${moderationResult.reason}\n\nPlease keep SportHub focused on sports, training, and positive motivation.`);
         setPosting(false);
         return;
+      }
+
+      if (moderationResult.action === "flag") {
+        await base44.entities.Report.create({
+          reporter_email: "system",
+          reported_item_type: "post",
+          reported_item_id: "pending",
+          reason: "inappropriate",
+          details: `AI flagged: ${moderationResult.reason} (${moderationResult.severity} severity)`,
+          status: "pending"
+        });
       }
     } catch (error) {
       console.error("Moderation check failed:", error);
