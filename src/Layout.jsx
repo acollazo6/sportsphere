@@ -60,31 +60,35 @@ export default function Layout({ children, currentPageName }) {
   if (currentPageName === "Login") return <>{children}</>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       <style>{`
         :root {
           --brand: #0f172a;
-          --brand-accent: #f97316;
-          --brand-light: #fff7ed;
+          --brand-accent: #06b6d4;
+          --brand-light: #1e293b;
         }
         @keyframes float {
           0%, 100% { transform: translateY(0px); }
           50% { transform: translateY(-10px); }
         }
         @keyframes glow {
-          0%, 100% { box-shadow: 0 0 20px rgba(249, 115, 22, 0.3); }
-          50% { box-shadow: 0 0 40px rgba(249, 115, 22, 0.6); }
+          0%, 100% { box-shadow: 0 0 20px rgba(6, 182, 212, 0.4); }
+          50% { box-shadow: 0 0 40px rgba(6, 182, 212, 0.7); }
+        }
+        @keyframes neon-pulse {
+          0%, 100% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.5), 0 0 30px rgba(6, 182, 212, 0.3); }
+          50% { box-shadow: 0 0 25px rgba(6, 182, 212, 0.7), 0 0 50px rgba(6, 182, 212, 0.5); }
         }
       `}</style>
 
       {/* Top navbar */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-2xl border-b border-white/20 shadow-lg shadow-purple-500/5">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-2xl border-b border-cyan-500/20 shadow-lg shadow-cyan-500/10">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link to={createPageUrl("Feed")} className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-600 via-pink-500 to-orange-500 flex items-center justify-center shadow-lg shadow-purple-500/40 group-hover:shadow-xl group-hover:shadow-purple-500/60 transition-all duration-300 group-hover:scale-110">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-500 flex items-center justify-center shadow-lg shadow-cyan-500/40 group-hover:shadow-xl group-hover:shadow-cyan-500/60 transition-all duration-300 group-hover:scale-110 animate-pulse">
               <Flame className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-black tracking-tight bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent hidden sm:block">{t("appName")}</span>
+            <span className="text-xl font-black tracking-tight bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent hidden sm:block">{t("appName")}</span>
           </Link>
 
           {/* Desktop nav */}
@@ -98,8 +102,8 @@ export default function Layout({ children, currentPageName }) {
                   to={createPageUrl(item.page)}
                   className={`relative flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 ${
                     isActive
-                      ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-xl shadow-purple-500/50 scale-105"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-white/80 hover:scale-105"
+                      ? "bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-xl shadow-cyan-500/50 scale-105"
+                      : "text-slate-400 hover:text-cyan-400 hover:bg-slate-800/60 hover:scale-105"
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -135,13 +139,13 @@ export default function Layout({ children, currentPageName }) {
             </Select>
             <div className="flex gap-2">
               <Link to={createPageUrl("Live")}>
-                  <Button variant="outline" className="rounded-2xl gap-2 hidden sm:flex border-red-300 bg-red-50/50 text-red-600 hover:bg-red-100 hover:border-red-400 font-bold shadow-lg shadow-red-500/20 hover:shadow-xl hover:shadow-red-500/30 transition-all">
+                  <Button variant="outline" className="rounded-2xl gap-2 hidden sm:flex border-red-500/50 bg-red-950/50 text-red-400 hover:bg-red-900/50 hover:border-red-400 font-bold shadow-lg shadow-red-500/20 hover:shadow-xl hover:shadow-red-500/30 transition-all">
                     <Radio className="w-4 h-4 animate-pulse" />
                     Live
                   </Button>
                 </Link>
                 <Link to={createPageUrl("CreatePost")}>
-                  <Button className="bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 hover:from-purple-700 hover:via-pink-600 hover:to-orange-600 text-white rounded-2xl shadow-xl shadow-purple-500/40 hover:shadow-2xl hover:shadow-purple-500/60 gap-2 hidden sm:flex font-bold transition-all duration-300 hover:scale-105">
+                  <Button className="bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 hover:from-cyan-500 hover:via-blue-500 hover:to-purple-500 text-white rounded-2xl shadow-xl shadow-cyan-500/40 hover:shadow-2xl hover:shadow-cyan-500/60 gap-2 hidden sm:flex font-bold transition-all duration-300 hover:scale-105">
                     <Plus className="w-4 h-4" />
                     {t("post")}
                   </Button>
@@ -165,7 +169,7 @@ export default function Layout({ children, currentPageName }) {
 
         {/* Mobile menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-white border-t border-slate-100 p-4 space-y-1">
+          <div className="md:hidden bg-slate-950/95 backdrop-blur-xl border-t border-cyan-500/20 p-4 space-y-1">
             {navItems.map(item => {
               const Icon = item.icon;
               const isActive = currentPageName === item.page;
@@ -175,7 +179,7 @@ export default function Layout({ children, currentPageName }) {
                   to={createPageUrl(item.page)}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                    isActive ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100"
+                    isActive ? "bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/30" : "text-slate-400 hover:bg-slate-800/60 hover:text-cyan-400"
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -198,7 +202,7 @@ export default function Layout({ children, currentPageName }) {
       </main>
 
       {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-2xl border-t border-white/20 shadow-2xl shadow-purple-500/10">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-2xl border-t border-cyan-500/20 shadow-2xl shadow-cyan-500/10">
         <div className="flex items-center justify-around py-2">
           {navItems.filter(item => ["Feed", "Reels", "Explore", "Groups", "Coach"].includes(item.page)).map(item => {
             const Icon = item.icon;
@@ -208,11 +212,11 @@ export default function Layout({ children, currentPageName }) {
               key={item.page}
               to={createPageUrl(item.page)}
               className={`relative flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-300 ${
-                isActive ? "text-purple-600 scale-110" : "text-slate-400 hover:text-slate-700"
+                isActive ? "text-cyan-400 scale-110" : "text-slate-500 hover:text-cyan-400"
               }`}
               >
                 <Icon className={`w-5 h-5 ${isActive ? "drop-shadow-lg" : ""}`} />
-                <span className={`text-[10px] font-bold ${isActive ? "text-purple-600" : ""}`}>{item.name}</span>
+                <span className={`text-[10px] font-bold ${isActive ? "text-cyan-400" : ""}`}>{item.name}</span>
                 {item.badge > 0 && (
                   <span className="absolute -top-0.5 right-1 w-4 h-4 bg-gradient-to-br from-pink-500 to-orange-500 text-white text-[9px] rounded-full flex items-center justify-center font-bold shadow-lg animate-pulse">
                     {item.badge}
