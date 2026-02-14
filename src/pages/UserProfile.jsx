@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { MessageCircle, Trophy, MapPin, Clock, Send, Loader2, ArrowLeft, Lightbulb, Users } from "lucide-react";
+import { MessageCircle, Trophy, MapPin, Clock, Send, Loader2, ArrowLeft, Lightbulb, Users, DollarSign, Heart, Crown } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import PostCard from "../components/feed/PostCard";
+import SubscribeButton from "../components/monetization/SubscribeButton";
+import DonateButton from "../components/monetization/DonateButton";
 
 export default function UserProfile() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -142,7 +144,7 @@ export default function UserProfile() {
               <p className="text-sm text-slate-500">{profile.location}</p>
             </div>
             {currentUser && currentUser.email !== profileEmail && (
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Button 
                   onClick={toggleFollow} 
                   variant={isFollowing ? "outline" : "default"}
@@ -155,9 +157,24 @@ export default function UserProfile() {
                 <Button onClick={startConversation} variant="outline" className="rounded-xl gap-2" size="sm">
                   <MessageCircle className="w-4 h-4" /> Message
                 </Button>
-                <Button onClick={() => setShowAdviceDialog(true)} className="rounded-xl gap-2 bg-slate-900 hover:bg-slate-800" size="sm">
-                  <Lightbulb className="w-4 h-4" /> Ask Advice
+                <Button onClick={() => setShowAdviceDialog(true)} variant="outline" className="rounded-xl gap-2" size="sm">
+                  <Lightbulb className="w-4 h-4" /> Advice
                 </Button>
+                {profile?.user?.subscription_price > 0 && (
+                  <SubscribeButton 
+                    creatorEmail={profileEmail}
+                    creatorName={profile.user_name}
+                    price={profile.user?.subscription_price}
+                    currentUser={currentUser}
+                  />
+                )}
+                {profile?.user?.is_accepting_donations && (
+                  <DonateButton
+                    recipientEmail={profileEmail}
+                    recipientName={profile.user_name}
+                    currentUser={currentUser}
+                  />
+                )}
               </div>
             )}
           </div>

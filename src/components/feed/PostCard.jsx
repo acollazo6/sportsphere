@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Heart, MessageCircle, Share2, Play, MoreHorizontal, Bookmark, Flag, AlertTriangle, Star, Eye } from "lucide-react";
+import { Heart, MessageCircle, Share2, Play, MoreHorizontal, Bookmark, Flag, AlertTriangle, Star, Eye, Crown } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -41,6 +41,7 @@ export default function PostCard({ post, currentUser, onUpdate }) {
   const [reportDetails, setReportDetails] = useState("");
   const [submittingReport, setSubmittingReport] = useState(false);
   const [isHighlighted, setIsHighlighted] = useState(false);
+  const [hasAccess, setHasAccess] = useState(false);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -50,6 +51,17 @@ export default function PostCard({ post, currentUser, onUpdate }) {
     
     // Track view
     trackView();
+
+    // Check subscription access for premium posts
+    if (post.is_premium && post.author_email !== currentUser.email) {
+      base44.entities.Subscription.filter({
+        subscriber_email: currentUser.email,
+        creator_email: post.author_email,
+        status: "active"
+      }).then(subs => setHasAccess(subs.length > 0));
+    } else {
+      setHasAccess(true);
+    }
   }, [currentUser, post.id]);
 
   const trackView = async () => {
@@ -232,21 +244,38 @@ export default function PostCard({ post, currentUser, onUpdate }) {
         </div>
       </div>
 
+      {/* Premium Badge */}
+      {post.is_premium && !hasAccess && (
+        <div className="px-4 pb-3">
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-3 flex items-center gap-2">
+            <Crown className="w-4 h-4 text-amber-600" />
+            <span className="text-sm font-medium text-amber-800">Premium Content</span>
+          </div>
+        </div>
+      )}
+
       {/* Content */}
       {post.content && (
-        <p className="px-4 pb-3 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
-          {post.content.split(/(@\w+(?:\s+\w+)*)/g).map((part, i) => 
-            part.startsWith('@') ? (
-              <span key={i} className="text-orange-500 font-medium">{part}</span>
-            ) : (
-              part
-            )
+        <div className={post.is_premium && !hasAccess ? "relative" : ""}>
+          {post.is_premium && !hasAccess && (
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white z-10" />
           )}
-        </p>
+          <p className={`px-4 pb-3 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap ${
+            post.is_premium && !hasAccess ? "line-clamp-2 blur-sm" : ""
+          }`}>
+            {post.content.split(/(@\w+(?:\s+\w+)*)/g).map((part, i) => 
+              part.startsWith('@') ? (
+                <span key={i} className="text-orange-500 font-medium">{part}</span>
+              ) : (
+                part
+              )
+            )}
+          </p>
+        </div>
       )}
 
       {/* Media */}
-      {post.media_urls?.length > 0 && (
+      {post.media_urls?.length > 0 && hasAccess && (
         <div className="relative bg-slate-100">
           {isVideo(post.media_urls[currentMediaIndex]) ? (
             <video

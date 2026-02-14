@@ -1,5 +1,5 @@
 import React from "react";
-import { Users, MapPin } from "lucide-react";
+import { Users, MapPin, DollarSign } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -33,9 +33,17 @@ export default function GroupCard({ group, currentUser, onUpdate }) {
           </div>
 
           <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-            <div className="flex items-center gap-1.5 text-slate-500">
-              <Users className="w-4 h-4" />
-              <span className="text-sm font-medium">{group.members?.length || 0}</span>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5 text-slate-500">
+                <Users className="w-4 h-4" />
+                <span className="text-sm font-medium">{group.members?.length || 0}</span>
+              </div>
+              {group.membership_fee > 0 && (
+                <div className="flex items-center gap-1 text-green-600">
+                  <DollarSign className="w-3 h-3" />
+                  <span className="text-xs font-semibold">{group.membership_fee}</span>
+                </div>
+              )}
             </div>
             {isMember && (
               <Badge className="bg-green-100 text-green-700 text-xs">Member</Badge>

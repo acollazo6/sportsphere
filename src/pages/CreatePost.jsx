@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { ImagePlus, Video, X, Loader2, ArrowLeft } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { ImagePlus, Video, X, Loader2, ArrowLeft, Crown } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const SPORTS = ["Basketball", "Soccer", "Football", "Baseball", "Tennis", "Golf", "Swimming", "Boxing", "MMA", "Track", "Volleyball", "Hockey", "Cycling", "Yoga", "CrossFit", "Other"];
@@ -30,6 +31,7 @@ export default function CreatePost() {
   const [mediaPreviews, setMediaPreviews] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [posting, setPosting] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => base44.auth.redirectToLogin());
@@ -111,6 +113,7 @@ Return ONLY JSON format: {"safe": true/false, "reason": "explanation if unsafe"}
       views: 0,
       shares: 0,
       mentioned_users: mentions.length > 0 ? mentions : [],
+      is_premium: isPremium,
     });
     
     // Notify mentioned users
@@ -207,6 +210,20 @@ Return ONLY JSON format: {"safe": true/false, "reason": "explanation if unsafe"}
             </Select>
           </div>
         </div>
+
+        {/* Premium Toggle */}
+        {user?.subscription_price > 0 && (
+          <div className="flex items-center justify-between p-3 bg-amber-50 border border-amber-200 rounded-xl">
+            <div className="flex items-center gap-2">
+              <Crown className="w-4 h-4 text-amber-600" />
+              <div>
+                <Label className="text-sm font-medium text-amber-900">Premium Content</Label>
+                <p className="text-xs text-amber-700">Only subscribers can view</p>
+              </div>
+            </div>
+            <Switch checked={isPremium} onCheckedChange={setIsPremium} />
+          </div>
+        )}
 
         {/* Media buttons */}
         <div className="flex items-center gap-3 pt-2 border-t border-slate-100">

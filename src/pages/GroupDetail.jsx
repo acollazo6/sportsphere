@@ -47,6 +47,29 @@ export default function GroupDetail() {
   const isAdmin = group?.admins?.includes(user?.email);
 
   const joinGroup = async () => {
+    // Check if membership fee required
+    if (group.membership_fee > 0) {
+      // Create transaction
+      await base44.entities.Transaction.create({
+        from_email: user.email,
+        to_email: group.creator_email,
+        type: "group_membership",
+        amount: group.membership_fee,
+        status: "completed",
+        group_id: groupId,
+      });
+
+      // Notify group creator
+      await base44.entities.Notification.create({
+        recipient_email: group.creator_email,
+        actor_email: user.email,
+        actor_name: user.full_name,
+        actor_avatar: user.avatar_url,
+        type: "follow",
+        message: `joined ${group.name} (paid $${group.membership_fee})`,
+      });
+    }
+
     await base44.entities.Group.update(groupId, {
       members: [...(group.members || []), user.email],
     });
