@@ -350,30 +350,10 @@ Provide a brief, engaging summary that helps viewers decide if they want to watc
         </div>
       )}
 
-      {/* AI Summary for Video Posts */}
-      {hasVideoContent() && hasAccess && (showSummary || post.ai_summary) && (
+      {/* AI Analysis for Video Posts */}
+      {hasVideoContent() && hasAccess && (
         <div className="px-4 pb-3">
-          {post.ai_summary ? (
-            <ContentSummary summary={post.ai_summary} type="post" />
-          ) : (
-            <button
-              onClick={generateSummary}
-              disabled={generatingSummary}
-              className="w-full bg-gradient-to-r from-purple-950/50 to-blue-950/50 border border-purple-500/30 rounded-xl p-3 flex items-center justify-center gap-2 text-purple-300 hover:text-purple-200 transition-colors"
-            >
-              {generatingSummary ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
-                  Generating summary...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-4 h-4" />
-                  Generate AI Summary
-                </>
-              )}
-            </button>
-          )}
+          <ContentSummary content={post} type="post" showButton={!post.ai_summary} />
         </div>
       )}
 

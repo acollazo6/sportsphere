@@ -293,7 +293,7 @@ export default function ViewLive() {
                       <p className="text-slate-600 leading-relaxed">{stream.description}</p>
                     )}
                     {stream.status === "ended" && stream.ai_summary && (
-                      <ContentSummary summary={stream.ai_summary} type="stream" />
+                      <ContentSummary content={stream} type="stream" />
                     )}
                   </div>
                 </>
