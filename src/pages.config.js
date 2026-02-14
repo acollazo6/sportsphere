@@ -54,13 +54,13 @@ import Explore from './pages/Explore';
 import Feed from './pages/Feed';
 import GroupDetail from './pages/GroupDetail';
 import Groups from './pages/Groups';
-import Messages from './pages/Messages';
-import Profile from './pages/Profile';
-import UserProfile from './pages/UserProfile';
-import Reels from './pages/Reels';
 import Live from './pages/Live';
-import ViewLive from './pages/ViewLive';
+import Messages from './pages/Messages';
 import Notifications from './pages/Notifications';
+import Profile from './pages/Profile';
+import Reels from './pages/Reels';
+import UserProfile from './pages/UserProfile';
+import ViewLive from './pages/ViewLive';
 import __Layout from './Layout.jsx';
 
 
@@ -72,13 +72,13 @@ export const PAGES = {
     "Feed": Feed,
     "GroupDetail": GroupDetail,
     "Groups": Groups,
-    "Messages": Messages,
-    "Profile": Profile,
-    "UserProfile": UserProfile,
-    "Reels": Reels,
     "Live": Live,
-    "ViewLive": ViewLive,
+    "Messages": Messages,
     "Notifications": Notifications,
+    "Profile": Profile,
+    "Reels": Reels,
+    "UserProfile": UserProfile,
+    "ViewLive": ViewLive,
 }
 
 export const pagesConfig = {

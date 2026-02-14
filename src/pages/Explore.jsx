@@ -3,20 +3,27 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
-import { Search, Loader2, MapPin, Trophy, ChevronRight, Calendar, Users, Check } from "lucide-react";
+import { Search, Loader2, MapPin, Trophy, ChevronRight, Plus, Filter, Globe, MapPinned } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SportFilter from "../components/feed/SportFilter";
-import moment from "moment";
+import EventCard from "../components/events/EventCard";
+import CreateEventDialog from "../components/events/CreateEventDialog";
+
+const SPORTS = ["Basketball", "Soccer", "Football", "Baseball", "Tennis", "Golf", "Swimming", "Boxing", "MMA", "Track", "Volleyball", "Hockey", "Cycling", "Yoga", "CrossFit", "Other"];
+const EVENT_TYPES = ["All", "Competition", "Workshop", "Meetup", "Training", "Tournament", "Other"];
 
 export default function Explore() {
   const [user, setUser] = useState(null);
   const [search, setSearch] = useState("");
   const [sportFilter, setSportFilter] = useState(null);
-  const [eventFilter, setEventFilter] = useState("all");
+  const [locationFilter, setLocationFilter] = useState("all");
+  const [eventTypeFilter, setEventTypeFilter] = useState("all");
+  const [showCreateEvent, setShowCreateEvent] = useState(false);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
@@ -34,7 +41,7 @@ export default function Explore() {
 
   const { data: allEvents, isLoading: loadingEvents, refetch: refetchEvents } = useQuery({
     queryKey: ["all-events"],
-    queryFn: () => base44.entities.Event.list("date", 100),
+    queryFn: () => base44.entities.Event.list("date", 200),
   });
 
   const filteredProfiles = profiles?.filter(p =>
@@ -49,24 +56,19 @@ export default function Explore() {
     const matchesSearch = !search || 
       e.title?.toLowerCase().includes(search.toLowerCase()) ||
       e.location?.toLowerCase().includes(search.toLowerCase()) ||
+      e.city?.toLowerCase().includes(search.toLowerCase()) ||
       e.description?.toLowerCase().includes(search.toLowerCase());
     
-    const matchesFilter = eventFilter === "all" || 
-      (eventFilter === "local" && e.location) ||
-      (eventFilter === "global" && !e.location);
+    const matchesEventType = eventTypeFilter === "all" || 
+      e.event_type?.toLowerCase() === eventTypeFilter.toLowerCase();
     
-    return matchesSearch && matchesFilter;
+    const matchesLocation = locationFilter === "all" ||
+      (locationFilter === "virtual" && e.is_virtual) ||
+      (locationFilter === "local" && !e.is_virtual && user && e.city?.toLowerCase() === user.city?.toLowerCase()) ||
+      (locationFilter === "global" && !e.is_virtual);
+    
+    return matchesSearch && matchesEventType && matchesLocation;
   });
-
-  const toggleRSVP = async (event) => {
-    const isAttending = event.attendees?.includes(user?.email);
-    const newAttendees = isAttending
-      ? event.attendees.filter(e => e !== user.email)
-      : [...(event.attendees || []), user.email];
-    
-    await base44.entities.Event.update(event.id, { attendees: newAttendees });
-    refetchEvents();
-  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
@@ -81,22 +83,102 @@ export default function Explore() {
         <Input
           value={search}
           onChange={e => setSearch(e.target.value)}
-          placeholder="Search athletes, events, or teams..."
+          placeholder="Search athletes, events, locations..."
           className="pl-12 h-12 rounded-xl bg-white border-slate-100 text-sm focus:ring-2 focus:ring-orange-200"
         />
       </div>
 
-      <Tabs defaultValue="athletes" className="space-y-4">
-        <TabsList className="bg-white border border-slate-100 p-1 rounded-xl">
-          <TabsTrigger value="athletes" className="rounded-lg gap-2">
-            <Trophy className="w-4 h-4" />
+      <Tabs defaultValue="events" className="space-y-4">
+        <TabsList className="bg-white border border-slate-100 p-1 rounded-xl w-full grid grid-cols-2">
+          <TabsTrigger value="events" className="rounded-lg">
+            🎯 Events
+          </TabsTrigger>
+          <TabsTrigger value="athletes" className="rounded-lg">
+            <Trophy className="w-4 h-4 mr-2" />
             Athletes
           </TabsTrigger>
-          <TabsTrigger value="events" className="rounded-lg gap-2">
-            <Calendar className="w-4 h-4" />
-            Events
-          </TabsTrigger>
         </TabsList>
+
+        {/* Events Tab */}
+        <TabsContent value="events" className="space-y-4">
+          {/* Event Filters */}
+          <div className="bg-white rounded-2xl border border-slate-100 p-4 space-y-3">
+            <div className="flex items-center gap-2 mb-2">
+              <Filter className="w-4 h-4 text-slate-500" />
+              <span className="text-sm font-medium text-slate-700">Filters</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Select value={locationFilter} onValueChange={setLocationFilter}>
+                <SelectTrigger className="rounded-xl">
+                  <SelectValue placeholder="Location" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">
+                    <span className="flex items-center gap-2"><Globe className="w-4 h-4" /> All Events</span>
+                  </SelectItem>
+                  <SelectItem value="local">
+                    <span className="flex items-center gap-2"><MapPinned className="w-4 h-4" /> Local (My City)</span>
+                  </SelectItem>
+                  <SelectItem value="global">
+                    <span className="flex items-center gap-2"><MapPin className="w-4 h-4" /> Global (In-Person)</span>
+                  </SelectItem>
+                  <SelectItem value="virtual">
+                    <span className="flex items-center gap-2"><Globe className="w-4 h-4" /> Virtual Only</span>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select value={eventTypeFilter} onValueChange={setEventTypeFilter}>
+                <SelectTrigger className="rounded-xl">
+                  <SelectValue placeholder="Event Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {EVENT_TYPES.map(type => (
+                    <SelectItem key={type.toLowerCase()} value={type.toLowerCase()}>
+                      {type}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Create Event Button */}
+          {user && (
+            <div className="flex justify-center">
+              <Button
+                onClick={() => setShowCreateEvent(true)}
+                className="rounded-xl bg-gradient-to-r from-orange-500 to-amber-400 hover:from-orange-600 hover:to-amber-500 text-white gap-2 shadow-lg shadow-orange-500/25"
+              >
+                <Plus className="w-4 h-4" />
+                Create Event
+              </Button>
+            </div>
+          )}
+
+          {loadingEvents ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-slate-300" />
+            </div>
+          ) : filteredEvents?.length === 0 ? (
+            <div className="text-center py-12 bg-white rounded-2xl border border-slate-100">
+              <p className="text-5xl mb-3">📅</p>
+              <p className="text-slate-500 font-medium">No upcoming events found</p>
+              <p className="text-sm text-slate-400 mt-1">Try adjusting your filters</p>
+            </div>
+          ) : (
+            <div className="grid sm:grid-cols-2 gap-4">
+              {filteredEvents?.map(event => (
+                <EventCard 
+                  key={event.id} 
+                  event={event} 
+                  currentUser={user}
+                  onUpdate={refetchEvents}
+                />
+              ))}
+            </div>
+          )}
+        </TabsContent>
 
         {/* Athletes Tab */}
         <TabsContent value="athletes" className="space-y-4">
@@ -161,107 +243,15 @@ export default function Explore() {
             </div>
           )}
         </TabsContent>
-
-        {/* Events Tab */}
-        <TabsContent value="events" className="space-y-4">
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {["all", "local", "global"].map(filter => (
-              <button
-                key={filter}
-                onClick={() => setEventFilter(filter)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
-                  eventFilter === filter
-                    ? "bg-slate-900 text-white shadow-lg"
-                    : "bg-white text-slate-600 hover:bg-slate-100"
-                }`}
-              >
-                {filter === "all" ? "All Events" : filter === "local" ? "Local Events" : "Global Events"}
-              </button>
-            ))}
-          </div>
-
-          {loadingEvents ? (
-            <div className="flex justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-slate-300" />
-            </div>
-          ) : filteredEvents?.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-2xl border border-slate-100">
-              <Calendar className="w-12 h-12 text-slate-200 mx-auto mb-3" />
-              <p className="text-slate-500 font-medium">No upcoming events found</p>
-            </div>
-          ) : (
-            <div className="grid sm:grid-cols-2 gap-4">
-              {filteredEvents?.map(event => {
-                const isAttending = event.attendees?.includes(user?.email);
-                const isFull = event.max_attendees && event.attendees?.length >= event.max_attendees;
-                
-                return (
-                  <div key={event.id} className="bg-white rounded-2xl border border-slate-100 p-5 space-y-3 hover:shadow-lg transition-shadow">
-                    <div className="flex items-start justify-between">
-                      <Badge className="bg-orange-100 text-orange-700">
-                        {moment(event.date).format("MMM D, YYYY")}
-                      </Badge>
-                      {event.location ? (
-                        <Badge variant="outline" className="text-xs">📍 Local</Badge>
-                      ) : (
-                        <Badge variant="outline" className="text-xs">🌍 Global</Badge>
-                      )}
-                    </div>
-                    
-                    <div>
-                      <h3 className="font-bold text-slate-900 mb-1 line-clamp-2">{event.title}</h3>
-                      <p className="text-sm text-slate-600 line-clamp-2">{event.description}</p>
-                    </div>
-
-                    <div className="space-y-2 text-sm text-slate-500">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-orange-500" />
-                        <span>{moment(event.date).format("h:mm A")}</span>
-                      </div>
-                      {event.location && (
-                        <div className="flex items-center gap-2">
-                          <MapPin className="w-4 h-4 text-orange-500" />
-                          <span className="truncate">{event.location}</span>
-                        </div>
-                      )}
-                      <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-orange-500" />
-                        <span>
-                          {event.attendees?.length || 0} attending
-                          {event.max_attendees && ` / ${event.max_attendees}`}
-                        </span>
-                      </div>
-                    </div>
-
-                    {user && (
-                      <Button
-                        onClick={() => toggleRSVP(event)}
-                        disabled={!isAttending && isFull}
-                        className={`w-full rounded-xl ${
-                          isAttending
-                            ? "bg-green-100 text-green-700 hover:bg-green-200"
-                            : "bg-slate-900 text-white hover:bg-slate-800"
-                        }`}
-                      >
-                        {isAttending ? (
-                          <>
-                            <Check className="w-4 h-4 mr-2" />
-                            RSVP'd
-                          </>
-                        ) : isFull ? (
-                          "Event Full"
-                        ) : (
-                          "RSVP"
-                        )}
-                      </Button>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </TabsContent>
       </Tabs>
+
+      {/* Create Event Dialog */}
+      <CreateEventDialog
+        open={showCreateEvent}
+        onOpenChange={setShowCreateEvent}
+        currentUser={user}
+        onSuccess={refetchEvents}
+      />
     </div>
   );
 }
