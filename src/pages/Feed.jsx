@@ -3,17 +3,30 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import PostCard from "../components/feed/PostCard";
 import SportFilter from "../components/feed/SportFilter";
-import { Loader2, Search } from "lucide-react";
+import FeedPreferencesDialog from "../components/reels/FeedPreferencesDialog";
+import { Loader2, Search, Settings2, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 export default function Feed() {
   const [user, setUser] = useState(null);
   const [sportFilter, setSportFilter] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showPreferences, setShowPreferences] = useState(false);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
   }, []);
+
+  const { data: preferences } = useQuery({
+    queryKey: ["feed-preferences", user?.email],
+    queryFn: async () => {
+      const prefs = await base44.entities.FeedPreferences.filter({ user_email: user.email });
+      return prefs[0] || null;
+    },
+    enabled: !!user,
+  });
 
   const { data: allPosts, isLoading, refetch } = useQuery({
     queryKey: ["feed-posts", sportFilter],
@@ -25,7 +38,31 @@ export default function Feed() {
     },
   });
 
-  const posts = allPosts?.filter(post => {
+  // Apply user preferences filtering
+  const filteredPosts = allPosts?.filter(post => {
+    // Exclude sports
+    if (preferences?.excluded_sports?.includes(post.sport)) {
+      return false;
+    }
+    
+    // If user has preferred sports, only show those
+    if (preferences?.preferred_sports?.length > 0) {
+      if (!preferences.preferred_sports.includes(post.sport)) {
+        return false;
+      }
+    }
+    
+    // Filter by content types if specified
+    if (preferences?.content_types?.length > 0) {
+      if (!preferences.content_types.includes(post.category)) {
+        return false;
+      }
+    }
+    
+    return true;
+  });
+
+  const posts = filteredPosts?.filter(post => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
@@ -34,6 +71,29 @@ export default function Feed() {
       post.sport?.toLowerCase().includes(query) ||
       post.category?.toLowerCase().includes(query)
     );
+  });
+
+  // Get highlight reels for preferred sports
+  const highlightSports = preferences?.preferred_sports?.length > 0 
+    ? preferences.preferred_sports 
+    : ["Basketball", "Soccer", "Football", "Tennis"];
+
+  const { data: highlightReels } = useQuery({
+    queryKey: ["highlight-reels", highlightSports],
+    queryFn: async () => {
+      const reels = await Promise.all(
+        highlightSports.map(async (sport) => {
+          const sportPosts = await base44.entities.Post.filter(
+            { sport, category: "highlight" }, 
+            "-created_date", 
+            5
+          );
+          return { sport, posts: sportPosts };
+        })
+      );
+      return reels.filter(reel => reel.posts.length > 0);
+    },
+    enabled: highlightSports.length > 0,
   });
 
   return (
@@ -59,11 +119,62 @@ export default function Feed() {
         />
       </div>
 
-      {/* Sport Filter */}
-      <SportFilter selected={sportFilter} onSelect={setSportFilter} />
+      {/* Preferences & Sport Filter */}
+      <div className="flex items-center gap-3">
+        <div className="flex-1">
+          <SportFilter selected={sportFilter} onSelect={setSportFilter} />
+        </div>
+        {user && (
+          <Button
+            onClick={() => setShowPreferences(true)}
+            variant="outline"
+            className="rounded-2xl gap-2 border-cyan-400/30 hover:border-cyan-400/50 hover:bg-cyan-50 text-slate-700"
+          >
+            <Settings2 className="w-4 h-4" />
+            Preferences
+          </Button>
+        )}
+      </div>
 
-      {/* Posts */}
-      {isLoading ? (
+      {/* Preferences Summary */}
+      {preferences?.preferred_sports?.length > 0 && (
+        <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-2xl p-4 border border-cyan-200">
+          <p className="text-sm font-semibold text-slate-700 mb-2">Your Preferred Sports:</p>
+          <div className="flex flex-wrap gap-2">
+            {preferences.preferred_sports.map(sport => (
+              <Badge key={sport} className="bg-cyan-500 text-white">{sport}</Badge>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Highlight Reels */}
+      {highlightReels?.length > 0 && !searchQuery && !sportFilter && (
+        <div className="space-y-6">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-amber-500" />
+            <h2 className="text-xl font-bold text-slate-900">Highlight Reels</h2>
+          </div>
+          {highlightReels.map(reel => (
+            <div key={reel.sport} className="space-y-3">
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-bold text-slate-800">{reel.sport} Highlights 🔥</h3>
+                <Badge className="bg-amber-100 text-amber-700">{reel.posts.length}</Badge>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {reel.posts.map(post => (
+                  <PostCard key={post.id} post={post} currentUser={user} onUpdate={refetch} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Regular Posts */}
+      <div>
+        <h2 className="text-xl font-bold text-slate-900 mb-4">Latest Posts</h2>
+        {isLoading ? (
         <div className="flex justify-center py-20">
           <Loader2 className="w-8 h-8 animate-spin text-slate-300" />
         </div>
@@ -79,6 +190,15 @@ export default function Feed() {
             <PostCard key={post.id} post={post} currentUser={user} onUpdate={refetch} />
           ))}
         </div>
+        )}
+      </div>
+
+      {/* Preferences Dialog */}
+      {showPreferences && user && (
+        <FeedPreferencesDialog
+          user={user}
+          onClose={() => setShowPreferences(false)}
+        />
       )}
     </div>
   );
