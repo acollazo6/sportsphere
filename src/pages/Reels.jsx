@@ -2,15 +2,28 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import ReelCard from "../components/reels/ReelCard";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, Settings } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import FeedPreferencesDialog from "../components/reels/FeedPreferencesDialog";
 
 export default function Reels() {
   const [user, setUser] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showPreferences, setShowPreferences] = useState(false);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
   }, []);
+
+  // Fetch user preferences
+  const { data: preferences } = useQuery({
+    queryKey: ["feed-preferences", user?.email],
+    queryFn: async () => {
+      const prefs = await base44.entities.FeedPreferences.filter({ user_email: user.email });
+      return prefs[0] || null;
+    },
+    enabled: !!user,
+  });
 
   // Fetch user's engagement data for personalization
   const { data: follows = [] } = useQuery({
@@ -45,69 +58,102 @@ export default function Reels() {
     refetchInterval: 10000,
   });
 
-  // Personalization algorithm
+  // Personalization algorithm with preferences
   const recommendedContent = React.useMemo(() => {
     if (!user || allPosts.length === 0) return allPosts;
 
     // Get user's preferred sports
     const userSports = userProfiles.map(p => p.sport);
     const likedSports = likedPosts.map(p => p.sport).filter(Boolean);
-    const preferredSports = [...new Set([...userSports, ...likedSports])];
+    const preferredSports = [...new Set([...userSports, ...likedSports, ...(preferences?.preferred_sports || [])])];
+    const excludedSports = preferences?.excluded_sports || [];
 
     // Get followed users
     const followedEmails = follows.map(f => f.following_email);
 
-    // Score posts
-    const scoredPosts = allPosts.map(post => {
-      let score = 0;
+    // Filter and score posts
+    const scoredPosts = allPosts
+      .filter(post => {
+        // Filter by excluded sports
+        if (excludedSports.length > 0 && post.sport && excludedSports.includes(post.sport)) {
+          return false;
+        }
+        // Filter by content types if set
+        if (preferences?.content_types?.length > 0 && post.category && !preferences.content_types.includes(post.category)) {
+          return false;
+        }
+        return true;
+      })
+      .map(post => {
+        let score = 0;
+        const reasons = [];
 
-      // Following bonus (highest priority)
-      if (followedEmails.includes(post.author_email)) score += 100;
+        // Following bonus (highest priority)
+        if (followedEmails.includes(post.author_email)) {
+          score += 100;
+          reasons.push("You follow this creator");
+        }
 
-      // Sport preference bonus
-      if (post.sport && preferredSports.includes(post.sport)) score += 50;
+        // Sport preference bonus
+        if (post.sport && preferredSports.includes(post.sport)) {
+          score += 50;
+          reasons.push(`You're interested in ${post.sport}`);
+        }
 
-      // Category preference (based on liked posts)
-      const likedCategories = likedPosts.map(p => p.category).filter(Boolean);
-      if (post.category && likedCategories.includes(post.category)) score += 30;
+        // Category preference (based on liked posts)
+        const likedCategories = likedPosts.map(p => p.category).filter(Boolean);
+        if (post.category && likedCategories.includes(post.category)) {
+          score += 30;
+          reasons.push(`You like ${post.category} content`);
+        }
 
-      // Engagement score (quality indicator)
-      const engagementRate = ((post.likes?.length || 0) + (post.comments_count || 0)) / Math.max(post.views || 1, 1);
-      score += engagementRate * 20;
+        // Engagement score (quality indicator)
+        const engagementRate = ((post.likes?.length || 0) + (post.comments_count || 0)) / Math.max(post.views || 1, 1);
+        if (engagementRate > 0.1) {
+          score += engagementRate * 20;
+          reasons.push("Popular content");
+        }
 
-      // Recency bonus (newer content)
-      const daysSincePost = (Date.now() - new Date(post.created_date)) / (1000 * 60 * 60 * 24);
-      score += Math.max(0, 20 - daysSincePost);
+        // Recency bonus (newer content)
+        const daysSincePost = (Date.now() - new Date(post.created_date)) / (1000 * 60 * 60 * 24);
+        if (daysSincePost < 2) {
+          score += Math.max(0, 20 - daysSincePost);
+          reasons.push("Recent post");
+        }
 
-      // Media bonus (posts with media are more engaging)
-      if (post.media_urls?.length > 0) score += 15;
+        // Media bonus (posts with media are more engaging)
+        if (post.media_urls?.length > 0) score += 15;
 
-      // Don't show user's own posts
-      if (post.author_email === user.email) score -= 1000;
+        // Don't show user's own posts
+        if (post.author_email === user.email) score -= 1000;
 
-      return { ...post, score };
-    });
+        if (reasons.length === 0) reasons.push("Recommended for you");
+
+        return { ...post, score, recommendationReasons: reasons };
+      });
 
     // Sort by score and return
     return scoredPosts.sort((a, b) => b.score - a.score);
-  }, [allPosts, user, userProfiles, likedPosts, follows]);
+  }, [allPosts, user, userProfiles, likedPosts, follows, preferences]);
 
   // Combine posts and live streams
   const feedItems = React.useMemo(() => {
     const items = [...recommendedContent];
     
-    // Insert live streams at strategic positions
-    liveStreams.forEach((stream, idx) => {
-      const position = idx * 5; // Insert every 5 posts
-      if (position < items.length) {
-        items.splice(position, 0, { ...stream, type: "stream" });
-      } else {
-        items.push({ ...stream, type: "stream" });
-      }
-    });
+    // Only add live streams if user preference allows
+    if (preferences?.show_live_streams !== false) {
+      liveStreams.forEach((stream, idx) => {
+        const position = idx * 5; // Insert every 5 posts
+        if (position < items.length) {
+          items.splice(position, 0, { ...stream, type: "stream", recommendationReasons: ["Live now"] });
+        } else {
+          items.push({ ...stream, type: "stream", recommendationReasons: ["Live now"] });
+        }
+      });
+    }
 
     return items;
-  }, [recommendedContent, liveStreams]);
+  }, [recommendedContent, liveStreams, preferences]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -155,12 +201,29 @@ export default function Reels() {
         ))}
       </div>
 
-      {/* Personalization indicator */}
+      {/* Personalization controls */}
       {user && (
-        <div className="fixed top-4 left-4 z-50 bg-slate-900/80 backdrop-blur-xl border border-cyan-500/30 rounded-2xl px-4 py-2 flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-cyan-400 animate-pulse" />
-          <span className="text-sm font-bold text-cyan-400">For You</span>
+        <div className="fixed top-4 left-4 z-50 flex items-center gap-2">
+          <div className="bg-slate-900/80 backdrop-blur-xl border border-cyan-500/30 rounded-2xl px-4 py-2 flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-cyan-400 animate-pulse" />
+            <span className="text-sm font-bold text-cyan-400">For You</span>
+          </div>
+          <Button
+            onClick={() => setShowPreferences(true)}
+            size="icon"
+            className="bg-slate-900/80 backdrop-blur-xl border border-cyan-500/30 hover:bg-slate-800"
+          >
+            <Settings className="w-4 h-4 text-cyan-400" />
+          </Button>
         </div>
+      )}
+
+      {/* Preferences Dialog */}
+      {showPreferences && (
+        <FeedPreferencesDialog
+          user={user}
+          onClose={() => setShowPreferences(false)}
+        />
       )}
     </div>
   );

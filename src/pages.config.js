@@ -63,6 +63,7 @@ import UserProfile from './pages/UserProfile';
 import ViewLive from './pages/ViewLive';
 import Analytics from './pages/Analytics';
 import CreatorAI from './pages/CreatorAI';
+import SavedContent from './pages/SavedContent';
 import __Layout from './Layout.jsx';
 
 
@@ -83,6 +84,7 @@ export const PAGES = {
     "ViewLive": ViewLive,
     "Analytics": Analytics,
     "CreatorAI": CreatorAI,
+    "SavedContent": SavedContent,
 }
 
 export const pagesConfig = {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQueryClient } from "@tanstack/react-query";
-import { Heart, MessageCircle, Share2, Radio, Crown, Play, Pause } from "lucide-react";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { Heart, MessageCircle, Share2, Radio, Crown, Play, Pause, Bookmark, Info } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +19,25 @@ export default function ReelCard({ item, currentUser, isActive }) {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [isPlaying, setIsPlaying] = useState(false);
+  const [showRecommendation, setShowRecommendation] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  // Check if content is saved
+  const { data: savedContent } = useQuery({
+    queryKey: ["saved-content", currentUser?.email, item.id],
+    queryFn: async () => {
+      const saved = await base44.entities.SavedContent.filter({
+        user_email: currentUser.email,
+        content_id: item.id
+      });
+      return saved[0] || null;
+    },
+    enabled: !!currentUser,
+  });
+
+  useEffect(() => {
+    setSaved(!!savedContent);
+  }, [savedContent]);
 
   useEffect(() => {
     setLiked(item.likes?.includes(currentUser?.email));
@@ -118,6 +137,31 @@ export default function ReelCard({ item, currentUser, isActive }) {
       navigator.clipboard.writeText(window.location.href);
       toast.success("Link copied to clipboard!");
     }
+  };
+
+  const handleSave = async () => {
+    if (!currentUser) {
+      toast.error("Please login to save content");
+      return;
+    }
+
+    if (saved) {
+      // Unsave
+      await base44.entities.SavedContent.delete(savedContent.id);
+      setSaved(false);
+      toast.success("Removed from saved");
+    } else {
+      // Save
+      await base44.entities.SavedContent.create({
+        user_email: currentUser.email,
+        content_type: isStream ? "stream" : "post",
+        content_id: item.id,
+        content_data: item
+      });
+      setSaved(true);
+      toast.success("Saved for later!");
+    }
+    queryClient.invalidateQueries({ queryKey: ["saved-content"] });
   };
 
   const isVideo = (url) => url && (url.includes('.mp4') || url.includes('.mov') || url.includes('.webm'));
@@ -246,6 +290,30 @@ export default function ReelCard({ item, currentUser, isActive }) {
                 </div>
                 <span className="text-white text-sm font-bold">{item.shares || 0}</span>
               </button>
+
+              <button
+                onClick={handleSave}
+                className="flex flex-col items-center gap-1 group"
+              >
+                <div className="w-12 h-12 rounded-full bg-slate-900/60 backdrop-blur-xl border border-cyan-500/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Bookmark
+                    className={`w-6 h-6 transition-all ${
+                      saved ? "fill-cyan-400 text-cyan-400" : "text-white"
+                    }`}
+                  />
+                </div>
+              </button>
+
+              {item.recommendationReasons && (
+                <button
+                  onClick={() => setShowRecommendation(!showRecommendation)}
+                  className="flex flex-col items-center gap-1 group"
+                >
+                  <div className="w-12 h-12 rounded-full bg-slate-900/60 backdrop-blur-xl border border-cyan-500/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Info className="w-6 h-6 text-white" />
+                  </div>
+                </button>
+              )}
             </div>
           )}
 
@@ -258,6 +326,26 @@ export default function ReelCard({ item, currentUser, isActive }) {
           )}
         </div>
       </div>
+
+      {/* Recommendation Explanation */}
+      {showRecommendation && item.recommendationReasons && (
+        <div className="absolute top-20 right-4 z-20 bg-slate-900/95 backdrop-blur-2xl border border-cyan-500/30 rounded-2xl p-4 max-w-xs">
+          <div className="flex items-start justify-between mb-2">
+            <h3 className="font-bold text-cyan-400 text-sm">Why recommended?</h3>
+            <button onClick={() => setShowRecommendation(false)}>
+              <Info className="w-4 h-4 text-slate-400" />
+            </button>
+          </div>
+          <ul className="space-y-1">
+            {item.recommendationReasons.map((reason, idx) => (
+              <li key={idx} className="text-xs text-slate-300 flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                {reason}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Comments Drawer */}
       {showComments && (
