@@ -72,6 +72,8 @@ import TrendingChallenges from './pages/TrendingChallenges';
 import UserProfile from './pages/UserProfile';
 import ViewLive from './pages/ViewLive';
 import CreatorHub from './pages/CreatorHub';
+import LiveCoaching from './pages/LiveCoaching';
+import CoachingSessionDetail from './pages/CoachingSessionDetail';
 import __Layout from './Layout.jsx';
 
 
@@ -101,6 +103,8 @@ export const PAGES = {
     "UserProfile": UserProfile,
     "ViewLive": ViewLive,
     "CreatorHub": CreatorHub,
+    "LiveCoaching": LiveCoaching,
+    "CoachingSessionDetail": CoachingSessionDetail,
 }
 
 export const pagesConfig = {
