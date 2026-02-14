@@ -39,23 +39,23 @@ export default function Feed() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
       {/* Hero card */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 md:p-8 text-white">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-orange-500/20 to-transparent rounded-full -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-amber-500/10 to-transparent rounded-full translate-y-1/2 -translate-x-1/2" />
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-600 via-pink-500 to-orange-500 p-6 md:p-8 text-white shadow-2xl shadow-purple-500/50">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-2xl" />
         <div className="relative z-10">
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Your Sports Feed</h1>
-          <p className="text-slate-300 mt-2 text-sm md:text-base">Discover training, highlights, and motivation from athletes worldwide.</p>
+          <h1 className="text-2xl md:text-4xl font-black tracking-tight drop-shadow-lg">Your Sports Feed 🔥</h1>
+          <p className="text-white/90 mt-2 text-sm md:text-base font-semibold drop-shadow">Discover training, highlights, and motivation from athletes worldwide.</p>
         </div>
       </div>
 
       {/* Search Bar */}
-      <div className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+      <div className="relative group">
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-400 group-focus-within:text-purple-600 transition-colors" />
         <Input
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
-          placeholder="Search posts, users, sports..."
-          className="pl-12 rounded-xl bg-white border-slate-200 h-12"
+          placeholder="Search posts, users, sports... 🔍"
+          className="pl-12 rounded-2xl bg-white/80 backdrop-blur-sm border-2 border-purple-100 focus:border-purple-400 h-14 shadow-xl shadow-purple-500/10 font-medium placeholder:text-slate-400 transition-all"
         />
       </div>
 
