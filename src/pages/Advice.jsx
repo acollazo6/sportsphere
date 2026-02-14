@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Loader2, Inbox, Send, Check, X, Clock, MessageCircle } from "lucide-react";
 import moment from "moment";
+import PremiumGate from "../components/premium/PremiumGate";
 
 const statusColors = {
   pending: "bg-amber-50 text-amber-700",
@@ -56,6 +57,9 @@ export default function Advice() {
     await base44.entities.AdviceRequest.update(id, { status });
     queryClient.invalidateQueries({ queryKey: ["advice-received"] });
   };
+
+  const isPremium = user?.is_premium && user?.premium_expires && new Date(user.premium_expires) > new Date();
+  if (!isPremium) return <PremiumGate feature="Expert Advice" />;
 
   const RequestCard = ({ req, isReceived }) => (
     <div className="bg-white rounded-2xl border border-slate-100 p-5 space-y-3">

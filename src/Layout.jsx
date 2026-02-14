@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "./utils";
 import { base44 } from "@/api/base44Client";
-import { Home, User, MessageCircle, Search, Bell, Plus, Menu, X, Trophy, Flame, Globe, Sparkles, Radio, Activity, Bookmark } from "lucide-react";
+import { Home, User, MessageCircle, Search, Bell, Plus, Menu, X, Trophy, Flame, Globe, Sparkles, Radio, Activity, Bookmark, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -54,6 +54,7 @@ export default function Layout({ children, currentPageName }) {
     { name: "Creator AI", page: "CreatorAI", icon: Sparkles },
     { name: "Analytics", page: "Analytics", icon: Activity },
     { name: "Saved", page: "SavedContent", icon: Bookmark },
+    { name: "Premium", page: "Premium", icon: Crown },
     { name: t("messages"), page: "Messages", icon: MessageCircle, badge: unreadCount },
     { name: "Notifications", page: "Notifications", icon: Bell, badge: notifCount },
     { name: t("advice"), page: "Advice", icon: Trophy },

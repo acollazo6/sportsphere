@@ -7,6 +7,7 @@ import { Send, Sparkles, Loader2, Plus, MessageSquare, Video, X } from "lucide-r
 import ReactMarkdown from "react-markdown";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import PremiumGate from "../components/premium/PremiumGate";
 
 export default function CoachPage() {
   const [user, setUser] = useState(null);
@@ -125,6 +126,9 @@ export default function CoachPage() {
   };
 
   if (!user) return null;
+
+  const isPremium = user.is_premium && user.premium_expires && new Date(user.premium_expires) > new Date();
+  if (!isPremium) return <PremiumGate feature="AI Coach" />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50 to-amber-50">

@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sparkles, Wand2, Hash, Video, Copy, Loader2, TrendingUp } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import PremiumGate from "../components/premium/PremiumGate";
 
 const SPORTS = [
   "Football", "Basketball", "Tennis", "Swimming", "Running", "Cycling",
@@ -221,6 +222,9 @@ Say: "..."`,
     navigator.clipboard.writeText(text);
     toast.success("Copied to clipboard!");
   };
+
+  const isPremium = user?.is_premium && user?.premium_expires && new Date(user.premium_expires) > new Date();
+  if (!isPremium) return <PremiumGate feature="AI Content Creator" />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6">
