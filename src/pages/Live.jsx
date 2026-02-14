@@ -7,7 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Radio, Eye, VideoOff, Loader2, PlayCircle, Users } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Radio, Eye, VideoOff, Loader2, PlayCircle, Users, Crown, DollarSign } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { Switch } from "@/components/ui/switch";
@@ -18,7 +19,14 @@ const SPORTS = ["Basketball", "Soccer", "Football", "Baseball", "Tennis", "Track
 export default function Live() {
   const [user, setUser] = useState(null);
   const [showGoLive, setShowGoLive] = useState(false);
-  const [liveData, setLiveData] = useState({ title: "", description: "", sport: "" });
+  const [liveData, setLiveData] = useState({ 
+    title: "", 
+    description: "", 
+    sport: "",
+    is_premium: false,
+    price: 0,
+    stream_url: ""
+  });
   const [goingLive, setGoingLive] = useState(false);
 
   useEffect(() => {
@@ -49,13 +57,16 @@ export default function Live() {
       title: liveData.title,
       description: liveData.description,
       sport: liveData.sport,
+      is_premium: liveData.is_premium,
+      price: parseFloat(liveData.price) || 0,
+      stream_url: liveData.stream_url,
       status: "live",
       viewers: [],
       started_at: new Date().toISOString(),
     });
     setGoingLive(false);
     setShowGoLive(false);
-    setLiveData({ title: "", description: "", sport: "" });
+    setLiveData({ title: "", description: "", sport: "", is_premium: false, price: 0, stream_url: "" });
     refetch();
   };
 
@@ -133,6 +144,49 @@ export default function Live() {
                 ))}
               </SelectContent>
             </Select>
+            
+            <div className="space-y-2">
+              <Label>Stream URL (Optional)</Label>
+              <Input
+                value={liveData.stream_url}
+                onChange={e => setLiveData({...liveData, stream_url: e.target.value})}
+                placeholder="YouTube/Twitch embed URL or leave empty"
+                className="rounded-xl"
+              />
+              <p className="text-xs text-slate-500">YouTube, Twitch, or other embed URL</p>
+            </div>
+
+            {user?.subscription_price > 0 && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-3 bg-purple-50 border border-purple-200 rounded-xl">
+                  <div className="flex items-center gap-2">
+                    <Crown className="w-4 h-4 text-purple-600" />
+                    <div>
+                      <Label className="text-sm font-medium text-purple-900">Premium Stream</Label>
+                      <p className="text-xs text-purple-700">Only subscribers can watch</p>
+                    </div>
+                  </div>
+                  <Switch checked={liveData.is_premium} onCheckedChange={v => setLiveData({...liveData, is_premium: v})} />
+                </div>
+
+                {!liveData.is_premium && (
+                  <div className="space-y-2">
+                    <Label>Pay-Per-View Price (USD)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={liveData.price}
+                      onChange={e => setLiveData({...liveData, price: e.target.value})}
+                      placeholder="0.00 (Free)"
+                      className="rounded-xl"
+                    />
+                    <p className="text-xs text-slate-500">One-time fee to watch (0 for free)</p>
+                  </div>
+                )}
+              </div>
+            )}
+            
             <div className="flex gap-2">
               <Button onClick={goLive} disabled={goingLive} className="rounded-xl bg-red-600 hover:bg-red-700 flex-1">
                 {goingLive ? "Starting..." : "Start Live Stream"}
