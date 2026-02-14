@@ -64,6 +64,7 @@ import ViewLive from './pages/ViewLive';
 import Analytics from './pages/Analytics';
 import CreatorAI from './pages/CreatorAI';
 import SavedContent from './pages/SavedContent';
+import Premium from './pages/Premium';
 import __Layout from './Layout.jsx';
 
 
@@ -85,6 +86,7 @@ export const PAGES = {
     "Analytics": Analytics,
     "CreatorAI": CreatorAI,
     "SavedContent": SavedContent,
+    "Premium": Premium,
 }
 
 export const pagesConfig = {
