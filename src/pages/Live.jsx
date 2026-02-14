@@ -71,13 +71,38 @@ export default function Live() {
   };
 
   const endStream = async () => {
-    if (myActiveStream?.[0]) {
-      await base44.entities.LiveStream.update(myActiveStream[0].id, {
-        status: "ended",
-        ended_at: new Date().toISOString(),
+    if (!myActiveStream?.[0]) return;
+    
+    const stream = myActiveStream[0];
+    
+    // Generate AI summary from chat messages
+    const chatMessages = await base44.entities.LiveChat.filter({ stream_id: stream.id }, "-created_date", 100);
+    const chatContext = chatMessages.map(m => `${m.sender_name}: ${m.message}`).join("\n");
+    
+    const summaryPrompt = `Summarize this live sports stream based on the title, description, and chat messages. Focus on key topics discussed, highlights, and main takeaways. Keep it concise (3-4 sentences).
+
+Title: ${stream.title}
+Description: ${stream.description || "No description"}
+Sport: ${stream.sport}
+
+Chat Messages:
+${chatContext || "No chat messages"}`;
+
+    let summary = "";
+    try {
+      summary = await base44.integrations.Core.InvokeLLM({
+        prompt: summaryPrompt,
       });
-      refetch();
+    } catch (error) {
+      console.error("Failed to generate summary:", error);
     }
+
+    await base44.entities.LiveStream.update(stream.id, {
+      status: "ended",
+      ended_at: new Date().toISOString(),
+      ai_summary: summary,
+    });
+    refetch();
   };
 
   return (
