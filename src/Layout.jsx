@@ -52,6 +52,7 @@ export default function Layout({ children, currentPageName }) {
     { name: "Reels", page: "Reels", icon: Flame },
     { name: "Discover", page: "Discover", icon: Search },
     { name: t("explore"), page: "Explore", icon: Globe },
+    { name: "Forums", page: "Forums", icon: MessageCircle },
     { name: "Groups", page: "Groups", icon: Globe },
     { name: "Challenges", page: "Challenges", icon: Trophy },
     { name: "Live Coaching", page: "LiveCoaching", icon: Video },

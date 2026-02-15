@@ -63,6 +63,7 @@ import Feed from './pages/Feed';
 import ForYou from './pages/ForYou';
 import GroupDetail from './pages/GroupDetail';
 import Groups from './pages/Groups';
+import Guidelines from './pages/Guidelines';
 import Live from './pages/Live';
 import LiveCoaching from './pages/LiveCoaching';
 import Messages from './pages/Messages';
@@ -71,11 +72,12 @@ import Premium from './pages/Premium';
 import Profile from './pages/Profile';
 import Reels from './pages/Reels';
 import SavedContent from './pages/SavedContent';
+import Terms from './pages/Terms';
 import TrendingChallenges from './pages/TrendingChallenges';
 import UserProfile from './pages/UserProfile';
 import ViewLive from './pages/ViewLive';
-import Terms from './pages/Terms';
-import Guidelines from './pages/Guidelines';
+import Forums from './pages/Forums';
+import ForumTopic from './pages/ForumTopic';
 import __Layout from './Layout.jsx';
 
 
@@ -96,6 +98,7 @@ export const PAGES = {
     "ForYou": ForYou,
     "GroupDetail": GroupDetail,
     "Groups": Groups,
+    "Guidelines": Guidelines,
     "Live": Live,
     "LiveCoaching": LiveCoaching,
     "Messages": Messages,
@@ -104,11 +107,12 @@ export const PAGES = {
     "Profile": Profile,
     "Reels": Reels,
     "SavedContent": SavedContent,
+    "Terms": Terms,
     "TrendingChallenges": TrendingChallenges,
     "UserProfile": UserProfile,
     "ViewLive": ViewLive,
-    "Terms": Terms,
-    "Guidelines": Guidelines,
+    "Forums": Forums,
+    "ForumTopic": ForumTopic,
 }
 
 export const pagesConfig = {
