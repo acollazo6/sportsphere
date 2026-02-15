@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MessageCircle, Eye, ThumbsUp, Plus, Search, TrendingUp, Pin, Flame } from "lucide-react";
 import moment from "moment";
 import { toast } from "sonner";
+import { awardPoints } from "../components/gamification/PointsHelper";
 
 const CATEGORIES = [
   { value: "training_tips", label: "Training Tips", icon: "💪" },
@@ -79,6 +80,9 @@ export default function Forums() {
         last_activity: new Date().toISOString(),
       });
 
+      // Award points for creating forum topic
+      await awardPoints(user.email, "FORUM_TOPIC_CREATED");
+      
       toast.success("Topic created!");
       setShowCreateDialog(false);
       navigate(createPageUrl(`ForumTopic?id=${topic.id}`));

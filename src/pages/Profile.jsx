@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Edit2, Trophy, MapPin, Clock, Star, Trash2, Loader2, Camera, LogOut, Settings, TrendingUp, BarChart3, Dumbbell, Sparkles, DollarSign, Crown } from "lucide-react";
+import { Plus, Edit2, Trophy, MapPin, Clock, Star, Trash2, Loader2, Camera, LogOut, Settings, TrendingUp, BarChart3, Dumbbell, Sparkles, DollarSign, Crown, Award, Zap } from "lucide-react";
 import PostCard from "../components/feed/PostCard";
 import StatInputDialog from "../components/stats/StatInputDialog";
 import StatsChart from "../components/stats/StatsChart";
@@ -19,6 +19,7 @@ import ProgramCard from "../components/training/ProgramCard";
 import ProgramDialog from "../components/training/ProgramDialog";
 import ProgramDetailDialog from "../components/training/ProgramDetailDialog";
 import MonetizationSetup from "../components/monetization/MonetizationSetup";
+import BadgeDisplay from "../components/gamification/BadgeDisplay";
 
 const SPORTS = ["Basketball", "Soccer", "Football", "Baseball", "Tennis", "Golf", "Swimming", "Boxing", "MMA", "Track", "Volleyball", "Hockey", "Cycling", "Yoga", "CrossFit", "Other"];
 const ROLES = ["athlete", "coach", "trainer", "instructor", "fan"];
@@ -96,6 +97,21 @@ export default function Profile() {
   const { data: subscriptions } = useQuery({
     queryKey: ["my-subscriptions", user?.email],
     queryFn: () => base44.entities.Subscription.filter({ subscriber_email: user.email, status: "active" }),
+    enabled: !!user,
+  });
+
+  const { data: userPoints } = useQuery({
+    queryKey: ["user-points", user?.email],
+    queryFn: async () => {
+      const points = await base44.entities.UserPoints.filter({ user_email: user.email });
+      return points[0] || null;
+    },
+    enabled: !!user,
+  });
+
+  const { data: userBadges = [] } = useQuery({
+    queryKey: ["user-badges", user?.email],
+    queryFn: () => base44.entities.UserBadge.filter({ user_email: user.email }, "-earned_date"),
     enabled: !!user,
   });
 
@@ -253,6 +269,58 @@ export default function Profile() {
         </div>
       </div>
 
+      {/* Gamification Stats */}
+      {userPoints && (
+        <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-5">
+          <div className="flex items-center gap-3 mb-4">
+            <Award className="w-6 h-6 text-amber-600" />
+            <div className="flex-1">
+              <h2 className="text-lg font-bold text-slate-900">Level {userPoints.level} Athlete</h2>
+              <p className="text-sm text-amber-700">{userPoints.total_points} Total Points</p>
+            </div>
+            <Link to={createPageUrl("Leaderboard")}>
+              <Button variant="outline" size="sm" className="rounded-xl border-amber-300">
+                View Leaderboard
+              </Button>
+            </Link>
+          </div>
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="bg-white rounded-xl p-3 text-center">
+              <p className="text-2xl font-black text-amber-600">{userPoints.workouts_completed}</p>
+              <p className="text-xs text-slate-600">Workouts</p>
+            </div>
+            <div className="bg-white rounded-xl p-3 text-center">
+              <p className="text-2xl font-black text-amber-600">{userPoints.challenges_completed}</p>
+              <p className="text-xs text-slate-600">Challenges</p>
+            </div>
+            <div className="bg-white rounded-xl p-3 text-center">
+              <p className="text-2xl font-black text-amber-600">{userPoints.sessions_attended}</p>
+              <p className="text-xs text-slate-600">Sessions</p>
+            </div>
+          </div>
+          {userBadges.length > 0 && (
+            <div>
+              <p className="text-sm font-semibold text-slate-900 mb-2 flex items-center gap-2">
+                <Zap className="w-4 h-4 text-amber-600" />
+                Recent Badges ({userBadges.length})
+              </p>
+              <div className="flex gap-2 flex-wrap">
+                {userBadges.slice(0, 5).map(badge => (
+                  <div key={badge.id} className="bg-white rounded-lg px-3 py-2 border border-amber-200" title={badge.badge_description}>
+                    <span className="text-2xl">{badge.badge_icon}</span>
+                  </div>
+                ))}
+                {userBadges.length > 5 && (
+                  <div className="bg-white rounded-lg px-3 py-2 border border-amber-200 text-xs text-slate-600">
+                    +{userBadges.length - 5} more
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Subscription Status */}
       {subscriptions?.length > 0 && (
         <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border border-purple-200 p-5">
@@ -273,6 +341,17 @@ export default function Profile() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* All Badges */}
+      {userBadges.length > 0 && (
+        <div>
+          <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <Trophy className="w-5 h-5 text-amber-500" />
+            My Badges
+          </h2>
+          <BadgeDisplay badges={userBadges} />
         </div>
       )}
 

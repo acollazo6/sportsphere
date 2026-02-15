@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, ThumbsUp, MessageCircle, Eye, Send, Flag } from "lucide-react";
 import moment from "moment";
 import { toast } from "sonner";
+import { awardPoints } from "../components/gamification/PointsHelper";
 
 const CATEGORIES = [
   { value: "training_tips", label: "Training Tips", icon: "💪" },
@@ -103,6 +104,10 @@ export default function ForumTopic() {
 
       queryClient.invalidateQueries({ queryKey: ["forum-replies"] });
       queryClient.invalidateQueries({ queryKey: ["forum"] });
+      
+      // Award points for forum reply
+      await awardPoints(user.email, "FORUM_REPLY");
+      
       setReplyContent("");
       toast.success("Reply posted!");
     } catch (error) {
