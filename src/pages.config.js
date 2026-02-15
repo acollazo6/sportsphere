@@ -78,6 +78,7 @@ import UserProfile from './pages/UserProfile';
 import ViewLive from './pages/ViewLive';
 import Forums from './pages/Forums';
 import ForumTopic from './pages/ForumTopic';
+import Leaderboard from './pages/Leaderboard';
 import __Layout from './Layout.jsx';
 
 
@@ -113,6 +114,7 @@ export const PAGES = {
     "ViewLive": ViewLive,
     "Forums": Forums,
     "ForumTopic": ForumTopic,
+    "Leaderboard": Leaderboard,
 }
 
 export const pagesConfig = {
