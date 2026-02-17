@@ -162,6 +162,12 @@ Return ONLY JSON format: {"safe": true/false, "reason": "explanation if unsafe",
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-5">
+        <AIPostGenerator
+          sport={sport}
+          category={category}
+          onUseContent={(text) => setContent(text)}
+        />
+
         <div className="space-y-2">
           <Textarea
             value={content}
