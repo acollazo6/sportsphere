@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Bell, Heart, MessageCircle, UserPlus, AtSign, Loader2, Settings, Trophy, Radio, DollarSign, Filter } from "lucide-react";
+import { Bell, Heart, MessageCircle, UserPlus, AtSign, Loader2, Settings, Trophy, Radio, DollarSign, Filter, Check, X } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -69,6 +69,7 @@ export default function Notifications() {
       case "comment": return <MessageCircle className="w-5 h-5 text-blue-500" />;
       case "mention": return <AtSign className="w-5 h-5 text-orange-500" />;
       case "follow": return <UserPlus className="w-5 h-5 text-green-500" />;
+      case "follow_request": return <UserPlus className="w-5 h-5 text-orange-500" />;
       case "challenge_update": return <Trophy className="w-5 h-5 text-amber-500" />;
       case "live_stream": return <Radio className="w-5 h-5 text-red-500" />;
       case "tip": return <DollarSign className="w-5 h-5 text-green-500" />;
@@ -82,6 +83,32 @@ export default function Notifications() {
     if (notif.challenge_id) return createPageUrl("ChallengeDetail") + `?id=${notif.challenge_id}`;
     if (notif.conversation_id) return createPageUrl("Messages") + `?conv=${notif.conversation_id}`;
     return createPageUrl("Profile");
+  };
+
+  const handleFollowResponse = async (notif, accept) => {
+    // Find the pending follow record
+    const follows = await base44.entities.Follow.filter({
+      follower_email: notif.follow_requester_email || notif.actor_email,
+      following_email: user.email,
+    });
+    if (follows[0]) {
+      if (accept) {
+        await base44.entities.Follow.update(follows[0].id, { status: "accepted" });
+        // Notify requester they were accepted
+        await base44.entities.Notification.create({
+          recipient_email: notif.actor_email,
+          actor_email: user.email,
+          actor_name: user.full_name,
+          actor_avatar: user.avatar_url,
+          type: "follow",
+          message: "accepted your follow request",
+        });
+      } else {
+        await base44.entities.Follow.delete(follows[0].id);
+      }
+    }
+    await base44.entities.Notification.update(notif.id, { is_read: true, follow_resolved: true });
+    queryClient.invalidateQueries({ queryKey: ["notifications"] });
   };
 
   const filterOptions = [
@@ -193,12 +220,34 @@ export default function Notifications() {
                         <p className="text-sm text-slate-200">
                           <span className="font-bold text-cyan-400">{notif.actor_name}</span> {notif.message}
                         </p>
-                        <div className="flex items-center gap-2 mt-2">
+                        <div className="flex items-center gap-2 mt-2 flex-wrap">
                           <p className="text-xs text-slate-500">{moment(notif.created_date).fromNow()}</p>
                           {!notif.is_read && (
                             <Badge className="bg-cyan-500 text-white text-xs">New</Badge>
                           )}
                         </div>
+                        {notif.type === "follow_request" && !notif.follow_resolved && (
+                          <div className="flex gap-2 mt-2" onClick={e => e.preventDefault()}>
+                            <Button
+                              size="sm"
+                              className="rounded-xl h-7 px-3 bg-green-600 hover:bg-green-700 text-white gap-1 text-xs"
+                              onClick={() => handleFollowResponse(notif, true)}
+                            >
+                              <Check className="w-3 h-3" /> Accept
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="rounded-xl h-7 px-3 border-red-400 text-red-400 hover:bg-red-50 gap-1 text-xs"
+                              onClick={() => handleFollowResponse(notif, false)}
+                            >
+                              <X className="w-3 h-3" /> Deny
+                            </Button>
+                          </div>
+                        )}
+                        {notif.type === "follow_request" && notif.follow_resolved && (
+                          <p className="text-xs text-slate-500 mt-1 italic">Request resolved</p>
+                        )}
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
                         {getIcon(notif.type)}
