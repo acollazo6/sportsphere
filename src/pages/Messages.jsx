@@ -4,11 +4,23 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Send, ArrowLeft, Loader2, MessageCircle, User, Plus, Search, ImagePlus, X, Play } from "lucide-react";
+import { Send, ArrowLeft, Loader2, MessageCircle, User, Plus, Search, ImagePlus, X, Play, Languages } from "lucide-react";
 import NewChatDialog from "../components/messages/NewChatDialog";
+import MessageBubble from "../components/messages/MessageBubble";
+import VoiceRecorder from "../components/messages/VoiceRecorder";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import moment from "moment";
+
+const LANGUAGES = [
+  { code: "en", label: "🇬🇧 English" }, { code: "es", label: "🇪🇸 Español" },
+  { code: "fr", label: "🇫🇷 Français" }, { code: "de", label: "🇩🇪 Deutsch" },
+  { code: "pt", label: "🇧🇷 Português" }, { code: "zh", label: "🇨🇳 中文" },
+  { code: "ja", label: "🇯🇵 日本語" }, { code: "ar", label: "🇸🇦 العربية" },
+  { code: "hi", label: "🇮🇳 हिन्दी" }, { code: "ru", label: "🇷🇺 Русский" },
+  { code: "it", label: "🇮🇹 Italiano" }, { code: "ko", label: "🇰🇷 한국어" },
+];
 
 export default function Messages() {
   const urlParams = new URLSearchParams(window.location.search);
