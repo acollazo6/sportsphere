@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { ImagePlus, Video, X, Loader2, ArrowLeft, Crown } from "lucide-react";
 import { Link } from "react-router-dom";
+import AIPostGenerator from "../components/feed/AIPostGenerator";
 
 const SPORTS = ["Basketball", "Soccer", "Football", "Baseball", "Tennis", "Golf", "Swimming", "Boxing", "MMA", "Track", "Volleyball", "Hockey", "Cycling", "Yoga", "CrossFit", "Other"];
 const CATEGORIES = [
