@@ -268,14 +268,61 @@ export default function ForYou() {
 
         {/* Recommended Posts */}
         <TabsContent value="recommended" className="space-y-4 mt-6">
-          {postsLoading ? (
-            <div className="flex justify-center py-20">
-              <Loader2 className="w-8 h-8 animate-spin text-slate-300" />
+          {/* AI Ranking Banner */}
+          <div className="bg-gradient-to-r from-purple-900/60 to-indigo-900/60 border border-purple-500/30 rounded-2xl p-4 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-purple-600 flex items-center justify-center shrink-0">
+                <Brain className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-white">
+                  {useAI ? "AI-Personalized Feed" : "Smart Feed"}
+                </p>
+                <p className="text-xs text-slate-400">
+                  {useAI
+                    ? "Ranked by AI using your likes, follows & sports"
+                    : "Enable AI to deeply personalize based on your interactions"}
+                </p>
+              </div>
+            </div>
+            <Button
+              size="sm"
+              onClick={() => {
+                if (useAI) { setUseAI(false); setAiRanked(null); }
+                else triggerAIRanking(recommendedPosts);
+              }}
+              disabled={aiLoading || postsLoading}
+              className={`shrink-0 rounded-xl text-xs font-semibold ${
+                useAI
+                  ? "bg-slate-700 hover:bg-slate-600 text-white border border-slate-600"
+                  : "bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
+              }`}
+            >
+              {aiLoading ? <><Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />Ranking…</> : useAI ? "Turn Off" : <><Sparkles className="w-3.5 h-3.5 mr-1" />AI Rank</>}
+            </Button>
+          </div>
+
+          {postsLoading || aiLoading ? (
+            <div className="flex flex-col items-center justify-center py-20 gap-3">
+              <Loader2 className="w-8 h-8 animate-spin text-purple-400" />
+              {aiLoading && <p className="text-sm text-slate-400">AI is analyzing your interests…</p>}
             </div>
           ) : recommendedPosts?.length === 0 ? (
             <div className="text-center py-20 bg-slate-800/80 rounded-3xl border border-slate-700">
               <p className="text-slate-400">No posts available. Follow some athletes to personalize your feed!</p>
             </div>
+          ) : useAI && aiRanked ? (
+            aiRanked.map(({ post, reason }) => (
+              <div key={post.id} className="relative">
+                {reason && (
+                  <div className="flex items-center gap-1.5 mb-1 px-1">
+                    <Sparkles className="w-3 h-3 text-purple-400" />
+                    <span className="text-xs text-purple-400 font-medium">{reason}</span>
+                  </div>
+                )}
+                <PostCard post={post} currentUser={user} />
+              </div>
+            ))
           ) : (
             recommendedPosts?.map(post => <PostCard key={post.id} post={post} currentUser={user} />)
           )}
