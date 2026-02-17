@@ -16,6 +16,9 @@ import { getAIRankedPosts } from "../components/feed/AIFeedRanker";
 export default function ForYou() {
   const [user, setUser] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [aiRanked, setAiRanked] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [useAI, setUseAI] = useState(false);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
