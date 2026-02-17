@@ -18,6 +18,8 @@ export default function Messages() {
   const [selectedConv, setSelectedConv] = useState(convParam || null);
   const [newMessage, setNewMessage] = useState("");
   const [sending, setSending] = useState(false);
+  const [showNewChat, setShowNewChat] = useState(false);
+  const [convSearch, setConvSearch] = useState("");
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
