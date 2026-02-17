@@ -35,6 +35,7 @@ export default function Messages() {
   const [mediaFile, setMediaFile] = useState(null);
   const [mediaPreview, setMediaPreview] = useState(null);
   const [mediaType, setMediaType] = useState(null);
+  const [preferredLanguage, setPreferredLanguage] = useState(() => localStorage.getItem("msg_lang") || "en");
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
