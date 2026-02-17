@@ -294,6 +294,5 @@ export default function Messages() {
         </div>
       </div>
     </div>
-    </>
   );
 }
