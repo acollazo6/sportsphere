@@ -116,40 +116,75 @@ export default function Messages() {
         <div className="flex h-full">
           {/* Conversation list */}
           <div className={`w-full md:w-80 border-r border-slate-100 flex flex-col ${selectedConv ? "hidden md:flex" : "flex"}`}>
-            <div className="p-4 border-b border-slate-100">
-              <h2 className="text-lg font-bold text-slate-900">Messages</h2>
+            <div className="p-4 border-b border-slate-100 space-y-3">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-bold text-slate-900">Messages</h2>
+                <button
+                  onClick={() => setShowNewChat(true)}
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-orange-500 hover:bg-orange-600 text-white transition-colors"
+                  title="New message"
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                <input
+                  value={convSearch}
+                  onChange={e => setConvSearch(e.target.value)}
+                  placeholder="Search conversations..."
+                  className="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-200"
+                />
+              </div>
             </div>
             <div className="flex-1 overflow-y-auto">
               {convsLoading ? (
                 <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-slate-300" /></div>
-              ) : conversations?.length === 0 ? (
+              ) : filteredConversations?.length === 0 ? (
                 <div className="text-center py-12 px-4">
                   <MessageCircle className="w-12 h-12 text-slate-200 mx-auto mb-3" />
-                  <p className="text-slate-400 text-sm">No conversations yet</p>
+                  <p className="text-slate-400 text-sm">
+                    {conversations?.length === 0 ? "No conversations yet" : "No results found"}
+                  </p>
+                  {conversations?.length === 0 && (
+                    <button
+                      onClick={() => setShowNewChat(true)}
+                      className="mt-3 text-sm text-orange-500 hover:text-orange-600 font-medium"
+                    >
+                      Start a new chat
+                    </button>
+                  )}
                 </div>
               ) : (
-                conversations?.map(conv => (
+                filteredConversations?.map(conv => (
                   <button
                    key={conv.id}
                    onClick={() => setSelectedConv(conv.id)}
-                   className={`w-full flex items-center gap-3 px-4 py-3.5 hover:bg-slate-50 transition-colors ${
-                     selectedConv === conv.id ? "bg-orange-50" : ""
+                   className={`w-full flex items-center gap-3 px-4 py-3.5 hover:bg-slate-50 transition-colors border-b border-slate-50 ${
+                     selectedConv === conv.id ? "bg-orange-50 border-orange-100" : ""
                    }`}
                   >
-                   <div className="relative">
+                   <div className="relative flex-shrink-0">
                      <Avatar className="w-11 h-11">
-                       <AvatarFallback className="bg-gradient-to-br from-slate-200 to-slate-300 text-slate-600 font-semibold">
+                       <AvatarImage src={getOtherAvatar(conv)} />
+                       <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white font-semibold">
                          {getOtherName(conv)?.[0]?.toUpperCase()}
                        </AvatarFallback>
                      </Avatar>
-                     <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
                    </div>
                    <div className="flex-1 min-w-0 text-left">
-                     <p className="font-semibold text-sm text-slate-900 truncate">{getOtherName(conv)}</p>
+                     <div className="flex items-center justify-between">
+                       <p className="font-semibold text-sm text-slate-900 truncate">{getOtherName(conv)}</p>
+                       {conv.last_message_time && (
+                         <span className="text-[10px] text-slate-400 flex-shrink-0 ml-1">
+                           {moment(conv.last_message_time).fromNow()}
+                         </span>
+                       )}
+                     </div>
                      <p className="text-xs text-slate-400 truncate">{conv.last_message || "No messages yet"}</p>
                    </div>
                    {conv.unread_by?.includes(user.email) && (
-                     <div className="w-2.5 h-2.5 bg-orange-500 rounded-full" />
+                     <div className="w-2.5 h-2.5 bg-orange-500 rounded-full flex-shrink-0" />
                    )}
                   </button>
                 ))
