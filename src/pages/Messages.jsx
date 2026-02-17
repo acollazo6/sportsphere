@@ -265,7 +265,18 @@ export default function Messages() {
                   </Avatar>
                   <div className="flex-1">
                     <p className="font-semibold text-slate-900">{getOtherName(selectedConversation)}</p>
+                    <p className="text-xs text-slate-400 flex items-center gap-1"><Languages className="w-3 h-3" /> AI translation active</p>
                   </div>
+                  <Select value={preferredLanguage} onValueChange={(v) => { setPreferredLanguage(v); localStorage.setItem("msg_lang", v); }}>
+                    <SelectTrigger className="w-32 h-8 text-xs rounded-xl border-slate-200">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {LANGUAGES.map(l => (
+                        <SelectItem key={l.code} value={l.code} className="text-xs">{l.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <Link 
                     to={createPageUrl("UserProfile") + `?email=${selectedConversation?.participants?.find(p => p !== user.email)}`}
                     className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
