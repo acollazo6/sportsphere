@@ -208,17 +208,14 @@ export default function Messages() {
                   <button onClick={() => setSelectedConv(null)} className="md:hidden p-1">
                     <ArrowLeft className="w-5 h-5 text-slate-600" />
                   </button>
-                  <div className="relative">
-                    <Avatar className="w-9 h-9">
-                      <AvatarFallback className="bg-gradient-to-br from-slate-200 to-slate-300 text-slate-600 font-semibold text-sm">
-                        {getOtherName(selectedConversation)?.[0]?.toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full" />
-                  </div>
+                  <Avatar className="w-9 h-9">
+                    <AvatarImage src={getOtherAvatar(selectedConversation)} />
+                    <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white font-semibold text-sm">
+                      {getOtherName(selectedConversation)?.[0]?.toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
                   <div className="flex-1">
                     <p className="font-semibold text-slate-900">{getOtherName(selectedConversation)}</p>
-                    <p className="text-xs text-green-600">Online</p>
                   </div>
                   <Link 
                     to={createPageUrl("UserProfile") + `?email=${selectedConversation?.participants?.find(p => p !== user.email)}`}
