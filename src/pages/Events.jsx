@@ -430,6 +430,13 @@ export default function Events() {
           )}
         </TabsContent>
 
+        {/* AI For You tab */}
+        {user && (
+          <TabsContent value="for_you" className="mt-5">
+            <AIEventRecommendations user={user} allEvents={allEvents} onRSVP={refetch} />
+          </TabsContent>
+        )}
+
         {/* My Events */}
         {user && (
           <TabsContent value="registered" className="space-y-5 mt-5">
