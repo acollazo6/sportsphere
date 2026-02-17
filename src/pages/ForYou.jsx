@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Sparkles, TrendingUp, Loader2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import PostCard from "../components/feed/PostCard";
-import ReelCard from "../components/reels/ReelCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import RecommendedCoaches from "../components/recommendations/RecommendedCoaches";
+import RecommendedEvents from "../components/recommendations/RecommendedEvents";
+import RecommendedForums from "../components/recommendations/RecommendedForums";
+import RecommendedUsers from "../components/recommendations/RecommendedUsers";
+import RecommendedPrograms from "../components/recommendations/RecommendedPrograms";
 
 export default function ForYou() {
   const [user, setUser] = useState(null);
@@ -16,7 +20,6 @@ export default function ForYou() {
     base44.auth.me().then(setUser).catch(() => {});
   }, []);
 
-  // Get user preferences and engagement history
   const { data: preferences } = useQuery({
     queryKey: ["feed-preferences", user?.email],
     queryFn: () => base44.entities.FeedPreferences.filter({ user_email: user.email }).then(r => r[0]),
@@ -29,81 +32,169 @@ export default function ForYou() {
     enabled: !!user,
   });
 
-  const { data: myPosts } = useQuery({
-    queryKey: ["my-engagement", user?.email],
-    queryFn: () => base44.entities.Post.filter({ author_email: user.email }, "-created_date", 10),
+  const { data: myProfiles } = useQuery({
+    queryKey: ["my-sport-profiles", user?.email],
+    queryFn: () => base44.entities.SportProfile.filter({ user_email: user.email }),
     enabled: !!user,
   });
 
-  // Fetch all posts
-  const { data: allPosts, isLoading } = useQuery({
-    queryKey: ["recommended-posts", refreshKey],
+  const { data: likedPosts } = useQuery({
+    queryKey: ["liked-posts", user?.email],
+    queryFn: () => base44.entities.Post.list("-created_date", 50).then(posts =>
+      posts.filter(p => p.likes?.includes(user.email))
+    ),
+    enabled: !!user,
+  });
+
+  // Derive user's sports and location from profile
+  const userSports = useMemo(() => {
+    const sports = new Set([
+      ...(myProfiles?.map(p => p.sport).filter(Boolean) || []),
+      ...(preferences?.preferred_sports || []),
+      ...(likedPosts?.map(p => p.sport).filter(Boolean) || []),
+    ]);
+    return [...sports];
+  }, [myProfiles, preferences, likedPosts]);
+
+  const userLocation = myProfiles?.[0]?.location || null;
+
+  // Recommended posts (scored)
+  const { data: recommendedPosts, isLoading: postsLoading } = useQuery({
+    queryKey: ["recommended-posts", refreshKey, user?.email],
     queryFn: async () => {
-      const posts = await base44.entities.Post.list("-created_date", 100);
-      
+      const posts = await base44.entities.Post.list("-created_date", 150);
       if (!user) return posts.slice(0, 20);
-
-      // Get sports from user's engagement
-      const mySports = [...new Set(myPosts?.map(p => p.sport).filter(Boolean) || [])];
-      const prefSports = preferences?.preferred_sports || [];
-      const allSports = [...new Set([...mySports, ...prefSports])];
-      
-      // Get followed creators
       const followedEmails = follows?.map(f => f.following_email) || [];
+      const likedSports = [...new Set(likedPosts?.map(p => p.sport).filter(Boolean) || [])];
+      const allSports = [...new Set([...userSports, ...likedSports])];
 
-      // Score posts based on relevance
-      const scoredPosts = posts.map(post => {
-        let score = 0;
-        
-        // Boost posts from followed creators
-        if (followedEmails.includes(post.author_email)) score += 100;
-        
-        // Boost posts from preferred sports
-        if (allSports.includes(post.sport)) score += 50;
-        
-        // Boost engaging content
-        score += (post.likes?.length || 0) * 2;
-        score += (post.comments_count || 0) * 5;
-        score += (post.views || 0) * 0.1;
-        
-        // Recency boost (newer posts get higher scores)
-        const hoursSincePost = (Date.now() - new Date(post.created_date).getTime()) / (1000 * 60 * 60);
-        if (hoursSincePost < 24) score += 30;
-        else if (hoursSincePost < 72) score += 15;
-        
-        // Diversity penalty for own posts
-        if (post.author_email === user.email) score -= 50;
-        
-        return { ...post, score };
-      });
+      const scored = posts
+        .filter(p => p.author_email !== user.email)
+        .map(post => {
+          let score = 0;
+          if (followedEmails.includes(post.author_email)) score += 120;
+          if (allSports.includes(post.sport)) score += 60;
+          score += (post.likes?.length || 0) * 2;
+          score += (post.comments_count || 0) * 5;
+          score += (post.views || 0) * 0.1;
+          const hours = (Date.now() - new Date(post.created_date).getTime()) / 3600000;
+          if (hours < 24) score += 40;
+          else if (hours < 72) score += 20;
+          else if (hours > 168) score -= 10;
+          return { ...post, score };
+        });
 
-      // Sort by score and return top 30
-      return scoredPosts.sort((a, b) => b.score - a.score).slice(0, 30);
+      return scored.sort((a, b) => b.score - a.score).slice(0, 30);
     },
-    enabled: !!user,
+    enabled: !!user && follows !== undefined,
   });
 
-  // Trending posts (high engagement recently)
+  // Trending posts
   const { data: trendingPosts } = useQuery({
-    queryKey: ["trending-posts"],
+    queryKey: ["trending-posts", refreshKey],
     queryFn: async () => {
       const posts = await base44.entities.Post.list("-created_date", 100);
       const dayAgo = Date.now() - 24 * 60 * 60 * 1000;
-      
       return posts
         .filter(p => new Date(p.created_date).getTime() > dayAgo)
-        .map(p => ({
-          ...p,
-          engagement: (p.likes?.length || 0) * 2 + (p.comments_count || 0) * 5 + (p.views || 0) * 0.1
-        }))
+        .map(p => ({ ...p, engagement: (p.likes?.length || 0) * 2 + (p.comments_count || 0) * 5 + (p.views || 0) * 0.1 }))
         .sort((a, b) => b.engagement - a.engagement)
         .slice(0, 10);
     },
   });
 
-  const handleRefresh = () => {
-    setRefreshKey(prev => prev + 1);
-  };
+  // Recommended coaches (sessions aligned with sports)
+  const { data: recommendedSessions } = useQuery({
+    queryKey: ["recommended-sessions", userSports.join(",")],
+    queryFn: async () => {
+      const sessions = await base44.entities.CoachingSession.list("-created_date", 50);
+      const upcoming = sessions.filter(s => s.status === "scheduled");
+      if (!userSports.length) return upcoming.slice(0, 4);
+      const matched = upcoming.filter(s => userSports.includes(s.sport));
+      const rest = upcoming.filter(s => !userSports.includes(s.sport));
+      return [...matched, ...rest].slice(0, 6);
+    },
+    enabled: !!user,
+  });
+
+  // Recommended events
+  const { data: recommendedEvents } = useQuery({
+    queryKey: ["recommended-events", userSports.join(","), userLocation],
+    queryFn: async () => {
+      const events = await base44.entities.Event.list("-created_date", 100);
+      const future = events.filter(e => new Date(e.date) > new Date());
+      const scored = future.map(e => {
+        let score = 0;
+        if (userSports.includes(e.sport)) score += 50;
+        if (userLocation && (e.city?.toLowerCase().includes(userLocation.toLowerCase()) || e.country?.toLowerCase().includes(userLocation.toLowerCase()))) score += 40;
+        if (e.is_virtual) score += 10;
+        return { ...e, score };
+      });
+      return scored.sort((a, b) => b.score - a.score).slice(0, 4);
+    },
+    enabled: !!user,
+  });
+
+  // Recommended forum topics
+  const { data: recommendedForums } = useQuery({
+    queryKey: ["recommended-forums", userSports.join(",")],
+    queryFn: async () => {
+      const forums = await base44.entities.Forum.list("-created_date", 100);
+      const scored = forums.map(f => {
+        let score = 0;
+        if (userSports.includes(f.sport)) score += 50;
+        score += (f.replies_count || 0) * 3;
+        score += (f.likes?.length || 0) * 2;
+        score += (f.views || 0) * 0.1;
+        const hours = (Date.now() - new Date(f.created_date || f.last_activity).getTime()) / 3600000;
+        if (hours < 48) score += 20;
+        return { ...f, score };
+      });
+      return scored.sort((a, b) => b.score - a.score).slice(0, 5);
+    },
+    enabled: !!user,
+  });
+
+  // Recommended users (similar sports/level)
+  const { data: recommendedUsers } = useQuery({
+    queryKey: ["recommended-users", userSports.join(","), user?.email],
+    queryFn: async () => {
+      const followedEmails = new Set(follows?.map(f => f.following_email) || []);
+      const profiles = await base44.entities.SportProfile.list("-created_date", 200);
+      const myLevels = new Set(myProfiles?.map(p => p.level).filter(Boolean) || []);
+      const others = profiles.filter(p =>
+        p.user_email !== user.email &&
+        !followedEmails.has(p.user_email)
+      );
+      const scored = others.map(p => {
+        let score = 0;
+        if (userSports.includes(p.sport)) score += 60;
+        if (myLevels.has(p.level)) score += 30;
+        if (userLocation && p.location?.toLowerCase().includes(userLocation.toLowerCase())) score += 40;
+        return { ...p, score };
+      });
+      // Deduplicate by user_email
+      const seen = new Set();
+      return scored
+        .sort((a, b) => b.score - a.score)
+        .filter(p => { if (seen.has(p.user_email)) return false; seen.add(p.user_email); return true; })
+        .slice(0, 6);
+    },
+    enabled: !!user && follows !== undefined && myProfiles !== undefined,
+  });
+
+  // Recommended training programs
+  const { data: recommendedPrograms } = useQuery({
+    queryKey: ["recommended-programs", userSports.join(",")],
+    queryFn: async () => {
+      const programs = await base44.entities.TrainingProgram.list("-created_date", 50);
+      if (!userSports.length) return programs.slice(0, 4);
+      const matched = programs.filter(p => userSports.includes(p.sport));
+      const rest = programs.filter(p => !userSports.includes(p.sport));
+      return [...matched, ...rest].slice(0, 4);
+    },
+    enabled: !!user,
+  });
 
   if (!user) {
     return (
@@ -125,12 +216,19 @@ export default function ForYou() {
               <Sparkles className="w-10 h-10" />
               For You
             </h1>
-            <p className="text-white/90 text-lg">Personalized content based on your interests</p>
+            <p className="text-white/90 text-base">Personalized to your sports, location, and activity</p>
+            {userSports.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-3">
+                {userSports.slice(0, 5).map(s => (
+                  <Badge key={s} className="bg-white/20 text-white border-white/30">{s}</Badge>
+                ))}
+              </div>
+            )}
           </div>
           <Button
-            onClick={handleRefresh}
+            onClick={() => setRefreshKey(k => k + 1)}
             variant="outline"
-            className="border-white/30 text-white hover:bg-white/10 gap-2"
+            className="border-white/30 text-white hover:bg-white/10 gap-2 flex-shrink-0"
           >
             <RefreshCw className="w-4 h-4" />
             Refresh
@@ -138,38 +236,41 @@ export default function ForYou() {
         </div>
       </div>
 
-      {/* Tabs for different content types */}
+      {/* Tabs */}
       <Tabs defaultValue="recommended" className="w-full">
-        <TabsList className="bg-slate-800/80 border border-slate-700 w-full justify-start">
+        <TabsList className="bg-slate-800/80 border border-slate-700 w-full justify-start overflow-x-auto">
           <TabsTrigger value="recommended" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-pink-600">
-            <Sparkles className="w-4 h-4 mr-2" />
-            Recommended
+            <Sparkles className="w-4 h-4 mr-2" />Recommended
           </TabsTrigger>
           <TabsTrigger value="trending" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-600 data-[state=active]:to-red-600">
-            <TrendingUp className="w-4 h-4 mr-2" />
-            Trending
+            <TrendingUp className="w-4 h-4 mr-2" />Trending
+          </TabsTrigger>
+          <TabsTrigger value="discover" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-600">
+            Discover
           </TabsTrigger>
         </TabsList>
 
+        {/* Recommended Posts */}
         <TabsContent value="recommended" className="space-y-4 mt-6">
-          {isLoading ? (
+          {postsLoading ? (
             <div className="flex justify-center py-20">
               <Loader2 className="w-8 h-8 animate-spin text-slate-300" />
             </div>
-          ) : allPosts?.length === 0 ? (
+          ) : recommendedPosts?.length === 0 ? (
             <div className="text-center py-20 bg-slate-800/80 rounded-3xl border border-slate-700">
-              <p className="text-slate-400">No posts available</p>
+              <p className="text-slate-400">No posts available. Follow some athletes to personalize your feed!</p>
             </div>
           ) : (
-            allPosts?.map(post => <PostCard key={post.id} post={post} currentUser={user} />)
+            recommendedPosts?.map(post => <PostCard key={post.id} post={post} currentUser={user} />)
           )}
         </TabsContent>
 
+        {/* Trending Posts */}
         <TabsContent value="trending" className="space-y-4 mt-6">
           <div className="bg-slate-800/60 rounded-2xl p-4 border border-orange-500/30 mb-4">
             <p className="text-sm text-slate-300">
               <TrendingUp className="w-4 h-4 inline mr-2 text-orange-400" />
-              Top posts from the last 24 hours with the highest engagement
+              Top posts from the last 24 hours with highest engagement
             </p>
           </div>
           {trendingPosts?.length === 0 ? (
@@ -179,13 +280,20 @@ export default function ForYou() {
           ) : (
             trendingPosts?.map(post => (
               <div key={post.id} className="relative">
-                <Badge className="absolute top-4 right-4 z-10 bg-gradient-to-r from-orange-500 to-red-500 text-white">
-                  🔥 Trending
-                </Badge>
+                <Badge className="absolute top-4 right-4 z-10 bg-gradient-to-r from-orange-500 to-red-500 text-white">🔥 Trending</Badge>
                 <PostCard post={post} currentUser={user} />
               </div>
             ))
           )}
+        </TabsContent>
+
+        {/* Discover Tab: events, coaches, forums, users, programs */}
+        <TabsContent value="discover" className="space-y-8 mt-6">
+          <RecommendedEvents events={recommendedEvents} />
+          <RecommendedCoaches sessions={recommendedSessions} userSports={userSports} />
+          <RecommendedForums topics={recommendedForums} />
+          <RecommendedPrograms programs={recommendedPrograms} />
+          <RecommendedUsers profiles={recommendedUsers} currentUser={user} />
         </TabsContent>
       </Tabs>
     </div>
