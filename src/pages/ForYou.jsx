@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { Sparkles, TrendingUp, Loader2, RefreshCw } from "lucide-react";
+import { Sparkles, TrendingUp, Loader2, RefreshCw, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import PostCard from "../components/feed/PostCard";
@@ -11,6 +11,7 @@ import RecommendedEvents from "../components/recommendations/RecommendedEvents";
 import RecommendedForums from "../components/recommendations/RecommendedForums";
 import RecommendedUsers from "../components/recommendations/RecommendedUsers";
 import RecommendedPrograms from "../components/recommendations/RecommendedPrograms";
+import { getAIRankedPosts } from "../components/feed/AIFeedRanker";
 
 export default function ForYou() {
   const [user, setUser] = useState(null);
