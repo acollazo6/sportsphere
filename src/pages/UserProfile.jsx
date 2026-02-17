@@ -23,7 +23,7 @@ export default function UserProfile() {
   const [adviceTopic, setAdviceTopic] = useState("");
   const [adviceMessage, setAdviceMessage] = useState("");
   const [sending, setSending] = useState(false);
-  const [isFollowing, setIsFollowing] = useState(false);
+  const [followStatus, setFollowStatus] = useState(null); // null | "pending" | "accepted"
 
   useEffect(() => {
     base44.auth.me().then(setCurrentUser).catch(() => {});
@@ -34,7 +34,10 @@ export default function UserProfile() {
       base44.entities.Follow.filter({ 
         follower_email: currentUser.email, 
         following_email: profileEmail 
-      }).then(follows => setIsFollowing(follows.length > 0));
+      }).then(follows => {
+        if (follows.length > 0) setFollowStatus(follows[0].status || "accepted");
+        else setFollowStatus(null);
+      });
     }
   }, [currentUser, profileEmail]);
 
@@ -86,30 +89,31 @@ export default function UserProfile() {
   };
 
   const toggleFollow = async () => {
-    if (isFollowing) {
+    if (followStatus) {
       const follows = await base44.entities.Follow.filter({ 
         follower_email: currentUser.email, 
         following_email: profileEmail 
       });
       if (follows[0]) {
         await base44.entities.Follow.delete(follows[0].id);
-        setIsFollowing(false);
+        setFollowStatus(null);
       }
     } else {
       await base44.entities.Follow.create({
         follower_email: currentUser.email,
         following_email: profileEmail,
+        status: "pending",
       });
-      setIsFollowing(true);
-      
-      // Create notification
+      setFollowStatus("pending");
+
       await base44.entities.Notification.create({
         recipient_email: profileEmail,
         actor_email: currentUser.email,
         actor_name: currentUser.full_name,
         actor_avatar: currentUser.avatar_url,
-        type: "follow",
-        message: "started following you",
+        type: "follow_request",
+        message: "wants to follow you",
+        follow_requester_email: currentUser.email,
       });
     }
   };
@@ -147,12 +151,12 @@ export default function UserProfile() {
               <div className="flex flex-wrap gap-2">
                 <Button 
                   onClick={toggleFollow} 
-                  variant={isFollowing ? "outline" : "default"}
+                  variant={followStatus ? "outline" : "default"}
                   className="rounded-xl gap-2"
                   size="sm"
                 >
                   <Users className="w-4 h-4" />
-                  {isFollowing ? "Following" : "Follow"}
+                  {followStatus === "accepted" ? "Following" : followStatus === "pending" ? "Requested" : "Follow"}
                 </Button>
                 <Button onClick={startConversation} variant="outline" className="rounded-xl gap-2" size="sm">
                   <MessageCircle className="w-4 h-4" /> Message
