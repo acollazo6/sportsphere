@@ -64,6 +64,17 @@ export default function Messages() {
     return conv.participant_names?.[idx === 0 ? 1 : 0] || conv.participants?.find(p => p !== user.email) || "Unknown";
   };
 
+  const getOtherAvatar = (conv) => {
+    if (!conv || !user) return "";
+    const idx = conv.participants?.indexOf(user.email);
+    return conv.participant_avatars?.[idx === 0 ? 1 : 0] || "";
+  };
+
+  const filteredConversations = conversations?.filter(conv => {
+    if (!convSearch.trim()) return true;
+    return getOtherName(conv)?.toLowerCase().includes(convSearch.toLowerCase());
+  });
+
   const sendMessage = async () => {
     if (!newMessage.trim() || sending) return;
     setSending(true);
