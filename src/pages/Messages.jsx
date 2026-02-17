@@ -290,45 +290,14 @@ export default function Messages() {
                   {msgsLoading ? (
                     <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-slate-300" /></div>
                   ) : (
-                    messages?.map(msg => {
-                      const isMine = msg.sender_email === user.email;
-                      return (
-                        <div key={msg.id} className={`flex gap-2 ${isMine ? "justify-end" : "justify-start"}`}>
-                          {!isMine && (
-                            <Avatar className="w-7 h-7 mt-1">
-                              <AvatarFallback className="bg-slate-200 text-xs">{msg.sender_name?.[0]}</AvatarFallback>
-                            </Avatar>
-                          )}
-                          <div className="flex flex-col max-w-[75%]">
-                            {!isMine && <span className="text-xs text-slate-500 mb-0.5 px-1">{msg.sender_name}</span>}
-                            <div className={`rounded-2xl overflow-hidden ${
-                              isMine
-                                ? "bg-slate-900 text-white"
-                                : "bg-slate-100 text-slate-800"
-                            }`}>
-                              {msg.media_url && msg.media_type === "video" ? (
-                                <video
-                                  src={msg.media_url}
-                                  controls
-                                  className="max-w-[240px] rounded-t-2xl"
-                                />
-                              ) : msg.media_url ? (
-                                <a href={msg.media_url} target="_blank" rel="noopener noreferrer">
-                                  <img src={msg.media_url} alt="" className="max-w-[240px] rounded-t-2xl block" />
-                                </a>
-                              ) : null}
-                              {msg.content && (
-                                <p className="text-sm whitespace-pre-wrap break-words px-4 py-2.5">{msg.content}</p>
-                              )}
-                              {!msg.content && msg.media_url && <div className="pb-1" />}
-                            </div>
-                            <span className="text-[10px] text-slate-400 mt-0.5 px-1">
-                              {moment(msg.created_date).format("h:mm A")}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })
+                    messages?.map(msg => (
+                      <MessageBubble
+                        key={msg.id}
+                        msg={msg}
+                        isMine={msg.sender_email === user.email}
+                        preferredLanguage={preferredLanguage}
+                      />
+                    ))
                   )}
                   <div ref={messagesEndRef} />
                 </div>
