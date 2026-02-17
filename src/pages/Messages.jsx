@@ -299,21 +299,56 @@ export default function Messages() {
                 </div>
 
                 {/* Input */}
-                <div className="p-4 border-t border-slate-100">
-                  <div className="flex gap-2">
+                <div className="p-4 border-t border-slate-100 space-y-2">
+                  {/* Media preview */}
+                  {mediaPreview && (
+                    <div className="relative inline-block">
+                      {mediaType === "video" ? (
+                        <div className="relative w-32 h-20 rounded-xl overflow-hidden bg-slate-900">
+                          <video src={mediaPreview} className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <Play className="w-6 h-6 text-white opacity-80" />
+                          </div>
+                        </div>
+                      ) : (
+                        <img src={mediaPreview} alt="preview" className="w-32 h-20 object-cover rounded-xl" />
+                      )}
+                      <button
+                        onClick={clearMedia}
+                        className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-slate-800 text-white rounded-full flex items-center justify-center hover:bg-red-500 transition-colors"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )}
+                  <div className="flex gap-2 items-center">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*,video/*"
+                      className="hidden"
+                      onChange={handleMediaSelect}
+                    />
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="p-2 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors flex-shrink-0"
+                      title="Attach image or video"
+                    >
+                      <ImagePlus className="w-5 h-5" />
+                    </button>
                     <Input
                       value={newMessage}
                       onChange={e => setNewMessage(e.target.value)}
-                      onKeyDown={e => e.key === "Enter" && sendMessage()}
+                      onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage()}
                       placeholder="Type a message..."
                       className="flex-1 rounded-xl bg-slate-50 border-0 focus:ring-2 focus:ring-orange-200"
                     />
                     <Button
                       onClick={sendMessage}
-                      disabled={!newMessage.trim() || sending}
-                      className="rounded-xl bg-slate-900 hover:bg-slate-800 px-4"
+                      disabled={(!newMessage.trim() && !mediaFile) || sending}
+                      className="rounded-xl bg-slate-900 hover:bg-slate-800 px-4 flex-shrink-0"
                     >
-                      <Send className="w-4 h-4" />
+                      {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                     </Button>
                   </div>
                 </div>
