@@ -111,7 +111,7 @@ export default function Messages() {
   if (!user) return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-slate-300" /></div>;
 
   return (
-    <>
+    <div className="max-w-5xl mx-auto px-4 py-6">
     {showNewChat && (
       <NewChatDialog
         user={user}
@@ -119,7 +119,6 @@ export default function Messages() {
         onClose={() => setShowNewChat(false)}
       />
     )}
-    <div className="max-w-5xl mx-auto px-4 py-6">
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden" style={{ height: "calc(100vh - 140px)" }}>
         <div className="flex h-full">
           {/* Conversation list */}
