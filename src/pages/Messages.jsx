@@ -20,7 +20,11 @@ export default function Messages() {
   const [sending, setSending] = useState(false);
   const [showNewChat, setShowNewChat] = useState(false);
   const [convSearch, setConvSearch] = useState("");
+  const [mediaFile, setMediaFile] = useState(null);
+  const [mediaPreview, setMediaPreview] = useState(null);
+  const [mediaType, setMediaType] = useState(null);
   const messagesEndRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => base44.auth.redirectToLogin());
