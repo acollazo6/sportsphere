@@ -14,6 +14,7 @@ import {
 import moment from "moment";
 import { toast } from "sonner";
 import CreateEventDialog from "../components/events/CreateEventDialog";
+import AIEventRecommendations from "../components/events/AIEventRecommendations";
 
 const SPORTS = ["All Sports", "Basketball", "Soccer", "Football", "Baseball", "Tennis", "Golf", "Swimming", "Boxing", "MMA", "Track", "Volleyball", "Hockey", "Cycling", "Yoga", "CrossFit", "Other"];
 
