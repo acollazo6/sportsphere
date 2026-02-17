@@ -79,21 +79,46 @@ export default function Messages() {
     return getOtherName(conv)?.toLowerCase().includes(convSearch.toLowerCase());
   });
 
+  const handleMediaSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const isVideo = file.type.startsWith("video/");
+    setMediaFile(file);
+    setMediaType(isVideo ? "video" : "image");
+    setMediaPreview(URL.createObjectURL(file));
+  };
+
+  const clearMedia = () => {
+    setMediaFile(null);
+    setMediaPreview(null);
+    setMediaType(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const sendMessage = async () => {
-    if (!newMessage.trim() || sending) return;
+    if ((!newMessage.trim() && !mediaFile) || sending) return;
     setSending(true);
+    let media_url = null;
+    if (mediaFile) {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file: mediaFile });
+      media_url = file_url;
+    }
     await base44.entities.Message.create({
       conversation_id: selectedConv,
       sender_email: user.email,
       sender_name: user.full_name,
       content: newMessage,
+      media_url,
+      media_type: mediaType,
     });
+    const lastMsg = media_url ? (newMessage.trim() ? newMessage : `📎 ${mediaType === "video" ? "Video" : "Image"}`) : newMessage;
     await base44.entities.Conversation.update(selectedConv, {
-      last_message: newMessage,
+      last_message: lastMsg,
       last_message_time: new Date().toISOString(),
       unread_by: selectedConversation.participants.filter(p => p !== user.email),
     });
     setNewMessage("");
+    clearMedia();
     queryClient.invalidateQueries({ queryKey: ["my-conversations"] });
     setSending(false);
   };
