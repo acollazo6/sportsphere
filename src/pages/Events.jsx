@@ -289,6 +289,7 @@ export default function Events() {
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="bg-white border border-gray-200 p-1 rounded-xl">
           <TabsTrigger value="discover" className="rounded-lg">🔍 Discover</TabsTrigger>
+          {user && <TabsTrigger value="for_you" className="rounded-lg">✨ For You</TabsTrigger>}
           {user && <TabsTrigger value="registered" className="rounded-lg">✅ My Events ({myEvents.length})</TabsTrigger>}
         </TabsList>
 
