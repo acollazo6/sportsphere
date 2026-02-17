@@ -340,11 +340,15 @@ export default function Messages() {
                     >
                       <ImagePlus className="w-5 h-5" />
                     </button>
+                    <VoiceRecorder
+                      onTranscribed={(text) => setNewMessage(prev => prev ? prev + " " + text : text)}
+                      disabled={sending}
+                    />
                     <Input
                       value={newMessage}
                       onChange={e => setNewMessage(e.target.value)}
                       onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage()}
-                      placeholder="Type a message..."
+                      placeholder="Type or record a message..."
                       className="flex-1 rounded-xl bg-slate-50 border-0 focus:ring-2 focus:ring-orange-200"
                     />
                     <Button
