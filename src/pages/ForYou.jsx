@@ -62,6 +62,18 @@ export default function ForYou() {
 
   const userLocation = myProfiles?.[0]?.location || null;
 
+  const triggerAIRanking = async (posts) => {
+    if (!user || !posts?.length) return;
+    setAiLoading(true);
+    setUseAI(true);
+    const ranked = await getAIRankedPosts({
+      user, posts, userSports,
+      follows, likedPosts, myProfiles,
+    });
+    setAiRanked(ranked);
+    setAiLoading(false);
+  };
+
   // Recommended posts (scored)
   const { data: recommendedPosts, isLoading: postsLoading } = useQuery({
     queryKey: ["recommended-posts", refreshKey, user?.email],
