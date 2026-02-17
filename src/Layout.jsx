@@ -76,6 +76,7 @@ export default function Layout({ children, currentPageName }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-50">
       <RecommendationNotification user={user} />
+      <SupportChatWidget user={user} />
       <style>{`
         :root {
           --brand: #7f1d1d;
