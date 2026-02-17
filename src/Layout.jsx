@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { translations } from "./components/translations";
 import RecommendationNotification from "./components/notifications/RecommendationNotification";
+import SupportChatWidget from "./components/messages/SupportChatWidget";
 
 export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
