@@ -135,10 +135,14 @@ export default function CreatorHub() {
       </div>
 
       {/* Content Tabs */}
-      <Tabs defaultValue="products" className="w-full">
-        <TabsList className="bg-white border border-gray-200">
-          <TabsTrigger value="products">Products & Courses</TabsTrigger>
-          <TabsTrigger value="challenges">Premium Challenges</TabsTrigger>
+      <Tabs defaultValue="analytics" className="w-full">
+        <TabsList className="bg-white border border-gray-200 flex-wrap h-auto gap-1 p-1">
+          <TabsTrigger value="analytics" className="gap-1.5"><BarChart2 className="w-3.5 h-3.5" />Analytics</TabsTrigger>
+          <TabsTrigger value="schedule" className="gap-1.5"><Calendar className="w-3.5 h-3.5" />Schedule</TabsTrigger>
+          <TabsTrigger value="vod" className="gap-1.5"><Scissors className="w-3.5 h-3.5" />VOD Editor</TabsTrigger>
+          <TabsTrigger value="plans" className="gap-1.5"><CreditCard className="w-3.5 h-3.5" />Subscriptions</TabsTrigger>
+          <TabsTrigger value="products">Products</TabsTrigger>
+          <TabsTrigger value="challenges">Challenges</TabsTrigger>
           <TabsTrigger value="subscribers">Subscribers</TabsTrigger>
         </TabsList>
 
