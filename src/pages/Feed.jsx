@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import PostCard from "../components/feed/PostCard";
 import SportFilter from "../components/feed/SportFilter";
 import FeedPreferencesDialog from "../components/reels/FeedPreferencesDialog";
+import UpcomingStreamsSection from "../components/feed/UpcomingStreamsSection";
 import { Loader2, Search, Settings2, Sparkles, Users } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
