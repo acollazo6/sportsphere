@@ -34,6 +34,8 @@ export default function CreatePost() {
   const [uploading, setUploading] = useState(false);
   const [posting, setPosting] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
+  const [editingVideoIndex, setEditingVideoIndex] = useState(null);
+  const [videoMeta, setVideoMeta] = useState({}); // index -> { trimStart, trimEnd, thumbnailFile, thumbnailPreview, chapters }
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => base44.auth.redirectToLogin());
