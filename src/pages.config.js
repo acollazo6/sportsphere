@@ -84,6 +84,7 @@ import OrgSessions from './pages/OrgSessions';
 import ParentView from './pages/ParentView';
 import Premium from './pages/Premium';
 import Profile from './pages/Profile';
+import ProfileSettings from './pages/ProfileSettings';
 import Reels from './pages/Reels';
 import SavedContent from './pages/SavedContent';
 import Terms from './pages/Terms';
@@ -94,7 +95,6 @@ import UploadVideo from './pages/UploadVideo';
 import UserProfile from './pages/UserProfile';
 import VideoReview from './pages/VideoReview';
 import ViewLive from './pages/ViewLive';
-import ProfileSettings from './pages/ProfileSettings';
 import __Layout from './Layout.jsx';
 
 
@@ -136,6 +136,7 @@ export const PAGES = {
     "ParentView": ParentView,
     "Premium": Premium,
     "Profile": Profile,
+    "ProfileSettings": ProfileSettings,
     "Reels": Reels,
     "SavedContent": SavedContent,
     "Terms": Terms,
@@ -146,7 +147,6 @@ export const PAGES = {
     "UserProfile": UserProfile,
     "VideoReview": VideoReview,
     "ViewLive": ViewLive,
-    "ProfileSettings": ProfileSettings,
 }
 
 export const pagesConfig = {
