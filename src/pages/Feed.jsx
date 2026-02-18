@@ -189,6 +189,16 @@ export default function Feed() {
         </div>
       )}
 
+      {/* Live Now Section */}
+      {!searchQuery && !sportFilter && (
+        <LiveNowSection user={user} userPreferences={userPreferences} />
+      )}
+
+      {/* Recommendations */}
+      {!searchQuery && !sportFilter && (
+        <StreamRecommendations user={user} userPreferences={userPreferences} />
+      )}
+
       {/* Upcoming Streams */}
       {!searchQuery && !sportFilter && (
         <UpcomingStreamsSection user={user} />
