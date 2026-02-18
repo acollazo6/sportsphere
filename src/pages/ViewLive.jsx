@@ -406,7 +406,7 @@ export default function ViewLive() {
                    </div>
                  </div>
                )
-               ) : (
+             ) : (
                <div className="flex-1 flex flex-col overflow-hidden min-h-0">
                  {activeSummaryTab === "summary" && (
                    <div className="flex-1 overflow-y-auto p-4">
@@ -419,7 +419,7 @@ export default function ViewLive() {
                    </div>
                  )}
                </div>
-               )}
+             )}
           </div>
         </div>
       </div>
