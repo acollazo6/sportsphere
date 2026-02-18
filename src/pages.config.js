@@ -47,8 +47,10 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import AdminHealth from './pages/AdminHealth';
 import Advice from './pages/Advice';
 import Analytics from './pages/Analytics';
+import AthleteInsights from './pages/AthleteInsights';
 import ChallengeDetail from './pages/ChallengeDetail';
 import Challenges from './pages/Challenges';
 import Coach from './pages/Coach';
@@ -71,34 +73,35 @@ import Leaderboard from './pages/Leaderboard';
 import Live from './pages/Live';
 import LiveCoaching from './pages/LiveCoaching';
 import Messages from './pages/Messages';
+import MyTraining from './pages/MyTraining';
 import Notifications from './pages/Notifications';
+import Onboarding from './pages/Onboarding';
+import OrgDashboard from './pages/OrgDashboard';
+import OrgMessages from './pages/OrgMessages';
+import OrgRoster from './pages/OrgRoster';
+import OrgSessions from './pages/OrgSessions';
+import ParentView from './pages/ParentView';
 import Premium from './pages/Premium';
 import Profile from './pages/Profile';
 import Reels from './pages/Reels';
 import SavedContent from './pages/SavedContent';
 import Terms from './pages/Terms';
-import TrendingChallenges from './pages/TrendingChallenges';
-import UserProfile from './pages/UserProfile';
-import ViewLive from './pages/ViewLive';
-import OrgDashboard from './pages/OrgDashboard';
-import OrgRoster from './pages/OrgRoster';
-import TrainingPlans from './pages/TrainingPlans';
-import VideoReview from './pages/VideoReview';
-import UploadVideo from './pages/UploadVideo';
-import OrgSessions from './pages/OrgSessions';
-import MyTraining from './pages/MyTraining';
-import ParentView from './pages/ParentView';
-import OrgMessages from './pages/OrgMessages';
 import TrainingPlanDetail from './pages/TrainingPlanDetail';
-import Onboarding from './pages/Onboarding';
-import AthleteInsights from './pages/AthleteInsights';
-import AdminHealth from './pages/AdminHealth';
+import TrainingPlans from './pages/TrainingPlans';
+import TrendingChallenges from './pages/TrendingChallenges';
+import UploadVideo from './pages/UploadVideo';
+import UserProfile from './pages/UserProfile';
+import VideoReview from './pages/VideoReview';
+import ViewLive from './pages/ViewLive';
+import GitHubExport from './pages/GitHubExport';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "AdminHealth": AdminHealth,
     "Advice": Advice,
     "Analytics": Analytics,
+    "AthleteInsights": AthleteInsights,
     "ChallengeDetail": ChallengeDetail,
     "Challenges": Challenges,
     "Coach": Coach,
@@ -121,28 +124,27 @@ export const PAGES = {
     "Live": Live,
     "LiveCoaching": LiveCoaching,
     "Messages": Messages,
+    "MyTraining": MyTraining,
     "Notifications": Notifications,
+    "Onboarding": Onboarding,
+    "OrgDashboard": OrgDashboard,
+    "OrgMessages": OrgMessages,
+    "OrgRoster": OrgRoster,
+    "OrgSessions": OrgSessions,
+    "ParentView": ParentView,
     "Premium": Premium,
     "Profile": Profile,
     "Reels": Reels,
     "SavedContent": SavedContent,
     "Terms": Terms,
-    "TrendingChallenges": TrendingChallenges,
-    "UserProfile": UserProfile,
-    "ViewLive": ViewLive,
-    "OrgDashboard": OrgDashboard,
-    "OrgRoster": OrgRoster,
-    "TrainingPlans": TrainingPlans,
-    "VideoReview": VideoReview,
-    "UploadVideo": UploadVideo,
-    "OrgSessions": OrgSessions,
-    "MyTraining": MyTraining,
-    "ParentView": ParentView,
-    "OrgMessages": OrgMessages,
     "TrainingPlanDetail": TrainingPlanDetail,
-    "Onboarding": Onboarding,
-    "AthleteInsights": AthleteInsights,
-    "AdminHealth": AdminHealth,
+    "TrainingPlans": TrainingPlans,
+    "TrendingChallenges": TrendingChallenges,
+    "UploadVideo": UploadVideo,
+    "UserProfile": UserProfile,
+    "VideoReview": VideoReview,
+    "ViewLive": ViewLive,
+    "GitHubExport": GitHubExport,
 }
 
 export const pagesConfig = {
