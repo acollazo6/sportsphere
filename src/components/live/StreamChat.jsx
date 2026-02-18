@@ -64,11 +64,10 @@ export default function StreamChat({ messages, user, isHost, message, setMessage
               )}
             </div>
           ))}
-        </div>
-      )}
+          )}
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {regularMessages.length === 0 && pinnedMessages.length === 0 && (
           <div className="text-center py-12">
             <p className="text-4xl mb-2">💬</p>
