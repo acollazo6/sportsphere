@@ -204,18 +204,47 @@ Return ONLY JSON format: {"safe": true/false, "reason": "explanation if unsafe",
         {mediaPreviews.length > 0 && (
           <div className="grid grid-cols-2 gap-3">
             {mediaPreviews.map((m, i) => (
-              <div key={i} className="relative rounded-xl overflow-hidden bg-slate-100 aspect-video">
-                {m.type === "video" ? (
-                  <video src={m.url} className="w-full h-full object-cover" />
-                ) : (
-                  <img src={m.url} alt="" className="w-full h-full object-cover" />
+              <div key={i} className="space-y-1">
+                <div className="relative rounded-xl overflow-hidden bg-slate-100 aspect-video">
+                  {m.type === "video" ? (
+                    videoMeta[i]?.thumbnailPreview
+                      ? <img src={videoMeta[i].thumbnailPreview} alt="thumbnail" className="w-full h-full object-cover" />
+                      : <video src={m.url} className="w-full h-full object-cover" />
+                  ) : (
+                    <img src={m.url} alt="" className="w-full h-full object-cover" />
+                  )}
+                  <button onClick={() => removeMedia(i)} className="absolute top-2 right-2 w-7 h-7 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80 transition">
+                    <X className="w-4 h-4 text-white" />
+                  </button>
+                  {m.type === "video" && (
+                    <button
+                      onClick={() => setEditingVideoIndex(editingVideoIndex === i ? null : i)}
+                      className="absolute bottom-2 right-2 flex items-center gap-1 text-xs bg-black/60 text-white px-2 py-1 rounded-lg hover:bg-black/80 transition"
+                    >
+                      <Sliders className="w-3 h-3" /> Edit
+                    </button>
+                  )}
+                  {videoMeta[i]?.chapters?.length > 0 && (
+                    <div className="absolute bottom-2 left-2 text-xs bg-black/60 text-white px-2 py-1 rounded-lg">
+                      {videoMeta[i].chapters.length} chapters
+                    </div>
+                  )}
+                </div>
+                {m.type === "video" && editingVideoIndex === i && (
+                  <VideoEditor
+                    videoUrl={m.url}
+                    onClose={() => setEditingVideoIndex(null)}
+                    onTrimReady={({ startTime, endTime }) =>
+                      setVideoMeta(prev => ({ ...prev, [i]: { ...prev[i], trimStart: startTime, trimEnd: endTime } }))
+                    }
+                    onThumbnailReady={(file, preview) =>
+                      setVideoMeta(prev => ({ ...prev, [i]: { ...prev[i], thumbnailFile: file, thumbnailPreview: preview } }))
+                    }
+                    onChaptersChange={(chapters) =>
+                      setVideoMeta(prev => ({ ...prev, [i]: { ...prev[i], chapters } }))
+                    }
+                  />
                 )}
-                <button
-                  onClick={() => removeMedia(i)}
-                  className="absolute top-2 right-2 w-7 h-7 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80 transition"
-                >
-                  <X className="w-4 h-4 text-white" />
-                </button>
               </div>
             ))}
           </div>
