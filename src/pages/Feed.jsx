@@ -196,6 +196,7 @@ export default function Feed() {
           ))}
         </div>
         )}
+        <FeedPagination total={totalPosts} page={page} onChange={p => { setPage(p); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
       </div>
 
       {/* Preferences Dialog */}
