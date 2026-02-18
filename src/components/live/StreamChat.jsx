@@ -25,10 +25,11 @@ export default function StreamChat({ messages, user, isHost, message, setMessage
   return (
     <div className="flex flex-col h-full">
       {/* Chat Tabs */}
-      <div className="flex gap-1 px-4 pt-3 pb-0 border-b border-slate-200">
+      <div className="flex gap-1 px-4 pt-3 pb-0 border-b border-slate-200 overflow-x-auto">
         {[
           { key: "messages", label: "Chat" },
           { key: "moderation", label: "Moderation", hidden: !isHost },
+          { key: "dashboard", label: "Dashboard", hidden: !isHost },
           { key: "faq", label: "FAQ" }
         ]
           .filter(tab => !tab.hidden)
