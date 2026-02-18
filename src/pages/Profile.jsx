@@ -253,8 +253,14 @@ export default function Profile() {
               </div>
             </div>
             <div className="flex gap-2">
+              <Link to={createPageUrl("ProfileSettings")}>
+                <Button variant="outline" size="sm" className="rounded-xl gap-2">
+                  <Settings className="w-4 h-4" />
+                  Settings
+                </Button>
+              </Link>
               <Button variant="outline" size="sm" className="rounded-xl gap-2" onClick={() => setShowPersonalInfoDialog(true)}>
-                <Settings className="w-4 h-4" />
+                <Edit2 className="w-4 h-4" />
                 Edit
               </Button>
               <Button variant="outline" size="sm" onClick={() => setShowMonetization(true)} className="rounded-xl gap-2 border-green-200 text-green-700 hover:bg-green-50">
