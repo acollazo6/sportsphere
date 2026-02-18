@@ -71,6 +71,7 @@ export default function Layout({ children, currentPageName }) {
     { name: "Notifications", page: "Notifications", icon: Bell, badge: notifCount },
     { name: t("advice"), page: "Advice", icon: Trophy },
     { name: t("profile"), page: "Profile", icon: User },
+    { name: "Profile Settings", page: "ProfileSettings", icon: Settings },
   ];
 
   if (currentPageName === "Login") return <>{children}</>;
