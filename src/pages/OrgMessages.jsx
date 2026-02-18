@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { MessageCircle, Send, Loader2, Paperclip } from "lucide-react";
+import { MessageCircle, Loader2, Paperclip } from "lucide-react";
+import ModeratedMessageInput from "@/components/org/ModeratedMessageInput";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

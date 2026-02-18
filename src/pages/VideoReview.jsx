@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Video, Sparkles, Loader2, CheckCircle, Star, Upload } from "lucide-react";
+import VideoFormAnalysis from "@/components/org/VideoFormAnalysis";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
