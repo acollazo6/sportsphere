@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Radio, Users, ArrowLeft, Send, Crown, DollarSign, Loader2, Pin } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Radio, Users, ArrowLeft, Crown, DollarSign, Loader2, Heart, Share2, Bell, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { toast } from "sonner";
 import TipButton from "../components/monetization/TipButton";
 import ContentSummary from "../components/content/ContentSummary";
+import StreamChat from "../components/live/StreamChat";
+import LiveReactions from "../components/live/LiveReactions";
+import moment from "moment";
 
 export default function ViewLive() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -20,6 +22,8 @@ export default function ViewLive() {
   const [message, setMessage] = useState("");
   const [hasAccess, setHasAccess] = useState(false);
   const [checkingAccess, setCheckingAccess] = useState(true);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [viewerCount, setViewerCount] = useState(0);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
@@ -29,185 +33,130 @@ export default function ViewLive() {
     queryKey: ["stream", streamId],
     queryFn: () => base44.entities.LiveStream.filter({ id: streamId }).then(s => s[0]),
     enabled: !!streamId,
-    refetchInterval: 10000, // Refresh every 10s
+    refetchInterval: 8000,
   });
 
-  const { data: messages } = useQuery({
+  const { data: messages, refetch: refetchChat } = useQuery({
     queryKey: ["stream-chat", streamId],
-    queryFn: () => base44.entities.LiveChat.filter({ stream_id: streamId }, "-created_date", 100),
+    queryFn: () => base44.entities.LiveChat.filter({ stream_id: streamId }, "created_date", 100),
     enabled: !!streamId && hasAccess,
-    refetchInterval: 3000, // Refresh every 3s
+    refetchInterval: 2000,
   });
 
-  // Check access permissions
+  // Real-time subscription to new chat messages
   useEffect(() => {
-    if (!stream || !user) {
-      setCheckingAccess(false);
-      return;
-    }
-
-    const checkAccess = async () => {
-      // Host always has access
-      if (stream.host_email === user.email) {
-        setHasAccess(true);
-        setCheckingAccess(false);
-        return;
+    if (!streamId || !hasAccess) return;
+    const unsub = base44.entities.LiveChat.subscribe((event) => {
+      if (event.data?.stream_id === streamId) {
+        queryClient.invalidateQueries({ queryKey: ["stream-chat", streamId] });
       }
+    });
+    return unsub;
+  }, [streamId, hasAccess]);
 
-      // Free stream
-      if (!stream.is_premium && (!stream.price || stream.price === 0)) {
-        setHasAccess(true);
-        setCheckingAccess(false);
-        return;
-      }
+  // Check follow status
+  useEffect(() => {
+    if (!user || !stream) return;
+    base44.entities.Follow.filter({ follower_email: user.email, following_email: stream.host_email, status: "accepted" })
+      .then(f => setIsFollowing(f.length > 0));
+  }, [user, stream]);
 
-      // Premium stream - check subscription
+  // Access check
+  useEffect(() => {
+    if (!stream || !user) { setCheckingAccess(false); return; }
+    const check = async () => {
+      if (stream.host_email === user.email) { setHasAccess(true); setCheckingAccess(false); return; }
+      if (!stream.is_premium && (!stream.price || stream.price === 0)) { setHasAccess(true); setCheckingAccess(false); return; }
       if (stream.is_premium) {
-        const subs = await base44.entities.Subscription.filter({
-          subscriber_email: user.email,
-          creator_email: stream.host_email,
-          status: "active"
-        });
+        const subs = await base44.entities.Subscription.filter({ subscriber_email: user.email, creator_email: stream.host_email, status: "active" });
         setHasAccess(subs.length > 0);
-        setCheckingAccess(false);
-        return;
+      } else if (stream.price > 0) {
+        const txs = await base44.entities.Transaction.filter({ from_email: user.email, to_email: stream.host_email, type: "ppv" });
+        setHasAccess(txs.some(t => t.stream_id === streamId));
       }
-
-      // Pay-per-view - check transaction
-      if (stream.price > 0) {
-        const transactions = await base44.entities.Transaction.filter({
-          from_email: user.email,
-          to_email: stream.host_email,
-          type: "subscription", // Using subscription type for PPV
-          status: "completed"
-        });
-        // Check if user paid for this stream (simplified - you might want a dedicated transaction type)
-        setHasAccess(transactions.length > 0);
-        setCheckingAccess(false);
-        return;
-      }
-
       setCheckingAccess(false);
     };
-
-    checkAccess();
+    check();
   }, [stream, user]);
 
-  // Add viewer on mount
+  // Add/remove viewer
   useEffect(() => {
     if (!stream || !user || !hasAccess) return;
-    
-    const addViewer = async () => {
-      const viewers = stream.viewers || [];
-      if (!viewers.includes(user.email)) {
-        await base44.entities.LiveStream.update(streamId, {
-          viewers: [...viewers, user.email]
-        });
-        queryClient.invalidateQueries({ queryKey: ["stream", streamId] });
-      }
-    };
-
-    addViewer();
-
-    // Remove viewer on unmount
+    const viewers = stream.viewers || [];
+    if (!viewers.includes(user.email)) {
+      base44.entities.LiveStream.update(streamId, { viewers: [...viewers, user.email] });
+    }
+    setViewerCount((stream.viewers?.length || 0) + 1);
     return () => {
-      const removeViewer = async () => {
-        const viewers = stream.viewers || [];
-        await base44.entities.LiveStream.update(streamId, {
-          viewers: viewers.filter(e => e !== user.email)
-        });
-      };
-      removeViewer();
+      base44.entities.LiveStream.update(streamId, {
+        viewers: (stream.viewers || []).filter(e => e !== user.email)
+      });
     };
-  }, [stream, user, hasAccess]);
+  }, [stream?.id, user?.email, hasAccess]);
 
   const handlePayment = async () => {
-    if (!user) {
-      toast.error("Please login to purchase access");
-      return;
-    }
-
-    // Create transaction
+    if (!user) { toast.error("Please login to purchase access"); return; }
     await base44.entities.Transaction.create({
-      from_email: user.email,
-      to_email: stream.host_email,
-      type: "subscription",
-      amount: stream.price,
-      status: "completed",
+      from_email: user.email, to_email: stream.host_email,
+      type: "ppv", amount: stream.price, status: "completed", stream_id: streamId,
     });
-
-    // Send notification
     await base44.entities.Notification.create({
-      recipient_email: stream.host_email,
-      actor_email: user.email,
-      actor_name: user.full_name,
-      actor_avatar: user.avatar_url,
-      type: "follow",
-      message: `purchased access to your live stream ($${stream.price})`,
+      recipient_email: stream.host_email, actor_email: user.email,
+      actor_name: user.full_name, actor_avatar: user.avatar_url,
+      type: "follow", message: `purchased access to your live stream ($${stream.price})`,
     });
-
     toast.success("Access granted! Enjoy the stream 🎉");
     setHasAccess(true);
   };
 
+  const handleFollow = async () => {
+    if (!user) return;
+    if (isFollowing) {
+      const follows = await base44.entities.Follow.filter({ follower_email: user.email, following_email: stream.host_email });
+      if (follows[0]) await base44.entities.Follow.delete(follows[0].id);
+      setIsFollowing(false);
+      toast.success("Unfollowed");
+    } else {
+      await base44.entities.Follow.create({ follower_email: user.email, following_email: stream.host_email, status: "accepted" });
+      await base44.entities.Notification.create({
+        recipient_email: stream.host_email, actor_email: user.email,
+        actor_name: user.full_name, type: "follow", message: "started following you",
+      });
+      setIsFollowing(true);
+      toast.success("Following! You'll see their content in your feed.");
+    }
+  };
+
   const sendMessage = async () => {
     if (!message.trim() || !user) return;
-
-    // AI Content moderation for live chat
-    try {
-      const moderation = await base44.integrations.Core.InvokeLLM({
-        prompt: `Analyze this live chat message for inappropriate content (profanity, harassment, spam, hate speech): "${message.trim()}". Return JSON: {"is_appropriate": boolean, "reason": string, "action": "allow"|"flag"|"block"}`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            is_appropriate: { type: "boolean" },
-            reason: { type: "string" },
-            action: { type: "string", enum: ["allow", "flag", "block"] }
-          }
-        }
-      });
-
-      if (moderation.action === "block") {
-        toast.error(`Message blocked: ${moderation.reason}`);
-        return;
-      }
-
-      if (moderation.action === "flag") {
-        await base44.entities.Report.create({
-          reporter_email: "system",
-          reported_item_type: "message",
-          reported_item_id: streamId,
-          reason: "inappropriate",
-          details: `AI flagged live chat: ${moderation.reason}`,
-          status: "pending"
-        });
-      }
-    } catch (error) {
-      console.error("Moderation failed:", error);
-    }
-
+    const trimmed = message.trim();
+    setMessage("");
     await base44.entities.LiveChat.create({
       stream_id: streamId,
       sender_email: user.email,
       sender_name: user.full_name,
       sender_avatar: user.avatar_url,
-      message: message.trim(),
+      message: trimmed,
+      is_host_tag: stream.host_email === user.email,
     });
-
-    setMessage("");
     queryClient.invalidateQueries({ queryKey: ["stream-chat", streamId] });
   };
 
-  const togglePinMessage = async (msg) => {
+  const togglePin = async (msg) => {
     if (stream.host_email !== user?.email) return;
     await base44.entities.LiveChat.update(msg.id, { is_pinned: !msg.is_pinned });
     queryClient.invalidateQueries({ queryKey: ["stream-chat", streamId] });
   };
 
+  const shareStream = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success("Stream link copied! 📋");
+  };
+
   if (isLoading || checkingAccess) {
     return (
-      <div className="flex justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader2 className="w-10 h-10 animate-spin text-red-500" />
       </div>
     );
   }
@@ -215,30 +164,32 @@ export default function ViewLive() {
   if (!stream) {
     return (
       <div className="text-center py-20">
-        <p className="text-slate-500">Stream not found</p>
+        <p className="text-slate-400 text-lg">Stream not found</p>
+        <Link to={createPageUrl("Live")} className="text-red-600 mt-3 inline-block font-semibold">← Back to Live</Link>
       </div>
     );
   }
 
   const isHost = stream.host_email === user?.email;
-  const pinnedMessages = messages?.filter(m => m.is_pinned) || [];
-  const regularMessages = messages?.filter(m => !m.is_pinned) || [];
+  const isLive = stream.status === "live";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <Link to={createPageUrl("Live")} className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-4 font-semibold">
+    <div className="min-h-screen bg-slate-950">
+      <div className="max-w-7xl mx-auto px-3 py-4">
+        {/* Back */}
+        <Link to={createPageUrl("Live")} className="inline-flex items-center gap-2 text-slate-400 hover:text-white mb-4 text-sm font-medium transition-colors">
           <ArrowLeft className="w-4 h-4" />
           Back to Live
         </Link>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Video Player */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="bg-white/80 backdrop-blur-xl rounded-3xl border-2 border-white/50 overflow-hidden shadow-2xl shadow-purple-500/20">
+        <div className="grid lg:grid-cols-3 gap-4 h-[calc(100vh-120px)] min-h-[600px]">
+          {/* Video + Info */}
+          <div className="lg:col-span-2 flex flex-col gap-4 min-h-0">
+            {/* Video Player */}
+            <div className="bg-black rounded-2xl overflow-hidden flex-shrink-0">
               {hasAccess ? (
-                <>
-                  <div className="aspect-video bg-gradient-to-br from-slate-900 to-slate-800 relative flex items-center justify-center">
+                <div className="relative">
+                  <div className="aspect-video bg-gradient-to-br from-slate-900 to-slate-800 relative">
                     {stream.stream_url ? (
                       <iframe
                         src={stream.stream_url}
@@ -247,75 +198,59 @@ export default function ViewLive() {
                         allowFullScreen
                       />
                     ) : (
-                      <div className="text-center text-white p-8">
-                        <Radio className="w-16 h-16 mx-auto mb-4 animate-pulse" />
-                        <p className="text-xl font-bold">Live Stream Active</p>
-                        <p className="text-slate-300 mt-2">Stream URL not configured</p>
+                      <div className="w-full h-full flex items-center justify-center">
+                        <div className="text-center text-white p-8">
+                          <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-red-600/20 border-2 border-red-500 flex items-center justify-center">
+                            <Radio className="w-10 h-10 text-red-400 animate-pulse" />
+                          </div>
+                          <p className="text-2xl font-bold mb-1">{stream.title}</p>
+                          <p className="text-slate-400">Stream is active — host hasn't added a stream URL yet</p>
+                          {isHost && (
+                            <p className="text-amber-400 text-sm mt-3">
+                              Tip: Add a YouTube/Twitch embed URL when you go live so viewers can watch!
+                            </p>
+                          )}
+                        </div>
                       </div>
                     )}
-                    <div className="absolute top-4 left-4 px-4 py-2 bg-red-600 text-white text-sm font-black rounded-full flex items-center gap-2 shadow-xl shadow-red-500/50 animate-pulse">
-                      <Radio className="w-4 h-4" />
-                      LIVE
-                    </div>
-                  </div>
-                  <div className="p-6 space-y-4 bg-gradient-to-br from-white/90 to-purple-50/50 backdrop-blur-sm">
-                    <h1 className="text-2xl font-black text-slate-900">{stream.title}</h1>
-                    <div className="flex items-center justify-between flex-wrap gap-3">
-                      <Link to={createPageUrl("UserProfile") + `?email=${stream.host_email}`} className="flex items-center gap-3 group">
-                        <Avatar className="w-12 h-12 ring-3 ring-purple-200 group-hover:ring-purple-400 transition-all">
-                          <AvatarImage src={stream.host_avatar} />
-                          <AvatarFallback className="bg-gradient-to-br from-purple-400 to-pink-400 text-white font-bold">
-                            {stream.host_name?.[0]?.toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-bold text-slate-900 group-hover:text-purple-600 transition-colors">{stream.host_name}</p>
-                          <div className="flex items-center gap-2 text-sm text-slate-500">
-                            <Users className="w-4 h-4 text-purple-500" />
-                            <span className="font-semibold">{stream.viewers?.length || 0} watching</span>
-                          </div>
-                        </div>
-                      </Link>
-                      {stream.sport && (
-                        <Badge className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-bold">{stream.sport}</Badge>
-                      )}
-                      {user && stream.host_email !== user.email && (
-                        <TipButton
-                          creator={{ email: stream.host_email, name: stream.host_name }}
-                          contextType="stream"
-                          contextId={stream.id}
-                          variant="outline"
-                          size="sm"
-                        />
-                      )}
-                    </div>
-                    {stream.description && (
-                      <p className="text-slate-600 leading-relaxed">{stream.description}</p>
+                    {isLive && (
+                      <div className="absolute top-3 left-3 flex items-center gap-2">
+                        <Badge className="bg-red-600 text-white gap-1.5 font-bold text-xs px-3 py-1 animate-pulse">
+                          <Radio className="w-3 h-3" /> LIVE
+                        </Badge>
+                        <Badge className="bg-black/70 text-white gap-1 font-semibold text-xs px-2 py-1">
+                          <Users className="w-3 h-3" /> {stream.viewers?.length || 0}
+                        </Badge>
+                      </div>
                     )}
-                    {stream.status === "ended" && stream.ai_summary && (
-                      <ContentSummary content={stream} type="stream" />
+                    {!isLive && (
+                      <div className="absolute top-3 left-3">
+                        <Badge className="bg-slate-600 text-white font-bold text-xs px-3 py-1">ENDED</Badge>
+                      </div>
                     )}
                   </div>
-                </>
+                </div>
               ) : (
-                <div className="aspect-video bg-gradient-to-br from-purple-600 via-pink-500 to-orange-500 relative flex items-center justify-center p-8">
+                <div className="aspect-video bg-gradient-to-br from-slate-900 to-red-950 flex items-center justify-center p-8">
                   <div className="text-center text-white max-w-md">
                     {stream.is_premium ? (
                       <>
-                        <Crown className="w-20 h-20 mx-auto mb-4 drop-shadow-xl" />
-                        <h2 className="text-3xl font-black mb-3 drop-shadow-lg">Premium Stream</h2>
-                        <p className="text-white/90 mb-6 font-semibold">Subscribe to {stream.host_name} to watch this exclusive content</p>
+                        <Crown className="w-16 h-16 mx-auto mb-4 text-yellow-400" />
+                        <h2 className="text-2xl font-black mb-2">Premium Stream</h2>
+                        <p className="text-slate-300 mb-6">Subscribe to {stream.host_name} to watch this exclusive stream</p>
+                        <Link to={createPageUrl("UserProfile") + `?email=${stream.host_email}`}>
+                          <Button className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl px-8">
+                            View Subscription Plans
+                          </Button>
+                        </Link>
                       </>
                     ) : (
                       <>
-                        <DollarSign className="w-20 h-20 mx-auto mb-4 drop-shadow-xl" />
-                        <h2 className="text-3xl font-black mb-3 drop-shadow-lg">Pay-Per-View</h2>
-                        <p className="text-white/90 mb-6 font-semibold">One-time payment of ${stream.price} to watch this stream</p>
-                        <Button
-                          onClick={handlePayment}
-                          className="bg-white text-purple-600 hover:bg-white/90 rounded-2xl px-8 py-6 text-lg font-bold shadow-2xl"
-                        >
-                          Purchase Access - ${stream.price}
+                        <DollarSign className="w-16 h-16 mx-auto mb-4 text-green-400" />
+                        <h2 className="text-2xl font-black mb-2">Pay-Per-View</h2>
+                        <p className="text-slate-300 mb-6">One-time payment of <span className="text-green-400 font-bold">${stream.price}</span> to watch</p>
+                        <Button onClick={handlePayment} className="bg-green-500 hover:bg-green-400 text-black font-bold rounded-xl px-8">
+                          Purchase Access — ${stream.price}
                         </Button>
                       </>
                     )}
@@ -323,87 +258,110 @@ export default function ViewLive() {
                 </div>
               )}
             </div>
-          </div>
 
-          {/* Live Chat */}
-          {hasAccess && (
-            <div className="bg-white/80 backdrop-blur-xl rounded-3xl border-2 border-white/50 shadow-2xl shadow-purple-500/20 flex flex-col h-[600px]">
-              <div className="p-4 border-b border-purple-100 bg-gradient-to-r from-purple-50 to-pink-50">
-                <h2 className="font-black text-lg text-slate-900 flex items-center gap-2">
-                  💬 Live Chat
-                  <Badge variant="secondary" className="bg-purple-100 text-purple-700 font-bold">
-                    {messages?.length || 0}
-                  </Badge>
-                </h2>
-              </div>
-
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                {pinnedMessages.map(msg => (
-                  <div key={msg.id} className="bg-gradient-to-r from-amber-100 to-orange-100 rounded-2xl p-3 border-2 border-amber-300 shadow-lg">
-                    <div className="flex items-start gap-2">
-                      <Pin className="w-4 h-4 text-amber-600 flex-shrink-0 mt-1" />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <Avatar className="w-6 h-6">
-                            <AvatarImage src={msg.sender_avatar} />
-                            <AvatarFallback className="text-xs bg-amber-200">{msg.sender_name?.[0]}</AvatarFallback>
-                          </Avatar>
-                          <p className="font-bold text-sm text-amber-900 truncate">{msg.sender_name}</p>
-                        </div>
-                        <p className="text-sm text-amber-900 break-words">{msg.message}</p>
-                      </div>
-                      {isHost && (
-                        <button onClick={() => togglePinMessage(msg)} className="text-amber-600 hover:text-amber-800">
-                          <Pin className="w-4 h-4 fill-current" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-
-                {regularMessages.map(msg => (
-                  <div key={msg.id} className="flex items-start gap-2 hover:bg-purple-50/50 rounded-xl p-2 transition-colors group">
-                    <Avatar className="w-8 h-8 flex-shrink-0">
-                      <AvatarImage src={msg.sender_avatar} />
-                      <AvatarFallback className="text-xs bg-gradient-to-br from-purple-200 to-pink-200">{msg.sender_name?.[0]}</AvatarFallback>
+            {/* Stream Info */}
+            <div className="bg-slate-900 rounded-2xl p-4 flex-shrink-0">
+              <h1 className="text-xl font-black text-white mb-3">{stream.title}</h1>
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                <div className="flex items-center gap-3">
+                  <Link to={createPageUrl("UserProfile") + `?email=${stream.host_email}`}>
+                    <Avatar className="w-10 h-10 ring-2 ring-red-500/50">
+                      <AvatarImage src={stream.host_avatar} />
+                      <AvatarFallback className="bg-red-700 text-white font-bold">{stream.host_name?.[0]?.toUpperCase()}</AvatarFallback>
                     </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm text-slate-900 truncate">{msg.sender_name}</p>
-                      <p className="text-sm text-slate-700 break-words">{msg.message}</p>
-                    </div>
-                    {isHost && (
-                      <button onClick={() => togglePinMessage(msg)} className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-purple-600 transition-all">
-                        <Pin className="w-4 h-4" />
-                      </button>
-                    )}
+                  </Link>
+                  <div>
+                    <p className="text-white font-bold text-sm">{stream.host_name}</p>
+                    <p className="text-slate-400 text-xs">{moment(stream.started_at).fromNow()}</p>
                   </div>
-                ))}
+                  {user && !isHost && (
+                    <Button
+                      onClick={handleFollow}
+                      size="sm"
+                      variant={isFollowing ? "outline" : "default"}
+                      className={`rounded-xl text-xs font-bold ${isFollowing ? "border-slate-600 text-slate-300 hover:border-red-500 hover:text-red-400" : "bg-red-600 hover:bg-red-700 text-white"}`}
+                    >
+                      {isFollowing ? (
+                        <><CheckCircle className="w-3 h-3" /> Following</>
+                      ) : (
+                        <><Bell className="w-3 h-3" /> Follow</>
+                      )}
+                    </Button>
+                  )}
+                </div>
 
-                {messages?.length === 0 && (
-                  <div className="text-center py-12">
-                    <p className="text-slate-400 text-sm">No messages yet. Start the conversation! 💬</p>
-                  </div>
-                )}
+                <div className="flex items-center gap-2">
+                  {stream.sport && <Badge className="bg-slate-700 text-slate-300 font-semibold text-xs">{stream.sport}</Badge>}
+                  <Button onClick={shareStream} variant="ghost" size="sm" className="text-slate-400 hover:text-white rounded-xl">
+                    <Share2 className="w-4 h-4" />
+                  </Button>
+                  {user && !isHost && (
+                    <TipButton
+                      creator={{ email: stream.host_email, name: stream.host_name }}
+                      contextType="stream"
+                      contextId={stream.id}
+                      variant="outline"
+                      size="sm"
+                    />
+                  )}
+                </div>
               </div>
 
-              {user && (
-                <div className="p-4 border-t border-purple-100 bg-gradient-to-r from-purple-50 to-pink-50">
-                  <div className="flex gap-2">
-                    <Input
-                      value={message}
-                      onChange={e => setMessage(e.target.value)}
-                      onKeyPress={e => e.key === "Enter" && sendMessage()}
-                      placeholder="Say something..."
-                      className="rounded-2xl border-2 border-purple-200 focus:border-purple-400 font-medium"
-                    />
-                    <Button onClick={sendMessage} className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-2xl px-6 font-bold shadow-lg">
-                      <Send className="w-4 h-4" />
-                    </Button>
-                  </div>
+              {stream.description && (
+                <p className="text-slate-400 text-sm mt-3 leading-relaxed">{stream.description}</p>
+              )}
+
+              {stream.status === "ended" && stream.ai_summary && (
+                <div className="mt-3 p-3 bg-slate-800 rounded-xl">
+                  <p className="text-xs font-bold text-slate-400 mb-1">✨ AI Stream Summary</p>
+                  <p className="text-slate-300 text-sm leading-relaxed">{stream.ai_summary}</p>
+                </div>
+              )}
+
+              {/* Reactions */}
+              {hasAccess && isLive && user && (
+                <div className="mt-3 pt-3 border-t border-slate-800">
+                  <p className="text-xs text-slate-500 mb-2 font-medium">React to the stream:</p>
+                  <LiveReactions streamId={streamId} user={user} />
                 </div>
               )}
             </div>
-          )}
+          </div>
+
+          {/* Chat Panel */}
+          <div className="bg-slate-900 rounded-2xl border border-slate-800 flex flex-col overflow-hidden min-h-0 max-h-[80vh] lg:max-h-full">
+            {/* Chat Header */}
+            <div className="px-4 py-3 border-b border-slate-800 flex items-center justify-between flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <h3 className="text-white font-black">Live Chat</h3>
+                {isLive && (
+                  <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                )}
+              </div>
+              <Badge className="bg-slate-700 text-slate-300 font-semibold text-xs">
+                {messages?.length || 0} messages
+              </Badge>
+            </div>
+
+            {hasAccess ? (
+              <StreamChat
+                messages={messages}
+                user={user}
+                isHost={isHost}
+                message={message}
+                setMessage={setMessage}
+                onSend={sendMessage}
+                onPin={togglePin}
+              />
+            ) : (
+              <div className="flex-1 flex items-center justify-center p-6">
+                <div className="text-center">
+                  <p className="text-4xl mb-3">🔒</p>
+                  <p className="text-slate-400 text-sm font-medium">Purchase access to join the chat</p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
