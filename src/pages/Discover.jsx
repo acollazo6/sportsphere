@@ -598,6 +598,13 @@ Based on the user's interests, provide personalized recommendations. Return a JS
           </div>
         )}
 
+        {/* Content Digest / Newsletter */}
+        <ContentDigest
+          user={user}
+          followedEmails={follows.map(f => f.following_email)}
+          interests={[...new Set([...(sportProfiles.map(p => p.sport)), ...(preferences?.preferred_sports || [])])]}
+        />
+
         <Button onClick={generateRecommendations} variant="outline" className="w-full border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10">
           <Sparkles className="w-4 h-4 mr-2" />
           Refresh Recommendations
