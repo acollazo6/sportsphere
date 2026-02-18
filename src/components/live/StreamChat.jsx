@@ -108,9 +108,25 @@ export default function StreamChat({ messages, user, isHost, message, setMessage
               )}
             </div>
           );
-        })}
-        <div ref={bottomRef} />
-      </div>
+          })}
+          <div ref={bottomRef} />
+        </div>
+        </>
+      )}
+
+      {/* Moderation Tab */}
+      {chatTab === "moderation" && isHost && (
+        <div className="flex-1 overflow-y-auto p-4">
+          <ChatModeration messages={messages} streamId={""} isHost={isHost} />
+        </div>
+      )}
+
+      {/* FAQ Tab */}
+      {chatTab === "faq" && (
+        <div className="flex-1 overflow-y-auto p-4">
+          <ChatFAQ streamTitle={streamTitle} streamDescription={streamDescription} isHost={isHost} />
+        </div>
+      )}
 
       {/* Input */}
       {user ? (
