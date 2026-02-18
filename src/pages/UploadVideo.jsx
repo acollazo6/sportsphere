@@ -24,6 +24,8 @@ export default function UploadVideo() {
   const [videoFile, setVideoFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [done, setDone] = useState(false);
+  const [showEditor, setShowEditor] = useState(false);
+  const [videoMeta, setVideoMeta] = useState({ thumbnailFile: null, thumbnailPreview: null, chapters: [], trimStart: undefined, trimEnd: undefined });
 
   useEffect(() => {
     base44.auth.me().then(async u => {
