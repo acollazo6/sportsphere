@@ -64,7 +64,7 @@ export default function Feed() {
     return true;
   });
 
-  const posts = filteredPosts?.filter(post => {
+  const searchedPosts = filteredPosts?.filter(post => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
@@ -74,6 +74,9 @@ export default function Feed() {
       post.category?.toLowerCase().includes(query)
     );
   });
+
+  const totalPosts = searchedPosts?.length || 0;
+  const posts = searchedPosts?.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   // Get highlight reels for preferred sports
   const highlightSports = preferences?.preferred_sports?.length > 0 
