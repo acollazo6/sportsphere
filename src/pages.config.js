@@ -82,6 +82,7 @@ import UserProfile from './pages/UserProfile';
 import ViewLive from './pages/ViewLive';
 import OrgDashboard from './pages/OrgDashboard';
 import OrgRoster from './pages/OrgRoster';
+import TrainingPlans from './pages/TrainingPlans';
 import __Layout from './Layout.jsx';
 
 
@@ -121,6 +122,7 @@ export const PAGES = {
     "ViewLive": ViewLive,
     "OrgDashboard": OrgDashboard,
     "OrgRoster": OrgRoster,
+    "TrainingPlans": TrainingPlans,
 }
 
 export const pagesConfig = {
