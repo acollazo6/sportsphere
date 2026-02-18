@@ -12,7 +12,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import PostCard from "../components/feed/PostCard";
 import SubscriptionTiers from "../components/monetization/SubscriptionTiers";
-import TipButton from "../components/monetization/TipButton";
 
 export default function UserProfile() {
   const urlParams = new URLSearchParams(window.location.search);
