@@ -220,9 +220,9 @@ export default function Feed() {
         </div>
       ) : posts?.length === 0 ? (
         <div className="text-center py-20">
-          <p className="text-6xl mb-4">🏟️</p>
-          <p className="text-slate-500 font-medium">No posts yet</p>
-          <p className="text-slate-400 text-sm mt-1">Be the first to share something!</p>
+          <p className="text-6xl mb-4">{feedTab === "following" ? "👥" : "🏟️"}</p>
+          <p className="text-slate-500 font-medium">{feedTab === "following" ? "No posts from people you follow yet" : "No posts yet"}</p>
+          <p className="text-slate-400 text-sm mt-1">{feedTab === "following" ? "Follow athletes to see their content here!" : "Be the first to share something!"}</p>
         </div>
       ) : (
         <div className="space-y-5">
