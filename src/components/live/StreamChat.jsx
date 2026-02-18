@@ -122,7 +122,14 @@ export default function StreamChat({ messages, user, isHost, message, setMessage
       {/* Moderation Tab */}
       {chatTab === "moderation" && isHost && (
         <div className="flex-1 overflow-y-auto p-4">
-          <ChatModeration messages={messages} streamId={""} isHost={isHost} />
+          <ChatModeration messages={messages} streamId={streamId} isHost={isHost} />
+        </div>
+      )}
+
+      {/* Dashboard Tab */}
+      {chatTab === "dashboard" && isHost && (
+        <div className="flex-1 overflow-y-auto p-4">
+          <ModerationDashboard streamId={streamId} isHost={isHost} />
         </div>
       )}
 
