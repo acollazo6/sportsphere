@@ -124,17 +124,25 @@ export default function OrgMessages() {
           </div>
 
           {/* Input */}
-          <div className="border-t border-gray-100 p-3 flex gap-2">
-            <Input
-              value={text}
-              onChange={e => setText(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage()}
+          <div className="border-t border-gray-100 p-3">
+            <ModeratedMessageInput
               placeholder={`Message #${channel}...`}
-              className="rounded-xl flex-1"
+              onSend={(msg) => {
+                const sendIt = async () => {
+                  if (!orgId || !user) return;
+                  await base44.entities.OrgMessage.create({
+                    organization_id: orgId,
+                    sender_email: user.email,
+                    sender_name: user.full_name,
+                    sender_role: membership?.role || "athlete",
+                    channel,
+                    content: msg,
+                  });
+                  qc.invalidateQueries(["org-messages", orgId, channel]);
+                };
+                sendIt();
+              }}
             />
-            <Button onClick={sendMessage} disabled={sending || !text.trim()} className="bg-red-900 hover:bg-red-800 text-white rounded-xl px-4">
-              {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-            </Button>
           </div>
         </div>
       </div>
