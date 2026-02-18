@@ -84,6 +84,7 @@ import OrgDashboard from './pages/OrgDashboard';
 import OrgRoster from './pages/OrgRoster';
 import TrainingPlans from './pages/TrainingPlans';
 import VideoReview from './pages/VideoReview';
+import UploadVideo from './pages/UploadVideo';
 import __Layout from './Layout.jsx';
 
 
@@ -125,6 +126,7 @@ export const PAGES = {
     "OrgRoster": OrgRoster,
     "TrainingPlans": TrainingPlans,
     "VideoReview": VideoReview,
+    "UploadVideo": UploadVideo,
 }
 
 export const pagesConfig = {
