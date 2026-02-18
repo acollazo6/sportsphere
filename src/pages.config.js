@@ -66,6 +66,7 @@ import Feed from './pages/Feed';
 import ForYou from './pages/ForYou';
 import ForumTopic from './pages/ForumTopic';
 import Forums from './pages/Forums';
+import GitHubExport from './pages/GitHubExport';
 import GroupDetail from './pages/GroupDetail';
 import Groups from './pages/Groups';
 import Guidelines from './pages/Guidelines';
@@ -93,7 +94,6 @@ import UploadVideo from './pages/UploadVideo';
 import UserProfile from './pages/UserProfile';
 import VideoReview from './pages/VideoReview';
 import ViewLive from './pages/ViewLive';
-import GitHubExport from './pages/GitHubExport';
 import __Layout from './Layout.jsx';
 
 
@@ -117,6 +117,7 @@ export const PAGES = {
     "ForYou": ForYou,
     "ForumTopic": ForumTopic,
     "Forums": Forums,
+    "GitHubExport": GitHubExport,
     "GroupDetail": GroupDetail,
     "Groups": Groups,
     "Guidelines": Guidelines,
@@ -144,7 +145,6 @@ export const PAGES = {
     "UserProfile": UserProfile,
     "VideoReview": VideoReview,
     "ViewLive": ViewLive,
-    "GitHubExport": GitHubExport,
 }
 
 export const pagesConfig = {
