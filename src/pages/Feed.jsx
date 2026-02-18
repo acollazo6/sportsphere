@@ -191,12 +191,12 @@ export default function Feed() {
 
       {/* Live Now Section */}
       {!searchQuery && !sportFilter && (
-        <LiveNowSection user={user} userPreferences={userPreferences} />
+        <LiveNowSection user={user} userPreferences={preferences} />
       )}
 
       {/* Recommendations */}
       {!searchQuery && !sportFilter && (
-        <StreamRecommendations user={user} userPreferences={userPreferences} />
+        <StreamRecommendations user={user} userPreferences={preferences} />
       )}
 
       {/* Upcoming Streams */}
