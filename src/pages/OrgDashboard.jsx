@@ -213,6 +213,11 @@ export default function OrgDashboard() {
                 <MessageCircle className="w-4 h-4" /> Team Messages
               </Button>
             </Link>
+            <Link to={createPageUrl("AthleteInsights")}>
+              <Button className="w-full justify-start gap-3 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-100 shadow-none font-semibold">
+                <Sparkles className="w-4 h-4" /> AI Insights
+              </Button>
+            </Link>
             {role === "admin" && (
               <Link to={createPageUrl("OrgRoster")}>
                 <Button className="w-full justify-start gap-3 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 shadow-none font-semibold">
