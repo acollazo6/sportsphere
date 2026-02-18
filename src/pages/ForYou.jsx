@@ -354,6 +354,9 @@ export default function ForYou() {
         </div>
       </div>
 
+      {/* AI Stream Recommendations */}
+      <AIStreamRecommendations />
+
       {/* Followed user activity strip */}
       <FollowedUserActivity follows={follows} user={user} />
 
