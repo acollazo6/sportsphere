@@ -21,8 +21,34 @@ export default function StreamChat({ messages, user, isHost, message, setMessage
 
   return (
     <div className="flex flex-col h-full">
-      {/* Pinned messages */}
-      {pinnedMessages.length > 0 && (
+      {/* Chat Tabs */}
+      <div className="flex gap-1 px-4 pt-3 pb-0 border-b border-slate-200">
+        {[
+          { key: "messages", label: "Chat" },
+          { key: "moderation", label: "Moderation", hidden: !isHost },
+          { key: "faq", label: "FAQ" }
+        ]
+          .filter(tab => !tab.hidden)
+          .map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => setChatTab(tab.key)}
+              className={`px-3 py-2 text-xs font-bold border-b-2 transition-colors ${
+                chatTab === tab.key
+                  ? "border-red-600 text-slate-800"
+                  : "border-transparent text-slate-400 hover:text-slate-600"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+      </div>
+
+      {/* Messages Tab */}
+      {chatTab === "messages" && (
+        <>
+          {/* Pinned messages */}
+          {pinnedMessages.length > 0 && (
         <div className="px-4 pt-3 space-y-2">
           {pinnedMessages.map(msg => (
             <div key={msg.id} className="bg-amber-50 border border-amber-200 rounded-xl p-2.5 flex items-start gap-2">
