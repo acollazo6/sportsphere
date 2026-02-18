@@ -265,7 +265,17 @@ export default function ViewLive() {
               )}
             </div>
 
-            {/* Stream Info */}
+            {/* Stream Info / Summary & Clips */}
+            {!isLive && (
+              <div className="max-h-96 overflow-y-auto">
+                {activeSummaryTab === "summary" ? (
+                  <StreamSummaryPanel stream={stream} transcript={messages?.map(m => m.message).join("\n") || ""} />
+                ) : (
+                  <HighlightClipGenerator stream={stream} />
+                )}
+              </div>
+            )}
+
             <div className="bg-slate-900 rounded-2xl p-4 flex-shrink-0">
               <h1 className="text-xl font-black text-white mb-3">{stream.title}</h1>
               <div className="flex items-center justify-between flex-wrap gap-3">
