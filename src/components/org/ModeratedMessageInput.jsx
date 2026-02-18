@@ -1,4 +1,4 @@
-import React, { useState } from "base44";
+import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Send, Loader2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
