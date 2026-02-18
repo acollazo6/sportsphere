@@ -92,6 +92,7 @@ import OrgMessages from './pages/OrgMessages';
 import TrainingPlanDetail from './pages/TrainingPlanDetail';
 import Onboarding from './pages/Onboarding';
 import AthleteInsights from './pages/AthleteInsights';
+import AdminHealth from './pages/AdminHealth';
 import __Layout from './Layout.jsx';
 
 
@@ -141,6 +142,7 @@ export const PAGES = {
     "TrainingPlanDetail": TrainingPlanDetail,
     "Onboarding": Onboarding,
     "AthleteInsights": AthleteInsights,
+    "AdminHealth": AdminHealth,
 }
 
 export const pagesConfig = {
