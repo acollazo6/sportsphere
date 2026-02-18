@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Radio, Users, ArrowLeft, Crown, DollarSign, Loader2, Heart, Share2, Bell, CheckCircle } from "lucide-react";
+import { Radio, Users, ArrowLeft, Crown, DollarSign, Loader2, Share2, Bell, CheckCircle, MessageSquare, BarChart2, MessageCircleQuestion } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { toast } from "sonner";
@@ -12,6 +12,8 @@ import TipButton from "../components/monetization/TipButton";
 import ContentSummary from "../components/content/ContentSummary";
 import StreamChat from "../components/live/StreamChat";
 import LiveReactions from "../components/live/LiveReactions";
+import StreamPolls from "../components/live/StreamPolls";
+import StreamQA from "../components/live/StreamQA";
 import moment from "moment";
 
 export default function ViewLive() {
