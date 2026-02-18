@@ -143,6 +143,20 @@ export default function Feed() {
         />
       </div>
 
+      {/* Feed Tabs */}
+      {user && (
+        <Tabs value={feedTab} onValueChange={v => { setFeedTab(v); resetPage(); }} className="w-full">
+          <TabsList className="w-full rounded-2xl bg-slate-100 h-11">
+            <TabsTrigger value="forYou" className="flex-1 rounded-xl gap-2 text-sm font-semibold">
+              <Sparkles className="w-4 h-4" /> For You
+            </TabsTrigger>
+            <TabsTrigger value="following" className="flex-1 rounded-xl gap-2 text-sm font-semibold">
+              <Users className="w-4 h-4" /> Following
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+      )}
+
       {/* Preferences & Sport Filter */}
       <div className="flex items-center gap-3">
         <div className="flex-1">
