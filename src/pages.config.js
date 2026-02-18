@@ -91,6 +91,7 @@ import ParentView from './pages/ParentView';
 import OrgMessages from './pages/OrgMessages';
 import TrainingPlanDetail from './pages/TrainingPlanDetail';
 import Onboarding from './pages/Onboarding';
+import AthleteInsights from './pages/AthleteInsights';
 import __Layout from './Layout.jsx';
 
 
@@ -139,6 +140,7 @@ export const PAGES = {
     "OrgMessages": OrgMessages,
     "TrainingPlanDetail": TrainingPlanDetail,
     "Onboarding": Onboarding,
+    "AthleteInsights": AthleteInsights,
 }
 
 export const pagesConfig = {
