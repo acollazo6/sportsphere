@@ -330,31 +330,56 @@ export default function ViewLive() {
             </div>
           </div>
 
-          {/* Chat Panel */}
+          {/* Chat / Polls / Q&A Panel */}
           <div className="bg-slate-900 rounded-2xl border border-slate-800 flex flex-col overflow-hidden min-h-0 max-h-[80vh] lg:max-h-full">
-            {/* Chat Header */}
-            <div className="px-4 py-3 border-b border-slate-800 flex items-center justify-between flex-shrink-0">
-              <div className="flex items-center gap-2">
-                <h3 className="text-white font-black">Live Chat</h3>
-                {isLive && (
-                  <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                )}
+            {/* Tab Header */}
+            <div className="px-4 pt-3 pb-0 border-b border-slate-800 flex-shrink-0">
+              <div className="flex items-center gap-1">
+                {[
+                  { key: "chat", icon: MessageSquare, label: "Chat" },
+                  { key: "polls", icon: BarChart2, label: "Polls" },
+                  { key: "qa", icon: MessageCircleQuestion, label: "Q&A" },
+                ].map(tab => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setPanelTab(tab.key)}
+                    className={`flex items-center gap-1.5 px-3 py-2 text-xs font-bold border-b-2 transition-colors
+                      ${panelTab === tab.key
+                        ? "border-red-500 text-white"
+                        : "border-transparent text-slate-400 hover:text-slate-200"}`}
+                  >
+                    <tab.icon className="w-3.5 h-3.5" />
+                    {tab.label}
+                    {tab.key === "chat" && isLive && <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />}
+                  </button>
+                ))}
               </div>
-              <Badge className="bg-slate-700 text-slate-300 font-semibold text-xs">
-                {messages?.length || 0} messages
-              </Badge>
             </div>
 
             {hasAccess ? (
-              <StreamChat
-                messages={messages}
-                user={user}
-                isHost={isHost}
-                message={message}
-                setMessage={setMessage}
-                onSend={sendMessage}
-                onPin={togglePin}
-              />
+              <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+                {panelTab === "chat" && (
+                  <StreamChat
+                    messages={messages}
+                    user={user}
+                    isHost={isHost}
+                    message={message}
+                    setMessage={setMessage}
+                    onSend={sendMessage}
+                    onPin={togglePin}
+                  />
+                )}
+                {panelTab === "polls" && (
+                  <div className="flex-1 overflow-y-auto p-4">
+                    <StreamPolls streamId={streamId} user={user} isHost={isHost} isLive={isLive} />
+                  </div>
+                )}
+                {panelTab === "qa" && (
+                  <div className="flex-1 flex flex-col overflow-hidden p-4 min-h-0">
+                    <StreamQA streamId={streamId} user={user} isHost={isHost} isLive={isLive} />
+                  </div>
+                )}
+              </div>
             ) : (
               <div className="flex-1 flex items-center justify-center p-6">
                 <div className="text-center">
