@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { DollarSign, TrendingUp, Users, ShoppingBag, Trophy, Loader2, Plus, Crown } from "lucide-react";
+import { DollarSign, TrendingUp, Users, ShoppingBag, Trophy, Loader2, Plus, Crown, Calendar, Scissors, BarChart2, CreditCard } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MonetizationSetup from "../components/monetization/MonetizationSetup";
 import ProductDialog from "../components/shop/ProductDialog";
+import StreamScheduler from "../components/creator/StreamScheduler";
+import VODEditor from "../components/creator/VODEditor";
+import CreatorAnalytics from "../components/creator/CreatorAnalytics";
+import SubscriptionPlans from "../components/creator/SubscriptionPlans";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 
