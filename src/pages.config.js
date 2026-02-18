@@ -81,6 +81,7 @@ import TrendingChallenges from './pages/TrendingChallenges';
 import UserProfile from './pages/UserProfile';
 import ViewLive from './pages/ViewLive';
 import OrgDashboard from './pages/OrgDashboard';
+import OrgRoster from './pages/OrgRoster';
 import __Layout from './Layout.jsx';
 
 
@@ -119,6 +120,7 @@ export const PAGES = {
     "UserProfile": UserProfile,
     "ViewLive": ViewLive,
     "OrgDashboard": OrgDashboard,
+    "OrgRoster": OrgRoster,
 }
 
 export const pagesConfig = {
