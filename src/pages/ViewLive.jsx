@@ -349,27 +349,27 @@ export default function ViewLive() {
             {/* Tab Header */}
             <div className="px-4 pt-3 pb-0 border-b border-slate-800 flex-shrink-0">
               <div className="flex items-center gap-1">
-                {isLive ? [
-                  { key: "chat", icon: MessageSquare, label: "Chat" },
-                  { key: "polls", icon: BarChart2, label: "Polls" },
-                  { key: "qa", icon: MessageCircleQuestion, label: "Q&A" },
-                ] : [
-                  { key: "summary", icon: MessageSquare, label: "Summary" },
-                  { key: "clips", icon: BarChart2, label: "Highlights" },
-                ]}.map(tab => (
-                  <button
-                    key={tab.key}
-                    onClick={() => setPanelTab(tab.key)}
-                    className={`flex items-center gap-1.5 px-3 py-2 text-xs font-bold border-b-2 transition-colors
-                      ${panelTab === tab.key
-                        ? "border-red-500 text-white"
-                        : "border-transparent text-slate-400 hover:text-slate-200"}`}
-                  >
-                    <tab.icon className="w-3.5 h-3.5" />
-                    {tab.label}
-                    {tab.key === "chat" && isLive && <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />}
-                  </button>
-                ))}
+                {(isLive ? [
+                   { key: "chat", icon: MessageSquare, label: "Chat" },
+                   { key: "polls", icon: BarChart2, label: "Polls" },
+                   { key: "qa", icon: MessageCircleQuestion, label: "Q&A" },
+                 ] : [
+                   { key: "summary", icon: MessageSquare, label: "Summary" },
+                   { key: "clips", icon: BarChart2, label: "Highlights" },
+                 ]).map(tab => (
+                   <button
+                     key={tab.key}
+                     onClick={() => isLive ? setPanelTab(tab.key) : setActiveSummaryTab(tab.key)}
+                     className={`flex items-center gap-1.5 px-3 py-2 text-xs font-bold border-b-2 transition-colors
+                       ${(isLive ? panelTab : activeSummaryTab) === tab.key
+                         ? "border-red-500 text-white"
+                         : "border-transparent text-slate-400 hover:text-slate-200"}`}
+                   >
+                     <tab.icon className="w-3.5 h-3.5" />
+                     {tab.label}
+                     {tab.key === "chat" && isLive && <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />}
+                   </button>
+                 ))}
               </div>
             </div>
 
