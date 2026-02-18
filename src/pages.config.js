@@ -58,6 +58,7 @@ import CreatorAI from './pages/CreatorAI';
 import CreatorHub from './pages/CreatorHub';
 import CreatorShop from './pages/CreatorShop';
 import Discover from './pages/Discover';
+import Events from './pages/Events';
 import Explore from './pages/Explore';
 import Feed from './pages/Feed';
 import ForYou from './pages/ForYou';
@@ -79,7 +80,7 @@ import Terms from './pages/Terms';
 import TrendingChallenges from './pages/TrendingChallenges';
 import UserProfile from './pages/UserProfile';
 import ViewLive from './pages/ViewLive';
-import Events from './pages/Events';
+import OrgDashboard from './pages/OrgDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -95,6 +96,7 @@ export const PAGES = {
     "CreatorHub": CreatorHub,
     "CreatorShop": CreatorShop,
     "Discover": Discover,
+    "Events": Events,
     "Explore": Explore,
     "Feed": Feed,
     "ForYou": ForYou,
@@ -116,7 +118,7 @@ export const PAGES = {
     "TrendingChallenges": TrendingChallenges,
     "UserProfile": UserProfile,
     "ViewLive": ViewLive,
-    "Events": Events,
+    "OrgDashboard": OrgDashboard,
 }
 
 export const pagesConfig = {
