@@ -14,10 +14,11 @@ import FeedPagination, { PAGE_SIZE } from "@/components/feed/FeedPagination";
 export default function Feed() {
   const [user, setUser] = useState(null);
   const [sportFilter, setSportFilter] = useState(null);
-  const resetPage = () => setPage(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [showPreferences, setShowPreferences] = useState(false);
   const [page, setPage] = useState(1);
+  const [feedTab, setFeedTab] = useState("forYou");
+  const resetPage = () => setPage(1);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
