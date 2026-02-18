@@ -123,19 +123,10 @@ ${chatContext || "No chat messages"}`;
               {user && !myActiveStream?.[0] && (
                 <Button
                   onClick={() => setShowGoLive(!showGoLive)}
-                  className="bg-white text-red-600 hover:bg-white/90 rounded-xl gap-2 font-semibold"
+                  className="bg-white text-red-600 hover:bg-white/90 rounded-xl gap-2 font-bold shadow-xl"
                 >
-                  <Radio className="w-4 h-4" />
+                  <Radio className="w-4 h-4 animate-pulse" />
                   Go Live
-                </Button>
-              )}
-              {myActiveStream?.[0] && (
-                <Button
-                  onClick={endStream}
-                  variant="outline"
-                  className="border-white/30 text-white hover:bg-white/20 rounded-xl"
-                >
-                  End Stream
                 </Button>
               )}
             </div>
