@@ -29,6 +29,7 @@ export default function ViewLive() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [viewerCount, setViewerCount] = useState(0);
   const [panelTab, setPanelTab] = useState("chat");
+  const [activeSummaryTab, setActiveSummaryTab] = useState("summary");
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
