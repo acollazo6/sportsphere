@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Send, Pin, AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
 import moment from "moment";
 import ChatModeration from "./ChatModeration";
 import ChatFAQ from "./ChatFAQ";
