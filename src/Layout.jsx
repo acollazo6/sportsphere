@@ -58,7 +58,6 @@ export default function Layout({ children, currentPageName }) {
     { name: "Groups", page: "Groups", icon: Globe },
     { name: "Challenges", page: "Challenges", icon: Trophy },
     { name: "Live Coaching", page: "LiveCoaching", icon: Video },
-    { name: "Team Hub", page: "OrgDashboard", icon: Shield },
     { name: "AI Coach", page: "Coach", icon: Sparkles },
     { name: "Creator AI", page: "CreatorAI", icon: Sparkles },
     { name: "Analytics", page: "Analytics", icon: Activity },
