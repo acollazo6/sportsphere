@@ -110,7 +110,10 @@ export default function UploadVideo() {
       >
         {videoFile ? (
           <div className="space-y-2">
-            <Video className="w-10 h-10 text-red-900 mx-auto" />
+            {videoMeta.thumbnailPreview
+              ? <img src={videoMeta.thumbnailPreview} alt="thumb" className="w-24 h-16 object-cover rounded-xl mx-auto border-2 border-red-200" />
+              : <Video className="w-10 h-10 text-red-900 mx-auto" />
+            }
             <p className="font-semibold text-gray-900 text-sm">{videoFile.name}</p>
             <p className="text-xs text-gray-400">{(videoFile.size / 1024 / 1024).toFixed(1)} MB</p>
           </div>
