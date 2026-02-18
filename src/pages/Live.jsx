@@ -223,28 +223,43 @@ ${chatContext || "No chat messages"}`;
           </div>
         )}
 
-        {/* Active Stream Status */}
+        {/* Active Stream Status - Broadcaster Dashboard */}
         {myActiveStream?.[0] && (
-          <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-6">
-            <div className="flex items-center justify-between">
+          <div className="bg-gradient-to-r from-red-900 to-red-800 rounded-2xl p-5 text-white">
+            <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <div className="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
                     <Radio className="w-6 h-6 text-white animate-pulse" />
                   </div>
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full animate-ping" />
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-300 rounded-full animate-ping" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900">You're Live!</h3>
-                  <p className="text-sm text-slate-600">{myActiveStream[0].title}</p>
+                  <div className="flex items-center gap-2">
+                    <span className="bg-white/20 text-white text-xs font-black px-2 py-0.5 rounded-full">● LIVE</span>
+                    <h3 className="font-black text-lg">You're Broadcasting</h3>
+                  </div>
+                  <p className="text-white/80 text-sm">{myActiveStream[0].title}</p>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="flex items-center gap-2 text-slate-600">
-                  <Users className="w-4 h-4" />
-                  <span className="font-semibold">{myActiveStream[0].viewers?.length || 0}</span>
-                </div>
-                <p className="text-xs text-slate-500">viewers</p>
+              <Button onClick={endStream} className="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-xl font-bold">
+                End Stream
+              </Button>
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-white/10 rounded-xl p-3 text-center">
+                <p className="text-2xl font-black">{myActiveStream[0].viewers?.length || 0}</p>
+                <p className="text-white/70 text-xs font-medium">Viewers</p>
+              </div>
+              <div className="bg-white/10 rounded-xl p-3 text-center">
+                <p className="text-2xl font-black">{moment(myActiveStream[0].started_at).fromNow(true)}</p>
+                <p className="text-white/70 text-xs font-medium">Duration</p>
+              </div>
+              <div className="bg-white/10 rounded-xl p-3 text-center">
+                <Link to={createPageUrl("ViewLive") + `?id=${myActiveStream[0].id}`} className="block">
+                  <p className="text-sm font-black">View Stream</p>
+                  <p className="text-white/70 text-xs">As viewer →</p>
+                </Link>
               </div>
             </div>
           </div>
