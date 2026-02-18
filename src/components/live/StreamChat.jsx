@@ -140,6 +140,21 @@ export default function StreamChat({ messages, user, isHost, message, setMessage
         </div>
       )}
 
+      {/* Moderation Suggestions */}
+      {isHost && message && (
+        <div className="px-3 pt-2">
+          <ModerationSuggestions 
+            message={message} 
+            streamId={streamId} 
+            isHost={isHost}
+            onAction={(action, msg) => {
+              setModerationAction({ action, message: msg });
+              toast.success(`Action: ${action}`);
+            }}
+          />
+        </div>
+      )}
+
       {/* Input */}
       {user ? (
         <div className="p-3 border-t border-slate-100 bg-white">
