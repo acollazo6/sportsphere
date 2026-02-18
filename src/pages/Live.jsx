@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -8,35 +8,79 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
-import { Radio, Eye, VideoOff, Loader2, PlayCircle, Users, Crown, DollarSign, ExternalLink } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Radio, Eye, VideoOff, Loader2, PlayCircle, Users, Crown, Clock, Sparkles, Search, X, Filter } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { Switch } from "@/components/ui/switch";
+import StreamSearch from "../components/discover/StreamSearch";
 import moment from "moment";
 
 const SPORTS = ["Basketball", "Soccer", "Football", "Baseball", "Tennis", "Track & Field", "Swimming", "Cycling", "CrossFit", "Weightlifting", "Martial Arts", "Other"];
 
+function StreamCard({ stream, isLive }) {
+  return (
+    <Link to={createPageUrl("ViewLive") + `?id=${stream.id}`} className="group">
+      <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-lg hover:border-red-200 transition-all">
+        <div className={`relative h-44 ${isLive ? "bg-gradient-to-br from-red-600 to-orange-500" : "bg-gradient-to-br from-slate-700 to-slate-900"}`}>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <PlayCircle className="w-14 h-14 text-white/60 group-hover:text-white/90 group-hover:scale-110 transition-all" />
+          </div>
+          {isLive ? (
+            <Badge className="absolute top-3 left-3 bg-red-600 text-white gap-1 animate-pulse text-xs font-black">
+              <Radio className="w-3 h-3" /> LIVE
+            </Badge>
+          ) : (
+            <Badge className="absolute top-3 left-3 bg-slate-600 text-white text-xs font-semibold">VOD</Badge>
+          )}
+          <div className="absolute top-3 right-3 bg-black/60 px-2 py-1 rounded-lg flex items-center gap-1">
+            {isLive ? <Eye className="w-3 h-3 text-white" /> : <Clock className="w-3 h-3 text-white" />}
+            <span className="text-white text-xs font-semibold">
+              {isLive ? (stream.viewers?.length || 0) : moment(stream.ended_at || stream.started_at).fromNow()}
+            </span>
+          </div>
+          {stream.thumbnail_url && (
+            <img src={stream.thumbnail_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-50" />
+          )}
+        </div>
+        <div className="p-3.5">
+          <div className="flex items-center gap-2 mb-2">
+            <Avatar className="w-7 h-7 flex-shrink-0">
+              <AvatarImage src={stream.host_avatar} />
+              <AvatarFallback className="text-[10px] bg-slate-200">{stream.host_name?.[0]}</AvatarFallback>
+            </Avatar>
+            <p className="text-xs font-semibold text-slate-600 truncate">{stream.host_name}</p>
+          </div>
+          <h3 className="font-bold text-slate-900 text-sm line-clamp-2 mb-1.5">{stream.title}</h3>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {stream.sport && <Badge variant="secondary" className="text-xs px-2">{stream.sport}</Badge>}
+            {stream.is_premium && <Badge className="bg-amber-100 text-amber-700 text-xs px-2"><Crown className="w-2.5 h-2.5 mr-1" />Premium</Badge>}
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 export default function Live() {
   const [user, setUser] = useState(null);
   const [showGoLive, setShowGoLive] = useState(false);
-  const [liveData, setLiveData] = useState({ 
-    title: "", 
-    description: "", 
-    sport: "",
-    is_premium: false,
-    price: 0,
-    stream_url: ""
-  });
+  const [liveData, setLiveData] = useState({ title: "", description: "", sport: "", is_premium: false, price: 0, stream_url: "" });
   const [goingLive, setGoingLive] = useState(false);
+  const [tab, setTab] = useState("live");
+  const [filters, setFilters] = useState({ query: "", sport: "all", sort: "recent" });
 
-  useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => {});
-  }, []);
+  useEffect(() => { base44.auth.me().then(setUser).catch(() => {}); }, []);
 
-  const { data: liveStreams, isLoading, refetch } = useQuery({
+  const { data: liveStreams, isLoading: loadingLive, refetch } = useQuery({
     queryKey: ["live-streams"],
     queryFn: () => base44.entities.LiveStream.filter({ status: "live" }, "-started_at"),
     refetchInterval: 5000,
+  });
+
+  const { data: pastStreams, isLoading: loadingPast } = useQuery({
+    queryKey: ["past-streams"],
+    queryFn: () => base44.entities.LiveStream.filter({ status: "ended" }, "-ended_at", 60),
   });
 
   const { data: myActiveStream } = useQuery({
@@ -46,23 +90,54 @@ export default function Live() {
     refetchInterval: 3000,
   });
 
+  const { data: follows = [] } = useQuery({
+    queryKey: ["follows-live", user?.email],
+    queryFn: () => base44.entities.Follow.filter({ follower_email: user.email, status: "accepted" }),
+    enabled: !!user,
+  });
+
+  const { data: preferences } = useQuery({
+    queryKey: ["prefs-live", user?.email],
+    queryFn: async () => { const p = await base44.entities.FeedPreferences.filter({ user_email: user.email }); return p[0]; },
+    enabled: !!user,
+  });
+
+  const followedEmails = useMemo(() => follows.map(f => f.following_email), [follows]);
+  const interests = preferences?.preferred_sports || [];
+
+  const applyFilters = (streams) => {
+    if (!streams) return [];
+    let result = [...streams];
+    const q = filters.query.toLowerCase();
+    if (q) result = result.filter(s => s.title?.toLowerCase().includes(q) || s.host_name?.toLowerCase().includes(q));
+    if (filters.sport !== "all") result = result.filter(s => s.sport === filters.sport);
+    if (filters.sort === "popular") result.sort((a, b) => (b.viewers?.length || 0) - (a.viewers?.length || 0));
+    else if (filters.sort === "recent") result.sort((a, b) => new Date(b.started_at) - new Date(a.started_at));
+    return result;
+  };
+
+  // Recommended: followed creators or matching interests
+  const recommended = useMemo(() => {
+    const pool = [...(liveStreams || []), ...(pastStreams || [])];
+    return pool.filter(s => followedEmails.includes(s.host_email) || interests.includes(s.sport))
+      .sort((a, b) => {
+        const scoreA = (followedEmails.includes(a.host_email) ? 10 : 0) + (interests.includes(a.sport) ? 5 : 0) + (a.viewers?.length || 0);
+        const scoreB = (followedEmails.includes(b.host_email) ? 10 : 0) + (interests.includes(b.sport) ? 5 : 0) + (b.viewers?.length || 0);
+        return scoreB - scoreA;
+      }).slice(0, 6);
+  }, [liveStreams, pastStreams, followedEmails, interests]);
+
+  const filteredLive = applyFilters(liveStreams);
+  const filteredPast = applyFilters(pastStreams);
+
   const goLive = async () => {
     if (!liveData.title.trim()) return;
-    
     setGoingLive(true);
     await base44.entities.LiveStream.create({
-      host_email: user.email,
-      host_name: user.full_name,
-      host_avatar: user.avatar_url,
-      title: liveData.title,
-      description: liveData.description,
-      sport: liveData.sport,
-      is_premium: liveData.is_premium,
-      price: parseFloat(liveData.price) || 0,
-      stream_url: liveData.stream_url,
-      status: "live",
-      viewers: [],
-      started_at: new Date().toISOString(),
+      host_email: user.email, host_name: user.full_name, host_avatar: user.avatar_url,
+      title: liveData.title, description: liveData.description, sport: liveData.sport,
+      is_premium: liveData.is_premium, price: parseFloat(liveData.price) || 0,
+      stream_url: liveData.stream_url, status: "live", viewers: [], started_at: new Date().toISOString(),
     });
     setGoingLive(false);
     setShowGoLive(false);
@@ -72,64 +147,38 @@ export default function Live() {
 
   const endStream = async () => {
     if (!myActiveStream?.[0]) return;
-    
     const stream = myActiveStream[0];
-    
-    // Generate AI summary from chat messages
     const chatMessages = await base44.entities.LiveChat.filter({ stream_id: stream.id }, "-created_date", 100);
     const chatContext = chatMessages.map(m => `${m.sender_name}: ${m.message}`).join("\n");
-    
-    const summaryPrompt = `Summarize this live sports stream based on the title, description, and chat messages. Focus on key topics discussed, highlights, and main takeaways. Keep it concise (3-4 sentences).
-
-Title: ${stream.title}
-Description: ${stream.description || "No description"}
-Sport: ${stream.sport}
-
-Chat Messages:
-${chatContext || "No chat messages"}`;
-
     let summary = "";
     try {
       summary = await base44.integrations.Core.InvokeLLM({
-        prompt: summaryPrompt,
+        prompt: `Summarize this live sports stream in 3-4 sentences. Title: ${stream.title}. Sport: ${stream.sport}. Chat: ${chatContext || "No chat messages"}`,
       });
-    } catch (error) {
-      console.error("Failed to generate summary:", error);
-    }
-
-    await base44.entities.LiveStream.update(stream.id, {
-      status: "ended",
-      ended_at: new Date().toISOString(),
-      ai_summary: summary,
-    });
+    } catch (e) {}
+    await base44.entities.LiveStream.update(stream.id, { status: "ended", ended_at: new Date().toISOString(), ai_summary: summary });
     refetch();
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50 to-amber-50">
-      <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
+      <div className="max-w-6xl mx-auto px-4 py-6 space-y-5">
         {/* Hero */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-600 via-red-500 to-orange-500 p-6 md:p-8 text-white">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-700 via-red-600 to-orange-500 p-6 md:p-8 text-white">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-          <div className="relative z-10">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Radio className="w-6 h-6 animate-pulse" />
-                  <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Live Training</h1>
-                </div>
-                <p className="text-white/90 text-sm md:text-base">Stream your workouts and watch others train</p>
+          <div className="relative z-10 flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Radio className="w-6 h-6 animate-pulse" />
+                <h1 className="text-2xl md:text-3xl font-black tracking-tight">Live Streams & VODs</h1>
               </div>
-              {user && !myActiveStream?.[0] && (
-                <Button
-                  onClick={() => setShowGoLive(!showGoLive)}
-                  className="bg-white text-red-600 hover:bg-white/90 rounded-xl gap-2 font-bold shadow-xl"
-                >
-                  <Radio className="w-4 h-4 animate-pulse" />
-                  Go Live
-                </Button>
-              )}
+              <p className="text-white/85 text-sm md:text-base">Watch live training, past streams, and highlights</p>
             </div>
+            {user && !myActiveStream?.[0] && (
+              <Button onClick={() => setShowGoLive(!showGoLive)} className="bg-white text-red-700 hover:bg-white/90 rounded-xl gap-2 font-black shadow-xl">
+                <Radio className="w-4 h-4 animate-pulse" /> Go Live
+              </Button>
+            )}
           </div>
         </div>
 
@@ -137,84 +186,35 @@ ${chatContext || "No chat messages"}`;
         {showGoLive && (
           <div className="bg-white rounded-2xl border border-slate-100 p-6 space-y-4">
             <h2 className="text-lg font-bold text-slate-900">Start Your Live Stream</h2>
-            <Input
-              placeholder="Stream title (e.g., Morning Basketball Practice)"
-              value={liveData.title}
-              onChange={e => setLiveData({ ...liveData, title: e.target.value })}
-              className="rounded-xl"
-            />
-            <Textarea
-              placeholder="Description (optional)"
-              value={liveData.description}
-              onChange={e => setLiveData({ ...liveData, description: e.target.value })}
-              className="rounded-xl resize-none"
-              rows={2}
-            />
+            <Input placeholder="Stream title" value={liveData.title} onChange={e => setLiveData({ ...liveData, title: e.target.value })} className="rounded-xl" />
+            <Textarea placeholder="Description (optional)" value={liveData.description} onChange={e => setLiveData({ ...liveData, description: e.target.value })} className="rounded-xl resize-none" rows={2} />
             <Select value={liveData.sport} onValueChange={sport => setLiveData({ ...liveData, sport })}>
-              <SelectTrigger className="rounded-xl">
-                <SelectValue placeholder="Select sport" />
-              </SelectTrigger>
-              <SelectContent>
-                {SPORTS.map(sport => (
-                  <SelectItem key={sport} value={sport}>{sport}</SelectItem>
-                ))}
-              </SelectContent>
+              <SelectTrigger className="rounded-xl"><SelectValue placeholder="Select sport" /></SelectTrigger>
+              <SelectContent>{SPORTS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
             </Select>
-            
-            <div className="space-y-2">
-              <Label>Stream URL (Optional)</Label>
-              <Input
-                value={liveData.stream_url}
-                onChange={e => setLiveData({...liveData, stream_url: e.target.value})}
-                placeholder="YouTube/Twitch embed URL or leave empty"
-                className="rounded-xl"
-              />
-              <p className="text-xs text-slate-500">YouTube, Twitch, or other embed URL</p>
+            <div className="space-y-1">
+              <Label>Stream URL (YouTube/Twitch embed)</Label>
+              <Input value={liveData.stream_url} onChange={e => setLiveData({ ...liveData, stream_url: e.target.value })} placeholder="Optional embed URL" className="rounded-xl" />
             </div>
-
             {user?.subscription_price > 0 && (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-purple-50 border border-purple-200 rounded-xl">
-                  <div className="flex items-center gap-2">
-                    <Crown className="w-4 h-4 text-purple-600" />
-                    <div>
-                      <Label className="text-sm font-medium text-purple-900">Premium Stream</Label>
-                      <p className="text-xs text-purple-700">Only subscribers can watch</p>
-                    </div>
-                  </div>
-                  <Switch checked={liveData.is_premium} onCheckedChange={v => setLiveData({...liveData, is_premium: v})} />
+              <div className="flex items-center justify-between p-3 bg-purple-50 border border-purple-200 rounded-xl">
+                <div className="flex items-center gap-2">
+                  <Crown className="w-4 h-4 text-purple-600" />
+                  <Label className="text-sm font-medium text-purple-900">Premium Only</Label>
                 </div>
-
-                {!liveData.is_premium && (
-                  <div className="space-y-2">
-                    <Label>Pay-Per-View Price (USD)</Label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={liveData.price}
-                      onChange={e => setLiveData({...liveData, price: e.target.value})}
-                      placeholder="0.00 (Free)"
-                      className="rounded-xl"
-                    />
-                    <p className="text-xs text-slate-500">One-time fee to watch (0 for free)</p>
-                  </div>
-                )}
+                <Switch checked={liveData.is_premium} onCheckedChange={v => setLiveData({ ...liveData, is_premium: v })} />
               </div>
             )}
-            
             <div className="flex gap-2">
               <Button onClick={goLive} disabled={goingLive} className="rounded-xl bg-red-600 hover:bg-red-700 flex-1">
-                {goingLive ? "Starting..." : "Start Live Stream"}
+                {goingLive ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Starting...</> : "Start Live Stream"}
               </Button>
-              <Button onClick={() => setShowGoLive(false)} variant="outline" className="rounded-xl">
-                Cancel
-              </Button>
+              <Button onClick={() => setShowGoLive(false)} variant="outline" className="rounded-xl">Cancel</Button>
             </div>
           </div>
         )}
 
-        {/* Active Stream Status - Broadcaster Dashboard */}
+        {/* Active broadcast dashboard */}
         {myActiveStream?.[0] && (
           <div className="bg-gradient-to-r from-red-900 to-red-800 rounded-2xl p-5 text-white">
             <div className="flex items-center justify-between mb-4">
@@ -233,93 +233,88 @@ ${chatContext || "No chat messages"}`;
                   <p className="text-white/80 text-sm">{myActiveStream[0].title}</p>
                 </div>
               </div>
-              <Button onClick={endStream} className="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-xl font-bold">
-                End Stream
-              </Button>
+              <Button onClick={endStream} className="bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-xl font-bold">End Stream</Button>
             </div>
-            <div className="grid grid-cols-3 gap-3">
-              <div className="bg-white/10 rounded-xl p-3 text-center">
+            <div className="grid grid-cols-3 gap-3 text-center">
+              <div className="bg-white/10 rounded-xl p-3">
                 <p className="text-2xl font-black">{myActiveStream[0].viewers?.length || 0}</p>
                 <p className="text-white/70 text-xs font-medium">Viewers</p>
               </div>
-              <div className="bg-white/10 rounded-xl p-3 text-center">
-                <p className="text-2xl font-black">{moment(myActiveStream[0].started_at).fromNow(true)}</p>
+              <div className="bg-white/10 rounded-xl p-3">
+                <p className="text-xl font-black">{moment(myActiveStream[0].started_at).fromNow(true)}</p>
                 <p className="text-white/70 text-xs font-medium">Duration</p>
               </div>
-              <div className="bg-white/10 rounded-xl p-3 text-center">
-                <Link to={createPageUrl("ViewLive") + `?id=${myActiveStream[0].id}`} className="block">
-                  <p className="text-sm font-black">View Stream</p>
-                  <p className="text-white/70 text-xs">As viewer →</p>
+              <div className="bg-white/10 rounded-xl p-3">
+                <Link to={createPageUrl("ViewLive") + `?id=${myActiveStream[0].id}`}>
+                  <p className="text-sm font-black">View →</p>
+                  <p className="text-white/70 text-xs">As viewer</p>
                 </Link>
               </div>
             </div>
           </div>
         )}
 
-        {/* Live Streams */}
-        <div>
-          <h2 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
-            <PlayCircle className="w-5 h-5 text-red-500" />
-            Live Now
-          </h2>
-          {isLoading ? (
-            <div className="flex justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-slate-300" />
+        {/* Recommended for You */}
+        {user && recommended.length > 0 && (
+          <div>
+            <h2 className="text-base font-black text-slate-900 mb-3 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-500" /> Recommended For You
+            </h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {recommended.map(s => <StreamCard key={s.id} stream={s} isLive={s.status === "live"} />)}
             </div>
-          ) : liveStreams?.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-2xl border border-slate-100">
-              <VideoOff className="w-12 h-12 text-slate-200 mx-auto mb-3" />
-              <p className="text-slate-400 font-medium">No one is live right now</p>
-              <p className="text-slate-400 text-sm mt-1">Be the first to go live!</p>
-            </div>
-          ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {liveStreams.map(stream => (
-                <Link
-                  key={stream.id}
-                  to={createPageUrl("ViewLive") + `?id=${stream.id}`}
-                  className="group"
-                >
-                  <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-lg transition-all">
-                    <div className="relative h-48 bg-gradient-to-br from-red-500 to-orange-500">
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <PlayCircle className="w-16 h-16 text-white/80 group-hover:scale-110 transition-transform" />
-                      </div>
-                      <Badge className="absolute top-3 left-3 bg-red-600 text-white gap-1 animate-pulse">
-                        <Radio className="w-3 h-3" />
-                        LIVE
-                      </Badge>
-                      <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm px-2 py-1 rounded-lg flex items-center gap-1">
-                        <Eye className="w-3 h-3 text-white" />
-                        <span className="text-white text-xs font-semibold">
-                          {stream.viewers?.length || 0}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="p-4">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Avatar className="w-8 h-8">
-                          <AvatarImage src={stream.host_avatar} />
-                          <AvatarFallback className="bg-slate-200 text-slate-600 text-xs">
-                            {stream.host_name?.[0]?.toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-sm text-slate-900 truncate">{stream.host_name}</p>
-                          <p className="text-xs text-slate-500">{moment(stream.started_at).fromNow()}</p>
-                        </div>
-                      </div>
-                      <h3 className="font-bold text-slate-900 mb-1 line-clamp-2">{stream.title}</h3>
-                      {stream.sport && (
-                        <Badge variant="secondary" className="text-xs">{stream.sport}</Badge>
-                      )}
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
+          </div>
+        )}
+
+        {/* Tabs: Live / Past */}
+        <Tabs value={tab} onValueChange={setTab}>
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <TabsList className="rounded-xl bg-slate-100 h-10">
+              <TabsTrigger value="live" className="rounded-lg gap-1.5 text-sm font-bold">
+                <Radio className="w-3.5 h-3.5" /> Live Now {liveStreams?.length > 0 && <Badge className="bg-red-600 text-white text-[10px] px-1.5 py-0 ml-0.5">{liveStreams.length}</Badge>}
+              </TabsTrigger>
+              <TabsTrigger value="past" className="rounded-lg gap-1.5 text-sm font-bold">
+                <PlayCircle className="w-3.5 h-3.5" /> Past Streams
+              </TabsTrigger>
+            </TabsList>
+          </div>
+
+          {/* Filters — shared */}
+          <div className="mt-3">
+            <StreamSearch filters={filters} onChange={setFilters} />
+          </div>
+
+          <TabsContent value="live" className="mt-4">
+            {loadingLive ? (
+              <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-slate-300" /></div>
+            ) : filteredLive.length === 0 ? (
+              <div className="text-center py-14 bg-white rounded-2xl border border-slate-100">
+                <VideoOff className="w-12 h-12 text-slate-200 mx-auto mb-3" />
+                <p className="text-slate-400 font-medium">{filters.query || filters.sport !== "all" ? "No streams match your filters" : "No one is live right now"}</p>
+                <p className="text-slate-400 text-sm mt-1">Be the first to go live!</p>
+              </div>
+            ) : (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredLive.map(s => <StreamCard key={s.id} stream={s} isLive={true} />)}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="past" className="mt-4">
+            {loadingPast ? (
+              <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-slate-300" /></div>
+            ) : filteredPast.length === 0 ? (
+              <div className="text-center py-14 bg-white rounded-2xl border border-slate-100">
+                <VideoOff className="w-12 h-12 text-slate-200 mx-auto mb-3" />
+                <p className="text-slate-400 font-medium">{filters.query || filters.sport !== "all" ? "No past streams match your filters" : "No past streams yet"}</p>
+              </div>
+            ) : (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredPast.map(s => <StreamCard key={s.id} stream={s} isLive={false} />)}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
