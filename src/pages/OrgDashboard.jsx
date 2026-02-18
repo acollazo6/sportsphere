@@ -7,7 +7,7 @@ import { Users, Dumbbell, Video, Calendar, TrendingUp, MessageCircle, ChevronRig
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import OrgSetupDialog from "../components/org/OrgSetupDialog";
+import OrgSetupDialog from "@/components/org/OrgSetupDialog";
 
 export default function OrgDashboard() {
   const [user, setUser] = useState(null);

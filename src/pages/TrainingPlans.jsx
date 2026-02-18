@@ -5,7 +5,7 @@ import { Dumbbell, Plus, Sparkles, Loader2, ChevronRight, Calendar, User } from 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import CreateTrainingPlanDialog from "../components/org/CreateTrainingPlanDialog";
+import CreateTrainingPlanDialog from "@/components/org/CreateTrainingPlanDialog";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
