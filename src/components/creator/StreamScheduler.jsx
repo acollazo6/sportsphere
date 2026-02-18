@@ -200,12 +200,43 @@ export default function StreamScheduler({ user }) {
                 <SelectContent>{SPORTS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div className="flex items-center justify-between p-3 bg-amber-50 border border-amber-200 rounded-xl">
-              <div className="flex items-center gap-2">
-                <Crown className="w-4 h-4 text-amber-600" />
-                <Label className="text-sm font-semibold text-amber-900">Premium / Subscribers Only</Label>
+            {/* Monetization */}
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">Monetization</Label>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { value: "free", label: "Free", icon: "🆓" },
+                  { value: "premium", label: "Premium", icon: "👑" },
+                  { value: "ppv", label: "Pay-Per-View", icon: "💳" },
+                ].map(opt => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setForm({ ...form, monetization: opt.value, is_premium: opt.value === "premium", price: opt.value !== "ppv" ? 0 : form.price })}
+                    className={`p-2.5 rounded-xl border text-center transition-all text-sm font-bold
+                      ${(form.monetization || "free") === opt.value
+                        ? "border-red-700 bg-red-50 text-red-900"
+                        : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"}`}
+                  >
+                    <div className="text-lg mb-0.5">{opt.icon}</div>
+                    {opt.label}
+                  </button>
+                ))}
               </div>
-              <Switch checked={form.is_premium} onCheckedChange={v => setForm({ ...form, is_premium: v })} />
+              {(form.monetization === "ppv") && (
+                <div className="space-y-1">
+                  <Label className="text-xs text-gray-500">Pay-Per-View Price (USD)</Label>
+                  <Input
+                    type="number"
+                    min="0.99"
+                    step="0.01"
+                    value={form.price}
+                    onChange={e => setForm({ ...form, price: e.target.value })}
+                    placeholder="e.g. 4.99"
+                    className="rounded-xl"
+                  />
+                </div>
+              )}
             </div>
             <div className="flex gap-2 pt-1">
               <Button onClick={save} disabled={saving} className="flex-1 bg-red-900 hover:bg-red-800 rounded-xl font-bold">
