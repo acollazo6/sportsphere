@@ -146,6 +146,22 @@ export default function CreatorHub() {
           <TabsTrigger value="subscribers">Subscribers</TabsTrigger>
         </TabsList>
 
+        <TabsContent value="analytics" className="space-y-4">
+          <CreatorAnalytics user={user} timeRange={30} />
+        </TabsContent>
+
+        <TabsContent value="schedule" className="space-y-4">
+          <StreamScheduler user={user} />
+        </TabsContent>
+
+        <TabsContent value="vod" className="space-y-4">
+          <VODEditor user={user} />
+        </TabsContent>
+
+        <TabsContent value="plans" className="space-y-4">
+          <SubscriptionPlans user={user} />
+        </TabsContent>
+
         <TabsContent value="products" className="space-y-4">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold text-gray-900">Your Products</h2>
