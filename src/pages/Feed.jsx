@@ -31,7 +31,7 @@ export default function Feed() {
   });
 
   const { data: allPosts, isLoading, refetch } = useQuery({
-    queryKey: ["feed-posts", sportFilter],
+    queryKey: ["feed-posts", sportFilter, page],
     queryFn: () => {
       if (sportFilter) {
         return base44.entities.Post.filter({ sport: sportFilter }, "-created_date", 50);
