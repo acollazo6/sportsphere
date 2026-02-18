@@ -7,9 +7,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { ImagePlus, Video, X, Loader2, ArrowLeft, Crown } from "lucide-react";
+import { ImagePlus, Video, X, Loader2, ArrowLeft, Crown, Sliders } from "lucide-react";
 import { Link } from "react-router-dom";
 import AIPostGenerator from "../components/feed/AIPostGenerator";
+import VideoEditor from "../components/video/VideoEditor";
 
 const SPORTS = ["Basketball", "Soccer", "Football", "Baseball", "Tennis", "Golf", "Swimming", "Boxing", "MMA", "Track", "Volleyball", "Hockey", "Cycling", "Yoga", "CrossFit", "Other"];
 const CATEGORIES = [
