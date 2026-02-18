@@ -187,6 +187,11 @@ export default function Feed() {
         </div>
       )}
 
+      {/* Upcoming Streams */}
+      {!searchQuery && !sportFilter && (
+        <UpcomingStreamsSection user={user} />
+      )}
+
       {/* Highlight Reels */}
       {highlightReels?.length > 0 && !searchQuery && !sportFilter && (
         <div className="space-y-6">
