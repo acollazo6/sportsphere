@@ -7,10 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Sparkles, TrendingUp, Radio, Calendar, Users, Loader2, ExternalLink, Play, Crown, Filter, Search } from "lucide-react";
+import { Sparkles, TrendingUp, Radio, Calendar, Users, Loader2, Play, Crown, Filter, Search, Mail, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import moment from "moment";
+import ContentDigest from "../components/discover/ContentDigest";
 
 export default function Discover() {
   const [user, setUser] = useState(null);
