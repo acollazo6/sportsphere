@@ -95,6 +95,7 @@ import UploadVideo from './pages/UploadVideo';
 import UserProfile from './pages/UserProfile';
 import VideoReview from './pages/VideoReview';
 import ViewLive from './pages/ViewLive';
+import SportHub from './pages/SportHub';
 import __Layout from './Layout.jsx';
 
 
@@ -147,6 +148,7 @@ export const PAGES = {
     "UserProfile": UserProfile,
     "VideoReview": VideoReview,
     "ViewLive": ViewLive,
+    "SportHub": SportHub,
 }
 
 export const pagesConfig = {
