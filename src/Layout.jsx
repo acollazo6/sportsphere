@@ -48,6 +48,7 @@ export default function Layout({ children, currentPageName }) {
   }, [user]);
 
   const navItems = [
+    { name: "GitHub Export", page: "GitHubExport", icon: Shield },
     { name: t("feed"), page: "Feed", icon: Home },
     { name: "For You", page: "ForYou", icon: Sparkles },
     { name: "Reels", page: "Reels", icon: Flame },
