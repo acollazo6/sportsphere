@@ -7,6 +7,8 @@ import { Send, Pin, AlertTriangle } from "lucide-react";
 import moment from "moment";
 import ChatModeration from "./ChatModeration";
 import ChatFAQ from "./ChatFAQ";
+import ModerationSuggestions from "./ModerationSuggestions";
+import ModerationDashboard from "./ModerationDashboard";
 
 export default function StreamChat({ messages, user, isHost, message, setMessage, onSend, onPin, streamTitle = "", streamDescription = "" }) {
   const [chatTab, setChatTab] = useState("messages");
