@@ -87,6 +87,7 @@ import Profile from './pages/Profile';
 import ProfileSettings from './pages/ProfileSettings';
 import Reels from './pages/Reels';
 import SavedContent from './pages/SavedContent';
+import SportHub from './pages/SportHub';
 import Terms from './pages/Terms';
 import TrainingPlanDetail from './pages/TrainingPlanDetail';
 import TrainingPlans from './pages/TrainingPlans';
@@ -95,7 +96,6 @@ import UploadVideo from './pages/UploadVideo';
 import UserProfile from './pages/UserProfile';
 import VideoReview from './pages/VideoReview';
 import ViewLive from './pages/ViewLive';
-import SportHub from './pages/SportHub';
 import __Layout from './Layout.jsx';
 
 
@@ -140,6 +140,7 @@ export const PAGES = {
     "ProfileSettings": ProfileSettings,
     "Reels": Reels,
     "SavedContent": SavedContent,
+    "SportHub": SportHub,
     "Terms": Terms,
     "TrainingPlanDetail": TrainingPlanDetail,
     "TrainingPlans": TrainingPlans,
@@ -148,7 +149,6 @@ export const PAGES = {
     "UserProfile": UserProfile,
     "VideoReview": VideoReview,
     "ViewLive": ViewLive,
-    "SportHub": SportHub,
 }
 
 export const pagesConfig = {

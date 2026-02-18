@@ -14,6 +14,7 @@ import RecommendedEvents from "../components/recommendations/RecommendedEvents";
 import RecommendedForums from "../components/recommendations/RecommendedForums";
 import RecommendedUsers from "../components/recommendations/RecommendedUsers";
 import RecommendedPrograms from "../components/recommendations/RecommendedPrograms";
+import AIStreamRecommendations from "../components/recommendations/AIStreamRecommendations";
 import { getAIRankedPosts } from "../components/feed/AIFeedRanker";
 
 function ScoreReason({ post }) {
