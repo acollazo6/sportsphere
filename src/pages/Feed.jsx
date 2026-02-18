@@ -15,6 +15,7 @@ export default function Feed() {
   const [sportFilter, setSportFilter] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showPreferences, setShowPreferences] = useState(false);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
