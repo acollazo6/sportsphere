@@ -14,6 +14,8 @@ import StreamChat from "../components/live/StreamChat";
 import LiveReactions from "../components/live/LiveReactions";
 import StreamPolls from "../components/live/StreamPolls";
 import StreamQA from "../components/live/StreamQA";
+import StreamSummaryPanel from "../components/live/StreamSummaryPanel";
+import HighlightClipGenerator from "../components/live/HighlightClipGenerator";
 import moment from "moment";
 
 export default function ViewLive() {
