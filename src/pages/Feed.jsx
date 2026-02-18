@@ -4,10 +4,11 @@ import { useQuery } from "@tanstack/react-query";
 import PostCard from "../components/feed/PostCard";
 import SportFilter from "../components/feed/SportFilter";
 import FeedPreferencesDialog from "../components/reels/FeedPreferencesDialog";
-import { Loader2, Search, Settings2, Sparkles } from "lucide-react";
+import { Loader2, Search, Settings2, Sparkles, Users } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FeedPagination, { PAGE_SIZE } from "@/components/feed/FeedPagination";
 
 export default function Feed() {
