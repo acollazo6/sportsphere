@@ -5,6 +5,7 @@ import { MessageCircle, Loader2 } from "lucide-react";
 import ModeratedMessageInput from "@/components/org/ModeratedMessageInput";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 const CHANNELS = [
   { id: "general", label: "# general" },
