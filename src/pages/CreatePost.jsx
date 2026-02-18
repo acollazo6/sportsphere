@@ -115,7 +115,23 @@ Return ONLY JSON format: {"safe": true/false, "reason": "explanation if unsafe",
     
     const hasVideo = mediaPreviews.some(m => m.type === "video");
     const hasImage = mediaPreviews.some(m => m.type === "image");
-    
+
+    // Upload custom thumbnails if set
+    const finalMediaUrls = [...mediaFiles];
+    let thumbnailUrl = undefined;
+    for (const [idxStr, meta] of Object.entries(videoMeta)) {
+      if (meta.thumbnailFile) {
+        const { file_url } = await base44.integrations.Core.UploadFile({ file: meta.thumbnailFile });
+        thumbnailUrl = file_url;
+      }
+    }
+
+    // Collect chapters from all video meta
+    const allChapters = Object.values(videoMeta).flatMap(m => m.chapters || []);
+    const allTrimInfo = Object.entries(videoMeta)
+      .filter(([, m]) => m.trimStart !== undefined)
+      .map(([i, m]) => ({ index: parseInt(i), startTime: m.trimStart, endTime: m.trimEnd }));
+
     const post = await base44.entities.Post.create({
       author_email: user.email,
       author_name: user.full_name,
@@ -123,8 +139,11 @@ Return ONLY JSON format: {"safe": true/false, "reason": "explanation if unsafe",
       content,
       sport: sport || undefined,
       category: category || undefined,
-      media_urls: mediaFiles,
+      media_urls: finalMediaUrls,
       media_type: hasVideo && hasImage ? "mixed" : hasVideo ? "video" : hasImage ? "image" : undefined,
+      thumbnail_url: thumbnailUrl,
+      video_chapters: allChapters.length > 0 ? allChapters : undefined,
+      video_trim: allTrimInfo.length > 0 ? allTrimInfo : undefined,
       likes: [],
       comments_count: 0,
       views: 0,
