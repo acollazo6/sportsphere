@@ -10,8 +10,9 @@ import ChatFAQ from "./ChatFAQ";
 import ModerationSuggestions from "./ModerationSuggestions";
 import ModerationDashboard from "./ModerationDashboard";
 
-export default function StreamChat({ messages, user, isHost, message, setMessage, onSend, onPin, streamTitle = "", streamDescription = "" }) {
+export default function StreamChat({ messages, user, isHost, message, setMessage, onSend, onPin, streamTitle = "", streamDescription = "", streamId = "" }) {
   const [chatTab, setChatTab] = useState("messages");
+  const [moderationAction, setModerationAction] = useState(null);
   const bottomRef = useRef(null);
 
   useEffect(() => {
