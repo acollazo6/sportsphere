@@ -8,6 +8,7 @@ import { Loader2, Search, Settings2, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import FeedPagination, { PAGE_SIZE } from "@/components/feed/FeedPagination";
 
 export default function Feed() {
   const [user, setUser] = useState(null);

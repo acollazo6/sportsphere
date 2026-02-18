@@ -46,22 +46,6 @@ export default function OrgMessages() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [sorted.length]);
 
-  const sendMessage = async () => {
-    if (!text.trim() || !orgId) return;
-    setSending(true);
-    await base44.entities.OrgMessage.create({
-      organization_id: orgId,
-      sender_email: user.email,
-      sender_name: user.full_name,
-      sender_role: membership?.role || "athlete",
-      channel,
-      content: text.trim(),
-    });
-    setText("");
-    qc.invalidateQueries(["org-messages", orgId, channel]);
-    setSending(false);
-  };
-
   const ROLE_COLORS = { admin: "text-red-600", coach: "text-purple-600", athlete: "text-blue-600", parent: "text-pink-600" };
 
   return (
