@@ -33,6 +33,15 @@ export default function Feed() {
     enabled: !!user,
   });
 
+  const { data: followedUsers } = useQuery({
+    queryKey: ["followed-users", user?.email],
+    queryFn: async () => {
+      const follows = await base44.entities.Follow.filter({ follower_email: user.email, status: "accepted" });
+      return follows.map(f => f.following_email);
+    },
+    enabled: !!user,
+  });
+
   const { data: allPosts, isLoading, refetch } = useQuery({
     queryKey: ["feed-posts", sportFilter, page],
     queryFn: () => {
