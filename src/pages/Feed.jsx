@@ -211,7 +211,9 @@ export default function Feed() {
 
       {/* Regular Posts */}
       <div>
-        <h2 className="text-xl font-bold text-slate-900 mb-4">Latest Posts</h2>
+        <h2 className="text-xl font-bold text-slate-900 mb-4">
+          {feedTab === "following" ? "From People You Follow" : "Latest Posts"}
+        </h2>
         {isLoading ? (
         <div className="flex justify-center py-20">
           <Loader2 className="w-8 h-8 animate-spin text-slate-300" />
