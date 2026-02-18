@@ -118,7 +118,38 @@ export default function UserProfile() {
     }
   };
 
-  if (!profile) return (
+  // Fetch the user record directly for name/avatar fallback
+  const { data: userRecord } = useQuery({
+    queryKey: ["user-record", profileEmail],
+    queryFn: async () => {
+      const users = await base44.entities.User.list();
+      return users.find(u => u.email === profileEmail) || null;
+    },
+    enabled: !!profileEmail,
+  });
+
+  const { data: followerCount } = useQuery({
+    queryKey: ["follower-count", profileEmail],
+    queryFn: () => base44.entities.Follow.filter({ following_email: profileEmail, status: "accepted" }),
+    enabled: !!profileEmail,
+  });
+
+  const { data: followingCount } = useQuery({
+    queryKey: ["following-count", profileEmail],
+    queryFn: () => base44.entities.Follow.filter({ follower_email: profileEmail, status: "accepted" }),
+    enabled: !!profileEmail,
+  });
+
+  const displayName = profile?.user_name || userRecord?.full_name || profileEmail;
+  const displayAvatar = profile?.avatar_url || userRecord?.avatar_url;
+
+  if (!profileEmail) return (
+    <div className="text-center py-20 text-slate-400">No user specified.</div>
+  );
+
+  const isLoading = !posts && !userRecord && !profiles;
+
+  if (isLoading) return (
     <div className="flex justify-center py-20">
       <Loader2 className="w-8 h-8 animate-spin text-slate-300" />
     </div>
@@ -127,7 +158,7 @@ export default function UserProfile() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
       <Link to={createPageUrl("Explore")} className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 transition-colors">
-        <ArrowLeft className="w-4 h-4" /> Back to Explore
+        <ArrowLeft className="w-4 h-4" /> Back
       </Link>
 
       {/* Profile header */}
@@ -138,14 +169,19 @@ export default function UserProfile() {
         <div className="px-6 pb-6 -mt-10 relative">
           <div className="flex flex-col sm:flex-row sm:items-end gap-4">
             <Avatar className="w-20 h-20 ring-4 ring-white shadow-lg">
-              <AvatarImage src={profile.avatar_url} />
+              <AvatarImage src={displayAvatar} />
               <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-xl font-bold">
-                {profile.user_name?.[0]?.toUpperCase()}
+                {displayName?.[0]?.toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <h1 className="text-xl font-bold text-slate-900">{profile.user_name}</h1>
-              <p className="text-sm text-slate-500">{profile.location}</p>
+              <h1 className="text-xl font-bold text-slate-900">{displayName}</h1>
+              {profile?.location && <p className="text-sm text-slate-500">{profile.location}</p>}
+              <div className="flex gap-4 mt-2 text-sm text-slate-500">
+                <span><strong className="text-slate-800">{followerCount?.length ?? 0}</strong> followers</span>
+                <span><strong className="text-slate-800">{followingCount?.length ?? 0}</strong> following</span>
+                <span><strong className="text-slate-800">{posts?.length ?? 0}</strong> posts</span>
+              </div>
             </div>
             {currentUser && currentUser.email !== profileEmail && (
               <div className="flex flex-wrap gap-2">
