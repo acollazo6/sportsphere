@@ -127,6 +127,29 @@ export default function UploadVideo() {
         <input id="videoInput" type="file" accept="video/*" className="hidden" onChange={e => setVideoFile(e.target.files[0])} />
       </div>
 
+      {/* Video Editor */}
+      {videoFile && (
+        <div>
+          <button
+            onClick={() => setShowEditor(v => !v)}
+            className="flex items-center gap-2 text-sm font-semibold text-red-900 hover:text-red-700 transition-colors"
+          >
+            <Sliders className="w-4 h-4" />
+            {showEditor ? "Hide" : "Edit Video"} (trim, thumbnail, chapters)
+          </button>
+          {showEditor && (
+            <div className="mt-3">
+              <VideoEditor
+                videoFile={videoFile}
+                onTrimReady={({ startTime, endTime }) => setVideoMeta(prev => ({ ...prev, trimStart: startTime, trimEnd: endTime }))}
+                onThumbnailReady={(file, preview) => setVideoMeta(prev => ({ ...prev, thumbnailFile: file, thumbnailPreview: preview }))}
+                onChaptersChange={(chapters) => setVideoMeta(prev => ({ ...prev, chapters }))}
+              />
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="space-y-4">
         <div>
           <Label className="text-sm font-semibold mb-1.5 block">Title *</Label>
