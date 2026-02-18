@@ -88,6 +88,7 @@ import UploadVideo from './pages/UploadVideo';
 import OrgSessions from './pages/OrgSessions';
 import MyTraining from './pages/MyTraining';
 import ParentView from './pages/ParentView';
+import OrgMessages from './pages/OrgMessages';
 import __Layout from './Layout.jsx';
 
 
@@ -133,6 +134,7 @@ export const PAGES = {
     "OrgSessions": OrgSessions,
     "MyTraining": MyTraining,
     "ParentView": ParentView,
+    "OrgMessages": OrgMessages,
 }
 
 export const pagesConfig = {
