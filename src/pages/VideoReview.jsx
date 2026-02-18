@@ -180,6 +180,10 @@ Keep it encouraging and practical. 3-4 sentences max.`,
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
                   Save Feedback
                 </Button>
+
+                <div className="border-t border-gray-100 pt-4">
+                  <VideoFormAnalysis video={selectedVideo} />
+                </div>
               </CardContent>
             </Card>
           ) : (
