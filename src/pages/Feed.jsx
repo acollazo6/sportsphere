@@ -76,7 +76,14 @@ export default function Feed() {
     return true;
   });
 
-  const searchedPosts = filteredPosts?.filter(post => {
+  // Following tab: only show posts from followed users, chronological
+  const followingPosts = filteredPosts?.filter(post =>
+    followedUsers?.includes(post.author_email)
+  );
+
+  const activePosts = feedTab === "following" ? followingPosts : filteredPosts;
+
+  const searchedPosts = activePosts?.filter(post => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
