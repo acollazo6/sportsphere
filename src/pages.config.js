@@ -83,6 +83,7 @@ import ViewLive from './pages/ViewLive';
 import OrgDashboard from './pages/OrgDashboard';
 import OrgRoster from './pages/OrgRoster';
 import TrainingPlans from './pages/TrainingPlans';
+import VideoReview from './pages/VideoReview';
 import __Layout from './Layout.jsx';
 
 
@@ -123,6 +124,7 @@ export const PAGES = {
     "OrgDashboard": OrgDashboard,
     "OrgRoster": OrgRoster,
     "TrainingPlans": TrainingPlans,
+    "VideoReview": VideoReview,
 }
 
 export const pagesConfig = {
