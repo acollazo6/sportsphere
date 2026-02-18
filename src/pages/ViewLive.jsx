@@ -373,31 +373,32 @@ export default function ViewLive() {
               </div>
             </div>
 
-            {hasAccess ? (
-              <div className="flex-1 flex flex-col overflow-hidden min-h-0">
-                {panelTab === "chat" && (
-                  <StreamChat
-                    messages={messages}
-                    user={user}
-                    isHost={isHost}
-                    message={message}
-                    setMessage={setMessage}
-                    onSend={sendMessage}
-                    onPin={togglePin}
-                  />
-                )}
-                {panelTab === "polls" && (
-                  <div className="flex-1 overflow-y-auto p-4">
-                    <StreamPolls streamId={streamId} user={user} isHost={isHost} isLive={isLive} />
-                  </div>
-                )}
-                {panelTab === "qa" && (
-                  <div className="flex-1 flex flex-col overflow-hidden p-4 min-h-0">
-                    <StreamQA streamId={streamId} user={user} isHost={isHost} isLive={isLive} />
-                  </div>
-                )}
-              </div>
-            ) : (
+            {isLive ? (
+               hasAccess ? (
+                 <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+                   {panelTab === "chat" && (
+                     <StreamChat
+                       messages={messages}
+                       user={user}
+                       isHost={isHost}
+                       message={message}
+                       setMessage={setMessage}
+                       onSend={sendMessage}
+                       onPin={togglePin}
+                     />
+                   )}
+                   {panelTab === "polls" && (
+                     <div className="flex-1 overflow-y-auto p-4">
+                       <StreamPolls streamId={streamId} user={user} isHost={isHost} isLive={isLive} />
+                     </div>
+                   )}
+                   {panelTab === "qa" && (
+                     <div className="flex-1 flex flex-col overflow-hidden p-4 min-h-0">
+                       <StreamQA streamId={streamId} user={user} isHost={isHost} isLive={isLive} />
+                     </div>
+                   )}
+                 </div>
+               ) : (
               <div className="flex-1 flex items-center justify-center p-6">
                 <div className="text-center">
                   <p className="text-4xl mb-3">🔒</p>
