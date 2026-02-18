@@ -7,6 +7,7 @@ import FeedPreferencesDialog from "../components/reels/FeedPreferencesDialog";
 import UpcomingStreamsSection from "../components/feed/UpcomingStreamsSection";
 import LiveNowSection from "../components/stream/LiveNowSection";
 import StreamRecommendations from "../components/stream/StreamRecommendations";
+import SportHubGrid from "../components/stream/SportHubGrid";
 import { Loader2, Search, Settings2, Sparkles, Users } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
