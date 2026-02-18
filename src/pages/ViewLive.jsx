@@ -385,6 +385,8 @@ export default function ViewLive() {
                        setMessage={setMessage}
                        onSend={sendMessage}
                        onPin={togglePin}
+                       streamTitle={stream.title}
+                       streamDescription={stream.description}
                      />
                    )}
                    {panelTab === "polls" && (
