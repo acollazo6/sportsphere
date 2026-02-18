@@ -19,8 +19,7 @@ export default function OrgMessages() {
   const [membership, setMembership] = useState(null);
   const [orgId, setOrgId] = useState(null);
   const [channel, setChannel] = useState("general");
-  const [text, setText] = useState("");
-  const [sending, setSending] = useState(false);
+
   const bottomRef = useRef(null);
   const qc = useQueryClient();
 
