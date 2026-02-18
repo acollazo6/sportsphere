@@ -387,6 +387,7 @@ export default function ViewLive() {
                        onPin={togglePin}
                        streamTitle={stream.title}
                        streamDescription={stream.description}
+                       streamId={streamId}
                      />
                    )}
                    {panelTab === "polls" && (
