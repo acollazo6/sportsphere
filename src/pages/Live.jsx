@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
-import { Radio, Eye, VideoOff, Loader2, PlayCircle, Users, Crown, DollarSign } from "lucide-react";
+import { Radio, Eye, VideoOff, Loader2, PlayCircle, Users, Crown, DollarSign, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { Switch } from "@/components/ui/switch";
