@@ -399,13 +399,27 @@ export default function ViewLive() {
                    )}
                  </div>
                ) : (
-              <div className="flex-1 flex items-center justify-center p-6">
-                <div className="text-center">
-                  <p className="text-4xl mb-3">🔒</p>
-                  <p className="text-slate-400 text-sm font-medium">Purchase access to join the chat</p>
-                </div>
-              </div>
-            )}
+                 <div className="flex-1 flex items-center justify-center p-6">
+                   <div className="text-center">
+                     <p className="text-4xl mb-3">🔒</p>
+                     <p className="text-slate-400 text-sm font-medium">Purchase access to join the chat</p>
+                   </div>
+                 </div>
+               )
+               ) : (
+               <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+                 {activeSummaryTab === "summary" && (
+                   <div className="flex-1 overflow-y-auto p-4">
+                     <StreamSummaryPanel stream={stream} transcript={messages?.map(m => m.message).join("\n") || ""} />
+                   </div>
+                 )}
+                 {activeSummaryTab === "clips" && (
+                   <div className="flex-1 overflow-y-auto p-4">
+                     <HighlightClipGenerator stream={stream} />
+                   </div>
+                 )}
+               </div>
+               )}
           </div>
         </div>
       </div>
