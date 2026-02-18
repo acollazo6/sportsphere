@@ -87,6 +87,7 @@ import VideoReview from './pages/VideoReview';
 import UploadVideo from './pages/UploadVideo';
 import OrgSessions from './pages/OrgSessions';
 import MyTraining from './pages/MyTraining';
+import ParentView from './pages/ParentView';
 import __Layout from './Layout.jsx';
 
 
@@ -131,6 +132,7 @@ export const PAGES = {
     "UploadVideo": UploadVideo,
     "OrgSessions": OrgSessions,
     "MyTraining": MyTraining,
+    "ParentView": ParentView,
 }
 
 export const pagesConfig = {
