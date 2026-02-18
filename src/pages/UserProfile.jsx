@@ -199,13 +199,6 @@ export default function UserProfile() {
                 <Button onClick={() => setShowAdviceDialog(true)} variant="outline" className="rounded-xl gap-2" size="sm">
                   <Lightbulb className="w-4 h-4" /> Advice
                 </Button>
-                <TipButton
-                  creator={{ email: profileEmail, name: profile.user_name }}
-                  contextType="profile"
-                  contextId={profileEmail}
-                  variant="outline"
-                  size="sm"
-                />
                 <Link to={createPageUrl("CreatorShop") + `?creator=${profileEmail}`}>
                   <Button variant="outline" className="rounded-xl gap-2" size="sm">
                     <ShoppingBag className="w-4 h-4" /> Shop
