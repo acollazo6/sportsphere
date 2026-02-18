@@ -344,16 +344,19 @@ export default function ViewLive() {
             </div>
           </div>
 
-          {/* Chat / Polls / Q&A Panel */}
+          {/* Chat / Polls / Q&A Panel or Summary Tabs */}
           <div className="bg-slate-900 rounded-2xl border border-slate-800 flex flex-col overflow-hidden min-h-0 max-h-[80vh] lg:max-h-full">
             {/* Tab Header */}
             <div className="px-4 pt-3 pb-0 border-b border-slate-800 flex-shrink-0">
               <div className="flex items-center gap-1">
-                {[
+                {isLive ? [
                   { key: "chat", icon: MessageSquare, label: "Chat" },
                   { key: "polls", icon: BarChart2, label: "Polls" },
                   { key: "qa", icon: MessageCircleQuestion, label: "Q&A" },
-                ].map(tab => (
+                ] : [
+                  { key: "summary", icon: MessageSquare, label: "Summary" },
+                  { key: "clips", icon: BarChart2, label: "Highlights" },
+                ]}.map(tab => (
                   <button
                     key={tab.key}
                     onClick={() => setPanelTab(tab.key)}
