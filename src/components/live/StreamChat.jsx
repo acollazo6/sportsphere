@@ -1,12 +1,15 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Send, Pin } from "lucide-react";
+import { Send, Pin, AlertTriangle } from "lucide-react";
 import moment from "moment";
+import ChatModeration from "./ChatModeration";
+import ChatFAQ from "./ChatFAQ";
 
-export default function StreamChat({ messages, user, isHost, message, setMessage, onSend, onPin }) {
+export default function StreamChat({ messages, user, isHost, message, setMessage, onSend, onPin, streamTitle = "", streamDescription = "" }) {
+  const [chatTab, setChatTab] = useState("messages");
   const bottomRef = useRef(null);
 
   useEffect(() => {
