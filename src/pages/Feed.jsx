@@ -254,32 +254,17 @@ export default function Feed() {
         </Tabs>
       )}
 
-      {/* Preferences & Sport Filter */}
-      <div className="flex items-center gap-3">
-        <div className="flex-1">
-          <SportFilter selected={sportFilter} onSelect={v => { setSportFilter(v); resetPage(); }} />
-        </div>
-        {user && (
+      {/* Preferences Button */}
+      {user && (
+        <div className="flex justify-end">
           <Button
             onClick={() => setShowPreferences(true)}
             variant="outline"
-            className="rounded-2xl gap-2 border-cyan-400/30 hover:border-cyan-400/50 hover:bg-cyan-50 text-slate-700"
+            className="rounded-2xl gap-2 border-slate-200 hover:border-red-300 hover:bg-red-50 text-slate-600 text-sm"
           >
             <Settings2 className="w-4 h-4" />
-            Preferences
+            Feed Preferences
           </Button>
-        )}
-      </div>
-
-      {/* Preferences Summary */}
-      {preferences?.preferred_sports?.length > 0 && (
-        <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-2xl p-4 border border-cyan-200">
-          <p className="text-sm font-semibold text-slate-700 mb-2">Your Preferred Sports:</p>
-          <div className="flex flex-wrap gap-2">
-            {preferences.preferred_sports.map(sport => (
-              <Badge key={sport} className="bg-cyan-500 text-white">{sport}</Badge>
-            ))}
-          </div>
         </div>
       )}
 
