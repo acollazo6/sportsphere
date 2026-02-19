@@ -257,6 +257,9 @@ export default function Explore() {
           <TabsTrigger value="events" className="rounded-lg text-xs sm:text-sm">
             <Zap className="w-4 h-4 mr-1 sm:mr-2" />Events
           </TabsTrigger>
+          <TabsTrigger value="browse" className="rounded-lg text-xs sm:text-sm">
+            <Globe className="w-4 h-4 mr-1 sm:mr-2" />Browse
+          </TabsTrigger>
         </TabsList>
 
         {/* Trending Posts */}
