@@ -229,11 +229,64 @@ export default function UserProfile() {
         </div>
       </div>
 
-      {/* Bio */}
-      {profile?.bio && (
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
-          <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-2">About</h2>
-          <p className="text-sm text-slate-700 leading-relaxed">{profile.bio}</p>
+      {/* Bio + Social Links */}
+      {(userRecord?.bio || userRecord?.social_links) && (
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 space-y-3">
+          {userRecord?.bio && (
+            <>
+              <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wide">About</h2>
+              <p className="text-sm text-slate-700 leading-relaxed">{userRecord.bio}</p>
+            </>
+          )}
+          {/* Preferred sports + skill level from user record */}
+          {(userRecord?.preferred_sports?.length > 0 || userRecord?.skill_level) && (
+            <div className="flex flex-wrap gap-1.5 pt-1">
+              {userRecord.skill_level && <Badge className="bg-slate-900 text-white text-xs capitalize">{userRecord.skill_level}</Badge>}
+              {userRecord.preferred_sports?.map(s => (
+                <Badge key={s} className="bg-orange-50 text-orange-700 border border-orange-200 text-xs">{s}</Badge>
+              ))}
+            </div>
+          )}
+          {/* Social links */}
+          {userRecord?.social_links && Object.keys(userRecord.social_links).some(k => userRecord.social_links[k]) && (
+            <div className="flex flex-wrap gap-2 pt-1">
+              {userRecord.social_links.instagram && (
+                <a href={`https://instagram.com/${userRecord.social_links.instagram}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-pink-600 bg-pink-50 px-2.5 py-1 rounded-full hover:bg-pink-100 transition-colors">
+                  <Instagram className="w-3 h-3" /> Instagram
+                </a>
+              )}
+              {userRecord.social_links.twitter && (
+                <a href={`https://x.com/${userRecord.social_links.twitter}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-sky-600 bg-sky-50 px-2.5 py-1 rounded-full hover:bg-sky-100 transition-colors">
+                  <Twitter className="w-3 h-3" /> X
+                </a>
+              )}
+              {userRecord.social_links.youtube && (
+                <a href={userRecord.social_links.youtube} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-red-600 bg-red-50 px-2.5 py-1 rounded-full hover:bg-red-100 transition-colors">
+                  <Youtube className="w-3 h-3" /> YouTube
+                </a>
+              )}
+              {userRecord.social_links.website && (
+                <a href={userRecord.social_links.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full hover:bg-emerald-100 transition-colors">
+                  <Globe className="w-3 h-3" /> Website
+                </a>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Featured Highlight (pinned post) */}
+      {pinnedHighlight?.item_data && (
+        <div className="space-y-2">
+          <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wide flex items-center gap-2">
+            <Pin className="w-4 h-4 text-orange-500" /> Featured Highlight
+          </h2>
+          <div className="ring-2 ring-orange-400/40 rounded-3xl overflow-hidden relative">
+            <div className="absolute top-3 left-3 z-10 bg-orange-500 text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-lg">
+              <Star className="w-3 h-3 fill-white" /> Featured
+            </div>
+            <PostCard post={pinnedHighlight.item_data} currentUser={currentUser} />
+          </div>
         </div>
       )}
 
