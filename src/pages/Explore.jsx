@@ -406,12 +406,13 @@ export default function Explore() {
             </div>
           )}
         </TabsContent>
-      </Tabs>
 
         {/* Browse Sports */}
         <TabsContent value="browse" className="space-y-4">
           <SportHubGrid />
         </TabsContent>
+      </Tabs>
+
       <CreateEventDialog
         open={showCreateEvent}
         onOpenChange={setShowCreateEvent}
