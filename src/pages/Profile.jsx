@@ -244,15 +244,63 @@ export default function Profile() {
             <div className="flex-1">
               <h1 className="text-2xl font-bold text-slate-900">{user.full_name}</h1>
               <p className="text-slate-500 text-sm">{user.email}</p>
-              {user.bio && <p className="text-sm text-slate-600 mt-2">{user.bio}</p>}
+              {user.bio && <p className="text-sm text-slate-600 mt-2 max-w-md">{user.bio}</p>}
+
+              {/* Sport profiles quick badges */}
+              {sportProfiles?.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {sportProfiles.map(p => (
+                    <Badge key={p.id} className="bg-orange-50 text-orange-700 border border-orange-200 text-xs gap-1">
+                      {p.sport}
+                      <span className="text-orange-400 capitalize">· {p.level}</span>
+                    </Badge>
+                  ))}
+                </div>
+              )}
+
+              {/* Personal info row */}
               <div className="flex flex-wrap gap-2 mt-2 text-xs text-slate-500">
+                {user.location && <span className="flex items-center gap-0.5"><MapPin className="w-3 h-3" />{user.location}</span>}
                 {user.age && <span>Age: {user.age}</span>}
-                {user.height && <span>• {user.height}</span>}
-                {user.weight && <span>• {user.weight} lbs</span>}
-                {user.highschool && <span>• 🏫 {user.highschool}</span>}
-                {user.college && <span>• 🎓 {user.college}</span>}
                 {user.professional_team && <span>• 🏆 {user.professional_team}</span>}
+                {user.college && <span>• 🎓 {user.college}</span>}
               </div>
+
+              {/* Social Links */}
+              {user.social_links && Object.keys(user.social_links).some(k => user.social_links[k]) && (
+                <div className="flex items-center gap-2 mt-3 flex-wrap">
+                  {user.social_links.instagram && (
+                    <a href={`https://instagram.com/${user.social_links.instagram}`} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-xs text-pink-600 hover:text-pink-700 bg-pink-50 px-2.5 py-1 rounded-full transition-colors">
+                      <Instagram className="w-3 h-3" /> Instagram
+                    </a>
+                  )}
+                  {user.social_links.twitter && (
+                    <a href={`https://x.com/${user.social_links.twitter}`} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-xs text-sky-600 hover:text-sky-700 bg-sky-50 px-2.5 py-1 rounded-full transition-colors">
+                      <Twitter className="w-3 h-3" /> X
+                    </a>
+                  )}
+                  {user.social_links.youtube && (
+                    <a href={user.social_links.youtube} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-xs text-red-600 hover:text-red-700 bg-red-50 px-2.5 py-1 rounded-full transition-colors">
+                      <Youtube className="w-3 h-3" /> YouTube
+                    </a>
+                  )}
+                  {user.social_links.tiktok && (
+                    <a href={`https://tiktok.com/@${user.social_links.tiktok}`} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-xs text-slate-700 hover:text-slate-900 bg-slate-100 px-2.5 py-1 rounded-full transition-colors">
+                      <MessageCircle className="w-3 h-3" /> TikTok
+                    </a>
+                  )}
+                  {user.social_links.website && (
+                    <a href={user.social_links.website} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full transition-colors">
+                      <Globe className="w-3 h-3" /> Website
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
             <div className="flex gap-2">
               <Link to={createPageUrl("ProfileSettings")}>
