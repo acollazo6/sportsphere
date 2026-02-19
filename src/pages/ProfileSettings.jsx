@@ -205,6 +205,50 @@ export default function ProfileSettings() {
             className="rounded-xl"
           />
         </div>
+
+        {/* Preferred Sports */}
+        <div className="space-y-2">
+          <Label className="text-xs font-medium text-slate-500">Preferred Sports</Label>
+          <div className="flex flex-wrap gap-2">
+            {SPORTS.map(sport => {
+              const selected = form.preferred_sports.includes(sport);
+              return (
+                <button
+                  key={sport}
+                  type="button"
+                  onClick={() => {
+                    setForm(prev => ({
+                      ...prev,
+                      preferred_sports: selected
+                        ? prev.preferred_sports.filter(s => s !== sport)
+                        : [...prev.preferred_sports, sport]
+                    }));
+                  }}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+                    selected
+                      ? "bg-orange-500 text-white border-orange-500"
+                      : "bg-slate-50 text-slate-600 border-slate-200 hover:border-orange-300"
+                  }`}
+                >
+                  {sport}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Skill Level */}
+        <div className="space-y-1.5">
+          <Label className="text-xs font-medium text-slate-500">Overall Skill Level</Label>
+          <Select value={form.skill_level} onValueChange={v => setForm(prev => ({ ...prev, skill_level: v }))}>
+            <SelectTrigger className="rounded-xl">
+              <SelectValue placeholder="Select your level" />
+            </SelectTrigger>
+            <SelectContent>
+              {LEVELS.map(l => <SelectItem key={l} value={l.toLowerCase()}>{l}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Social Links */}
