@@ -246,17 +246,15 @@ export default function Profile() {
               <p className="text-slate-500 text-sm">{user.email}</p>
               {user.bio && <p className="text-sm text-slate-600 mt-2 max-w-md">{user.bio}</p>}
 
-              {/* Sport profiles quick badges */}
-              {sportProfiles?.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mt-2">
-                  {sportProfiles.map(p => (
-                    <Badge key={p.id} className="bg-orange-50 text-orange-700 border border-orange-200 text-xs gap-1">
-                      {p.sport}
-                      <span className="text-orange-400 capitalize">· {p.level}</span>
-                    </Badge>
-                  ))}
-                </div>
-              )}
+              {/* Preferred sports + skill level */}
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {user.skill_level && (
+                  <Badge className="bg-slate-900 text-white text-xs capitalize">{user.skill_level}</Badge>
+                )}
+                {(user.preferred_sports?.length > 0 ? user.preferred_sports : sportProfiles?.map(p => p.sport) || []).map(sport => (
+                  <Badge key={sport} className="bg-orange-50 text-orange-700 border border-orange-200 text-xs">{sport}</Badge>
+                ))}
+              </div>
 
               {/* Personal info row */}
               <div className="flex flex-wrap gap-2 mt-2 text-xs text-slate-500">
