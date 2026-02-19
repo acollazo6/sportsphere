@@ -23,6 +23,7 @@ export default function Feed() {
   const [showPreferences, setShowPreferences] = useState(false);
   const [page, setPage] = useState(1);
   const [feedTab, setFeedTab] = useState("forYou");
+  const [showSportDropdown, setShowSportDropdown] = useState(false);
   const resetPage = () => setPage(1);
 
   useEffect(() => {
