@@ -272,15 +272,21 @@ export default function VideoEditor({ videoFile, videoUrl, onThumbnailReady, onT
 
       {/* Tabs */}
       <Tabs defaultValue="trim" className="px-4 pb-4">
-        <TabsList className="w-full bg-slate-100 rounded-xl mb-4 mt-2 h-9">
-          <TabsTrigger value="trim" className="flex-1 text-xs rounded-lg gap-1.5">
-            <Scissors className="w-3.5 h-3.5" />Trim
+        <TabsList className="w-full bg-slate-100 rounded-xl mb-4 mt-2 h-9 grid grid-cols-5">
+          <TabsTrigger value="trim" className="text-xs rounded-lg gap-1">
+            <Scissors className="w-3.5 h-3.5" /><span className="hidden sm:inline">Trim</span>
           </TabsTrigger>
-          <TabsTrigger value="thumbnail" className="flex-1 text-xs rounded-lg gap-1.5">
-            <Image className="w-3.5 h-3.5" />Thumbnail
+          <TabsTrigger value="filters" className="text-xs rounded-lg gap-1">
+            <Sliders className="w-3.5 h-3.5" /><span className="hidden sm:inline">Filters</span>
           </TabsTrigger>
-          <TabsTrigger value="chapters" className="flex-1 text-xs rounded-lg gap-1.5">
-            <Clock className="w-3.5 h-3.5" />Chapters
+          <TabsTrigger value="text" className="text-xs rounded-lg gap-1">
+            <Type className="w-3.5 h-3.5" /><span className="hidden sm:inline">Text</span>
+          </TabsTrigger>
+          <TabsTrigger value="thumbnail" className="text-xs rounded-lg gap-1">
+            <Image className="w-3.5 h-3.5" /><span className="hidden sm:inline">Thumb</span>
+          </TabsTrigger>
+          <TabsTrigger value="chapters" className="text-xs rounded-lg gap-1">
+            <Clock className="w-3.5 h-3.5" /><span className="hidden sm:inline">Chapters</span>
           </TabsTrigger>
         </TabsList>
 
