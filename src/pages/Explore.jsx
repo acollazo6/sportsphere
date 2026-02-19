@@ -412,8 +412,6 @@ export default function Explore() {
         <TabsContent value="browse" className="space-y-4">
           <SportHubGrid />
         </TabsContent>
-      </Tabs>
-
       <CreateEventDialog
         open={showCreateEvent}
         onOpenChange={setShowCreateEvent}
