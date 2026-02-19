@@ -48,6 +48,8 @@ export default function PostCard({ post, currentUser, onUpdate }) {
   const [hasAccess, setHasAccess] = useState(false);
   const [generatingSummary, setGeneratingSummary] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerStartIndex, setViewerStartIndex] = useState(0);
 
   useEffect(() => {
     if (!currentUser) return;
