@@ -280,11 +280,6 @@ export default function Feed() {
         <LiveNowSection user={user} userPreferences={preferences} />
       )}
 
-      {/* Recommendations */}
-      {!searchQuery && !sportFilter && (
-        <StreamRecommendations user={user} userPreferences={preferences} />
-      )}
-
       {/* Upcoming Streams */}
       {!searchQuery && !sportFilter && (
         <UpcomingStreamsSection user={user} />
