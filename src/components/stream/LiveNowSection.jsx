@@ -65,7 +65,7 @@ export default function LiveNowSection({ user, userPreferences }) {
 
       <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide" style={{ scrollSnapType: "x mandatory" }}>
         {filtered.map(stream => (
-          <Link key={stream.id} to={createPageUrl(`ViewLive?stream_id=${stream.id}`)} style={{ scrollSnapAlign: "start" }}>
+          <Link key={stream.id} to={createPageUrl(`ViewLive?id=${stream.id}`)} style={{ scrollSnapAlign: "start" }}>
             <div className="flex-shrink-0 w-48 rounded-2xl overflow-hidden bg-white border border-slate-100 hover:shadow-lg transition-all">
               <div className="relative h-28 bg-gray-900">
                 {stream.thumbnail_url ? (
