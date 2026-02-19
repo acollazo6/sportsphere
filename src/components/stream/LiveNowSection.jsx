@@ -17,13 +17,15 @@ export default function LiveNowSection({ user, userPreferences }) {
   const { data: liveStreams = [] } = useQuery({
     queryKey: ["liveStreams"],
     queryFn: () => base44.entities.LiveStream.filter({ status: "live" }),
-    refetchInterval: 5000,
+    refetchInterval: 30000,
+    staleTime: 20000,
   });
 
   const { data: follows = [] } = useQuery({
     queryKey: ["follows", user?.email],
-    queryFn: () => (user ? base44.entities.Follow.filter({ follower_email: user.email }) : []),
+    queryFn: () => base44.entities.Follow.filter({ follower_email: user.email }),
     enabled: !!user,
+    staleTime: 60000,
   });
 
   const followingEmails = follows.map(f => f.following_email);
