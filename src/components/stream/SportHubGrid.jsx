@@ -55,7 +55,7 @@ export default function SportHubGrid() {
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
       <div className="flex items-center gap-2 mb-4">
         <Trophy className="w-6 h-6 text-yellow-600" />
-        <h2 className="text-2xl font-bold text-gray-900">Browse Sports</h2>
+        <h2 className="text-2xl font-bold text-gray-900">SportSphere</h2>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
         {MAJOR_SPORTS.map(sport => {
