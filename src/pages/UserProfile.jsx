@@ -210,23 +210,70 @@ export default function UserProfile() {
         </div>
       </div>
 
+      {/* Bio */}
+      {profile?.bio && (
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+          <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-2">About</h2>
+          <p className="text-sm text-slate-700 leading-relaxed">{profile.bio}</p>
+        </div>
+      )}
+
+      {/* Favorite Sports */}
+      {profiles?.length > 0 && (
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+          <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-3 flex items-center gap-2">
+            <Star className="w-4 h-4 text-amber-500" /> Favorite Sports
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {profiles.map(sp => (
+              <span key={sp.id} className="inline-flex items-center gap-1.5 bg-orange-50 text-orange-700 border border-orange-200 rounded-full px-3 py-1 text-sm font-semibold">
+                🏅 {sp.sport}
+                <span className="text-orange-400 text-xs capitalize">· {sp.level}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Sport Profiles */}
       <div className="grid gap-3 sm:grid-cols-2">
         {profiles?.map(sp => (
-          <div key={sp.id} className="bg-white rounded-2xl border border-slate-100 p-5">
-            <Badge className="bg-orange-50 text-orange-700 rounded-lg mb-3">{sp.sport}</Badge>
-            <p className="text-sm font-semibold text-slate-700 capitalize">{sp.role} · {sp.level}</p>
-            {sp.bio && <p className="text-xs text-slate-500 mt-1">{sp.bio}</p>}
-            <div className="flex flex-wrap gap-2 mt-3">
-              {sp.team && <span className="text-xs text-slate-400 flex items-center gap-1"><Trophy className="w-3 h-3" />{sp.team}</span>}
-              {sp.years_experience > 0 && <span className="text-xs text-slate-400 flex items-center gap-1"><Clock className="w-3 h-3" />{sp.years_experience}yr</span>}
+          <div key={sp.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 space-y-3">
+            <div className="flex items-center justify-between">
+              <Badge className="bg-orange-50 text-orange-700 border-orange-200 rounded-lg">{sp.sport}</Badge>
+              <span className="text-xs text-slate-400 capitalize font-medium">{sp.role}</span>
             </div>
+            <p className="text-sm font-semibold text-slate-700 capitalize">{sp.level} level</p>
+            {sp.bio && <p className="text-xs text-slate-500 leading-relaxed">{sp.bio}</p>}
+            <div className="flex flex-wrap gap-3">
+              {sp.team && <span className="text-xs text-slate-500 flex items-center gap-1"><Trophy className="w-3 h-3 text-amber-500" />{sp.team}</span>}
+              {sp.years_experience > 0 && <span className="text-xs text-slate-500 flex items-center gap-1"><Clock className="w-3 h-3 text-blue-400" />{sp.years_experience} yr exp</span>}
+              {sp.location && <span className="text-xs text-slate-500 flex items-center gap-1"><MapPin className="w-3 h-3 text-red-400" />{sp.location}</span>}
+            </div>
+
+            {/* Achievements */}
+            {sp.achievements?.length > 0 && (
+              <div className="pt-2 border-t border-slate-100">
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2 flex items-center gap-1">
+                  <Trophy className="w-3 h-3 text-amber-500" /> Achievements
+                </p>
+                <ul className="space-y-1">
+                  {sp.achievements.map((ach, i) => (
+                    <li key={i} className="text-xs text-slate-600 flex items-start gap-1.5">
+                      <CheckCircle className="w-3 h-3 text-green-500 mt-0.5 flex-shrink-0" />
+                      {ach}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             {sp.stats?.length > 0 && (
-              <div className="flex gap-4 pt-3 border-t border-slate-50 mt-3">
+              <div className="flex gap-4 pt-3 border-t border-slate-100">
                 {sp.stats.map((s, i) => (
                   <div key={i} className="text-center">
                     <p className="text-sm font-bold text-slate-900">{s.value}</p>
-                    <p className="text-[10px] text-slate-400 uppercase">{s.label}</p>
+                    <p className="text-[10px] text-slate-400 uppercase tracking-wide">{s.label}</p>
                   </div>
                 ))}
               </div>
