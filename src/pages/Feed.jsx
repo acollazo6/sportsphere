@@ -27,6 +27,13 @@ export default function Feed() {
   const resetPage = () => setPage(1);
 
   useEffect(() => {
+    if (!showSportDropdown) return;
+    const close = () => setShowSportDropdown(false);
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [showSportDropdown]);
+
+  useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
   }, []);
 
