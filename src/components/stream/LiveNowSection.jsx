@@ -53,84 +53,49 @@ export default function LiveNowSection({ user, userPreferences }) {
 
   const sports = Array.from(new Set(liveStreams.map(s => s.sport).filter(Boolean)));
 
-  if (liveStreams.length === 0) {
-    return (
-      <div className="max-w-6xl mx-auto px-4 py-8 text-center">
-        <Flame className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-        <p className="text-gray-400">No streams live right now</p>
-      </div>
-    );
-  }
+  if (liveStreams.length === 0) return null;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <Flame className="w-6 h-6 text-red-600" />
-          Live Now
-        </h2>
-        <div className="flex gap-2">
-          <Select value={sportFilter} onValueChange={setSportFilter}>
-            <SelectTrigger className="w-32 rounded-xl">
-              <SelectValue placeholder="Sport" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Sports</SelectItem>
-              {sports.map(sport => (
-                <SelectItem key={sport} value={sport}>{sport}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-32 rounded-xl">
-              <SelectValue placeholder="Sort" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="viewers">Most Viewers</SelectItem>
-              <SelectItem value="follows">Following</SelectItem>
-              <SelectItem value="recent">Most Recent</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+    <div className="space-y-3">
+      <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+        <Flame className="w-4 h-4 text-red-600 animate-pulse" />
+        Live Now
+        <Badge className="bg-red-600 text-white text-[10px] px-1.5">{liveStreams.length}</Badge>
+      </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide" style={{ scrollSnapType: "x mandatory" }}>
         {filtered.map(stream => (
-          <Link key={stream.id} to={createPageUrl(`ViewLive?stream_id=${stream.id}`)}>
-            <Card className="hover:shadow-lg transition-all cursor-pointer overflow-hidden h-full">
-              <div className="relative h-40 bg-gradient-to-br from-gray-900 to-black flex items-center justify-center overflow-hidden">
+          <Link key={stream.id} to={createPageUrl(`ViewLive?stream_id=${stream.id}`)} style={{ scrollSnapAlign: "start" }}>
+            <div className="flex-shrink-0 w-48 rounded-2xl overflow-hidden bg-white border border-slate-100 hover:shadow-lg transition-all">
+              <div className="relative h-28 bg-gray-900">
                 {stream.thumbnail_url ? (
                   <img src={stream.thumbnail_url} alt={stream.title} className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full bg-gray-800" />
+                  <div className="w-full h-full bg-gradient-to-br from-red-900 to-orange-700" />
                 )}
-                <div className="absolute top-2 left-2">
-                  <Badge className="bg-red-600 text-white flex items-center gap-1 animate-pulse">
-                    <Flame className="w-3 h-3" />
-                    LIVE
-                  </Badge>
-                </div>
-                <div className="absolute bottom-2 right-2 bg-black/70 px-2 py-1 rounded-lg flex items-center gap-1 text-white text-xs font-bold">
-                  <Users className="w-3 h-3" />
+                <Badge className="absolute top-2 left-2 bg-red-600 text-white text-[10px] gap-1 animate-pulse px-1.5 py-0.5">
+                  <Flame className="w-2.5 h-2.5" /> LIVE
+                </Badge>
+                <div className="absolute bottom-2 right-2 bg-black/70 px-1.5 py-0.5 rounded-md flex items-center gap-1 text-white text-[10px] font-bold">
+                  <Users className="w-2.5 h-2.5" />
                   {stream.viewers?.length || 0}
                 </div>
               </div>
-              <div className="p-3 space-y-2">
-                <h3 className="font-bold text-sm line-clamp-2">{stream.title}</h3>
-                <div className="flex items-center gap-2">
-                  <img src={stream.host_avatar} alt={stream.host_name} className="w-6 h-6 rounded-full object-cover" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-gray-700 truncate">{stream.host_name}</p>
-                  </div>
+              <div className="p-2.5 space-y-1.5">
+                <p className="font-bold text-xs line-clamp-2 text-slate-900">{stream.title}</p>
+                <div className="flex items-center gap-1.5">
+                  {stream.host_avatar ? (
+                    <img src={stream.host_avatar} alt={stream.host_name} className="w-5 h-5 rounded-full object-cover flex-shrink-0" />
+                  ) : (
+                    <div className="w-5 h-5 rounded-full bg-slate-200 flex-shrink-0" />
+                  )}
+                  <p className="text-[11px] text-slate-500 truncate">{stream.host_name}</p>
                   {followingEmails.includes(stream.host_email) && (
-                    <Heart className="w-4 h-4 text-red-600 fill-red-600" />
+                    <Heart className="w-3 h-3 text-red-600 fill-red-600 flex-shrink-0" />
                   )}
                 </div>
-                {stream.sport && (
-                  <Badge variant="outline" className="text-xs rounded-lg w-fit">{stream.sport}</Badge>
-                )}
               </div>
-            </Card>
+            </div>
           </Link>
         ))}
       </div>
