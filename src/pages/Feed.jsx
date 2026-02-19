@@ -137,9 +137,13 @@ export default function Feed() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
       {/* Hero card */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-600 via-pink-500 to-orange-500 p-6 md:p-8 text-white shadow-2xl shadow-purple-500/50">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-2xl" />
+      <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 text-white shadow-2xl" style={{background: "linear-gradient(135deg, rgba(0,40,100,0.85) 0%, rgba(0,80,160,0.75) 50%, rgba(0,120,80,0.7) 100%)"}}>
+        <img
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698f6f4f4e61dd2806b88ed2/5c675f7bf_392DC896-FFC0-4491-BCB6-20C0C160BF03.png"
+          alt="SportSphere background"
+          className="absolute inset-0 w-full h-full object-cover opacity-20"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/60 via-blue-700/40 to-green-700/40" />
         <div className="relative z-10">
           <h1 className="text-2xl md:text-4xl font-black tracking-tight drop-shadow-lg">Your Sports Feed 🔥</h1>
           <p className="text-white/90 mt-2 text-sm md:text-base font-semibold drop-shadow">Discover training, highlights, and motivation from athletes worldwide.</p>
