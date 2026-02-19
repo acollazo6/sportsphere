@@ -20,6 +20,8 @@ import ProgramDialog from "../components/training/ProgramDialog";
 import ProgramDetailDialog from "../components/training/ProgramDetailDialog";
 import MonetizationSetup from "../components/monetization/MonetizationSetup";
 import BadgeDisplay from "../components/gamification/BadgeDisplay";
+import FeaturedHighlight from "../components/profile/FeaturedHighlight";
+import { Instagram, Twitter, Youtube, Linkedin, Globe, MessageCircle } from "lucide-react";
 
 const SPORTS = ["Basketball", "Soccer", "Football", "Baseball", "Tennis", "Golf", "Swimming", "Boxing", "MMA", "Track", "Volleyball", "Hockey", "Cycling", "Yoga", "CrossFit", "Other"];
 const ROLES = ["athlete", "coach", "trainer", "instructor", "fan"];
