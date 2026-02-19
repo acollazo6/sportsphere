@@ -184,14 +184,24 @@ export default function UserProfile() {
             </div>
             {currentUser && currentUser.email !== profileEmail && (
               <div className="flex flex-wrap gap-2">
-                <Button 
-                  onClick={toggleFollow} 
-                  variant={followStatus ? "outline" : "default"}
-                  className="rounded-xl gap-2"
+                <Button
+                  onClick={toggleFollow}
                   size="sm"
+                  className={`rounded-xl gap-2 font-bold transition-all ${
+                    followStatus === "accepted"
+                      ? "bg-green-50 text-green-700 border border-green-300 hover:bg-red-50 hover:text-red-600 hover:border-red-300"
+                      : followStatus === "pending"
+                      ? "bg-amber-50 text-amber-700 border border-amber-300"
+                      : "bg-gradient-to-r from-orange-500 to-amber-400 text-white hover:from-orange-600 hover:to-amber-500 shadow-md"
+                  }`}
                 >
-                  <Users className="w-4 h-4" />
-                  {followStatus === "accepted" ? "Following" : followStatus === "pending" ? "Requested" : "Follow"}
+                  {followStatus === "accepted" ? (
+                    <><UserCheck className="w-4 h-4" /> Following</>
+                  ) : followStatus === "pending" ? (
+                    <><Hourglass className="w-4 h-4" /> Requested</>
+                  ) : (
+                    <><UserPlus className="w-4 h-4" /> Follow</>
+                  )}
                 </Button>
                 <Button onClick={startConversation} variant="outline" className="rounded-xl gap-2" size="sm">
                   <MessageCircle className="w-4 h-4" /> Message
