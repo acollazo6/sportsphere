@@ -117,6 +117,15 @@ export default function UserProfile() {
     }
   };
 
+  const { data: pinnedHighlight } = useQuery({
+    queryKey: ["pinned-highlight", profileEmail],
+    queryFn: async () => {
+      const highlights = await base44.entities.Highlight.filter({ user_email: profileEmail });
+      return highlights.find(h => h.is_pinned && h.item_type === "post") || null;
+    },
+    enabled: !!profileEmail,
+  });
+
   // Fetch the user record directly for name/avatar fallback
   const { data: userRecord } = useQuery({
     queryKey: ["user-record", profileEmail],
