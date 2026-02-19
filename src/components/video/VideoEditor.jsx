@@ -166,6 +166,35 @@ export default function VideoEditor({ videoFile, videoUrl, onThumbnailReady, onT
     if (videoRef.current) videoRef.current.currentTime = t;
   };
 
+  const handleFilterChange = (filterId) => {
+    setActiveFilter(filterId);
+    onFiltersChange?.(filterId);
+  };
+
+  const addTextOverlay = () => {
+    if (!newText.trim()) return;
+    const overlay = {
+      id: Date.now(),
+      text: newText.trim(),
+      color: newTextColor,
+      size: newTextSize,
+      align: newTextAlign,
+      bold: newTextBold,
+    };
+    const updated = [...textOverlays, overlay];
+    setTextOverlays(updated);
+    onTextOverlaysChange?.(updated);
+    setNewText("");
+  };
+
+  const removeTextOverlay = (id) => {
+    const updated = textOverlays.filter(o => o.id !== id);
+    setTextOverlays(updated);
+    onTextOverlaysChange?.(updated);
+  };
+
+  const currentFilter = FILTERS.find(f => f.id === activeFilter) || FILTERS[0];
+
   if (!src) return null;
 
   const trimStartPct = duration ? (trimRange[0] / duration) * 100 : 0;
