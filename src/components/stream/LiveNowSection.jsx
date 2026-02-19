@@ -17,8 +17,8 @@ export default function LiveNowSection({ user, userPreferences }) {
   const { data: liveStreams = [] } = useQuery({
     queryKey: ["liveStreams"],
     queryFn: () => base44.entities.LiveStream.filter({ status: "live" }),
-    refetchInterval: 30000,
-    staleTime: 20000,
+    refetchInterval: 60000,
+    staleTime: 50000,
   });
 
   const { data: follows = [] } = useQuery({

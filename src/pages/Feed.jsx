@@ -35,25 +35,29 @@ export default function Feed() {
       return prefs[0] || null;
     },
     enabled: !!user,
+    staleTime: 5 * 60 * 1000,
   });
 
   const { data: followedUsers } = useQuery({
-    queryKey: ["followed-users", user?.email],
+    queryKey: ["follows", user?.email],
     queryFn: async () => {
       const follows = await base44.entities.Follow.filter({ follower_email: user.email, status: "accepted" });
       return follows.map(f => f.following_email);
     },
     enabled: !!user,
+    staleTime: 60000,
   });
 
   const { data: allPosts, isLoading, refetch } = useQuery({
-    queryKey: ["feed-posts", sportFilter, page],
+    queryKey: ["feed-posts", sportFilter],
     queryFn: () => {
       if (sportFilter) {
         return base44.entities.Post.filter({ sport: sportFilter }, "-created_date", 50);
       }
       return base44.entities.Post.list("-created_date", 50);
     },
+    staleTime: 60000,
+    refetchInterval: 120000,
   });
 
   // Apply user preferences filtering
