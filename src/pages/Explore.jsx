@@ -224,12 +224,19 @@ export default function Explore() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400 rounded-3xl p-8 text-white shadow-2xl">
-        <h1 className="text-4xl font-black flex items-center gap-3 mb-2">
-          <Flame className="w-10 h-10" />
-          Explore
-        </h1>
-        <p className="text-white/90 text-sm">Trending posts, rising athletes & emerging sports worldwide</p>
+      <div className="relative overflow-hidden bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400 rounded-3xl p-8 text-white shadow-2xl">
+        <img
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698f6f4f4e61dd2806b88ed2/15137601c_392DC896-FFC0-4491-BCB6-20C0C160BF03.png"
+          alt="SportSphere"
+          className="absolute right-4 top-1/2 -translate-y-1/2 h-24 w-24 object-contain opacity-25 pointer-events-none"
+        />
+        <div className="relative z-10">
+          <h1 className="text-4xl font-black flex items-center gap-3 mb-2">
+            <Flame className="w-10 h-10" />
+            Explore
+          </h1>
+          <p className="text-white/90 text-sm">Trending posts, rising athletes & emerging sports worldwide</p>
+        </div>
       </div>
 
       {/* Search */}
