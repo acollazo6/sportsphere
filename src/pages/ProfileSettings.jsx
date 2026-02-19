@@ -54,6 +54,8 @@ export default function ProfileSettings() {
         cover_url: u.cover_url || "",
         location: u.location || "",
         website: u.website || "",
+        preferred_sports: u.preferred_sports || [],
+        skill_level: u.skill_level || "",
         social_links: u.social_links || {},
         contact_preferences: u.contact_preferences || {
           allow_messages: true,
