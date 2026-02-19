@@ -20,13 +20,15 @@ export default function StreamRecommendations({ user, userPreferences }) {
     queryFn: () => base44.entities.Follow.filter({ follower_email: user.email }),
     enabled: !!user,
     staleTime: 60000,
+    refetchInterval: 120000,
   });
 
   const { data: userSportProfiles = [] } = useQuery({
     queryKey: ["userSportProfiles", user?.email],
     queryFn: () => base44.entities.SportProfile.filter({ user_email: user.email }),
     enabled: !!user,
-    staleTime: 60000,
+    staleTime: 5 * 60 * 1000,
+    refetchInterval: false,
   });
 
   const followingEmails = follows.map(f => f.following_email);
