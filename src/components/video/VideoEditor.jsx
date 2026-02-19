@@ -324,6 +324,118 @@ export default function VideoEditor({ videoFile, videoUrl, onThumbnailReady, onT
           )}
         </TabsContent>
 
+        {/* FILTERS */}
+        <TabsContent value="filters" className="space-y-3 mt-0">
+          <p className="text-xs text-slate-500">Choose a filter to apply to your video.</p>
+          <div className="grid grid-cols-4 gap-2">
+            {FILTERS.map(f => (
+              <button
+                key={f.id}
+                onClick={() => handleFilterChange(f.id)}
+                className={`relative rounded-xl overflow-hidden border-2 transition-all aspect-video bg-slate-800 flex items-center justify-center ${
+                  activeFilter === f.id ? "border-orange-500 scale-95" : "border-transparent hover:border-slate-300"
+                }`}
+              >
+                {videoRef.current && (
+                  <div
+                    className="w-full h-full absolute inset-0 bg-gradient-to-br from-slate-600 to-slate-900"
+                    style={{ filter: f.css || "none" }}
+                  />
+                )}
+                <span className={`relative text-[10px] font-bold z-10 px-1 py-0.5 rounded ${activeFilter === f.id ? "text-orange-400" : "text-white/80"}`}>
+                  {f.label}
+                </span>
+                {activeFilter === f.id && (
+                  <div className="absolute top-1 right-1 z-10">
+                    <Check className="w-3 h-3 text-orange-400" />
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-slate-400 text-center">Filter previews apply in real-time above.</p>
+        </TabsContent>
+
+        {/* TEXT OVERLAYS */}
+        <TabsContent value="text" className="space-y-3 mt-0">
+          <p className="text-xs text-slate-500">Add text overlays displayed on your video.</p>
+          <Input
+            value={newText}
+            onChange={e => setNewText(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && addTextOverlay()}
+            placeholder="Your text here..."
+            className="rounded-xl text-sm h-9"
+          />
+          <div className="grid grid-cols-2 gap-2">
+            <div className="space-y-1">
+              <Label className="text-xs text-slate-500">Color</Label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="color"
+                  value={newTextColor}
+                  onChange={e => setNewTextColor(e.target.value)}
+                  className="w-8 h-8 rounded-lg cursor-pointer border border-slate-200"
+                />
+                <span className="text-xs text-slate-500 font-mono">{newTextColor}</span>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-slate-500">Size</Label>
+              <Select value={newTextSize} onValueChange={setNewTextSize}>
+                <SelectTrigger className="rounded-xl h-8 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="sm">Small</SelectItem>
+                  <SelectItem value="base">Medium</SelectItem>
+                  <SelectItem value="lg">Large</SelectItem>
+                  <SelectItem value="2xl">X-Large</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Label className="text-xs text-slate-500">Align</Label>
+            <div className="flex gap-1">
+              {[["left", AlignLeft], ["center", AlignCenter], ["right", AlignRight]].map(([val, Icon]) => (
+                <button
+                  key={val}
+                  onClick={() => setNewTextAlign(val)}
+                  className={`p-1.5 rounded-lg transition-colors ${newTextAlign === val ? "bg-orange-100 text-orange-600" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => setNewTextBold(b => !b)}
+              className={`p-1.5 rounded-lg transition-colors ml-1 ${newTextBold ? "bg-orange-100 text-orange-600" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}
+            >
+              <Bold className="w-3.5 h-3.5" />
+            </button>
+            <Button size="sm" onClick={addTextOverlay} disabled={!newText.trim()} className="ml-auto rounded-xl bg-orange-500 hover:bg-orange-600 text-white gap-1 px-3 text-xs h-8">
+              <Plus className="w-3 h-3" /> Add
+            </Button>
+          </div>
+
+          {textOverlays.length > 0 ? (
+            <div className="space-y-1.5 max-h-36 overflow-y-auto">
+              {textOverlays.map(o => (
+                <div key={o.id} className="flex items-center gap-2 bg-slate-50 rounded-xl px-3 py-2 group">
+                  <span className="w-4 h-4 rounded-full shrink-0 border border-slate-200" style={{ background: o.color }} />
+                  <p className="text-sm text-slate-700 flex-1 truncate" style={{ fontWeight: o.bold ? 700 : 400 }}>{o.text}</p>
+                  <span className="text-[10px] text-slate-400 capitalize">{o.size}</span>
+                  <button onClick={() => removeTextOverlay(o.id)} className="opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-slate-400 text-center py-2">No text overlays yet.</p>
+          )}
+        </TabsContent>
+
         {/* THUMBNAIL */}
         <TabsContent value="thumbnail" className="space-y-3 mt-0">
           <div className="flex gap-2">
