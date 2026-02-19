@@ -12,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SportFilter from "../components/feed/SportFilter";
+import SportHubGrid from "../components/stream/SportHubGrid";
 import EventCard from "../components/events/EventCard";
 import CreateEventDialog from "../components/events/CreateEventDialog";
 import PostCard from "../components/feed/PostCard";
