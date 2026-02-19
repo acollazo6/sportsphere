@@ -106,9 +106,11 @@ export default function Layout({ children, currentPageName }) {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-2xl border-b border-gray-200 shadow-lg">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link to={createPageUrl("Feed")} className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-red-900 via-red-800 to-red-900 flex items-center justify-center shadow-lg shadow-red-900/40 group-hover:shadow-xl group-hover:shadow-red-900/60 transition-all duration-300 group-hover:scale-110">
-              <Flame className="w-5 h-5 text-white" />
-            </div>
+            <img
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698f6f4f4e61dd2806b88ed2/15137601c_392DC896-FFC0-4491-BCB6-20C0C160BF03.png"
+              alt="SportSphere"
+              className="w-10 h-10 object-contain group-hover:scale-110 transition-all duration-300"
+            />
             <span className="text-xl font-black tracking-tight text-red-900 hidden sm:block">{t("appName")}</span>
           </Link>
 
