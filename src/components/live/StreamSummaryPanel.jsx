@@ -3,12 +3,13 @@ import { base44 } from "@/api/base44Client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, Sparkles, Clock, AlertCircle } from "lucide-react";
+import { Loader2, Sparkles, Clock, AlertCircle, Tag, Star, RefreshCw } from "lucide-react";
 
 export default function StreamSummaryPanel({ stream, transcript, onSummaryGenerated }) {
   const [loading, setLoading] = useState(false);
-  const [summary, setSummary] = useState(stream?.ai_summary || null);
+  const [overview, setOverview] = useState(stream?.ai_summary || null);
   const [highlights, setHighlights] = useState([]);
+  const [tags, setTags] = useState(stream?.ai_tags || []);
   const [error, setError] = useState(null);
 
   const generateSummary = async () => {
@@ -17,13 +18,15 @@ export default function StreamSummaryPanel({ stream, transcript, onSummaryGenera
       setError(null);
       const response = await base44.functions.invoke('generateStreamSummary', {
         stream_id: stream.id,
-        transcript: transcript || `Title: ${stream.title}. Description: ${stream.description}`,
+        transcript: transcript || "",
         title: stream.title,
         description: stream.description,
+        sport: stream.sport,
       });
 
-      setSummary(response.data.summary);
+      setOverview(response.data.overview);
       setHighlights(response.data.highlights || []);
+      setTags(response.data.tags || []);
       onSummaryGenerated?.();
     } catch (err) {
       setError(err.message);
@@ -32,93 +35,128 @@ export default function StreamSummaryPanel({ stream, transcript, onSummaryGenera
     }
   };
 
+  const hasSummary = overview || highlights.length > 0 || tags.length > 0;
+
   return (
-    <Card className="p-4 space-y-4">
-      {/* Summary Section */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-amber-500" />
-            <h3 className="font-bold text-lg">Stream Summary</h3>
-          </div>
-          {!summary && !loading && (
-            <Button onClick={generateSummary} size="sm" className="gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700">
-              <Sparkles className="w-4 h-4" />
-              Generate with AI
-            </Button>
-          )}
+    <Card className="p-4 bg-slate-900 border-slate-800 text-white space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-amber-400" />
+          <h3 className="font-bold text-base">AI Stream Summary</h3>
         </div>
-
-        {loading && (
-          <div className="flex items-center justify-center py-6 gap-2 text-amber-600">
-            <Loader2 className="w-5 h-5 animate-spin" />
-            <span className="font-medium">Analyzing stream...</span>
-          </div>
-        )}
-
-        {error && (
-          <div className="flex items-start gap-2 p-3 bg-red-50 rounded-lg text-red-700">
-            <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-            <div className="flex-1">
-              <p className="font-medium">Failed to generate summary</p>
-              <p className="text-sm">{error}</p>
-              <Button onClick={generateSummary} size="sm" variant="outline" className="mt-2">
-                Try again
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {summary && (
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-3 border border-amber-200">
-            <p className="text-sm text-gray-700 leading-relaxed">{summary}</p>
-          </div>
-        )}
+        <Button
+          onClick={generateSummary}
+          disabled={loading}
+          size="sm"
+          className="gap-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs"
+        >
+          {loading ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : hasSummary ? (
+            <RefreshCw className="w-3.5 h-3.5" />
+          ) : (
+            <Sparkles className="w-3.5 h-3.5" />
+          )}
+          {hasSummary ? "Regenerate" : "Generate"}
+        </Button>
       </div>
 
-      {/* Highlights Section */}
-      {highlights.length > 0 && (
-        <div className="space-y-3 pt-2 border-t border-gray-200">
-          <h4 className="font-semibold text-sm text-gray-900">Key Moments</h4>
-          <div className="space-y-2">
-            {highlights.map((highlight, idx) => (
-              <div
-                key={idx}
-                className={`p-3 rounded-lg border-l-4 ${
-                  highlight.importance === 'high'
-                    ? 'border-l-red-600 bg-red-50'
-                    : 'border-l-yellow-600 bg-yellow-50'
-                }`}
-              >
-                <div className="flex items-start gap-2">
-                  <Clock className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-600" />
-                  <div className="flex-1 min-w-0">
-                    {highlight.timestamp && (
-                      <Badge variant="outline" className="mb-1">
-                        {highlight.timestamp}
-                      </Badge>
-                    )}
-                    <p className="text-sm text-gray-700">{highlight.description}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
+      {/* Loading */}
+      {loading && (
+        <div className="flex items-center justify-center py-8 gap-2 text-amber-400">
+          <Loader2 className="w-5 h-5 animate-spin" />
+          <span className="text-sm font-medium">Analyzing stream content…</span>
+        </div>
+      )}
+
+      {/* Error */}
+      {error && !loading && (
+        <div className="flex items-start gap-2 p-3 bg-red-900/40 rounded-lg text-red-300 border border-red-800">
+          <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+          <div className="flex-1 text-sm">
+            <p className="font-medium">Failed to generate summary</p>
+            <p className="text-red-400 text-xs mt-0.5">{error}</p>
           </div>
         </div>
       )}
 
-      {/* Peak Moments Tags */}
-      {stream.ai_tags?.length > 0 && (
-        <div className="space-y-2 pt-2 border-t border-gray-200">
-          <h4 className="font-semibold text-sm text-gray-900">Peak Moments</h4>
-          <div className="flex flex-wrap gap-2">
-            {stream.ai_tags.map((tag, idx) => (
-              <Badge key={idx} variant="secondary" className="bg-purple-100 text-purple-700">
-                {tag}
-              </Badge>
-            ))}
-          </div>
-        </div>
+      {!loading && (
+        <>
+          {/* Overview */}
+          {overview && (
+            <div className="space-y-1.5">
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Overview</p>
+              <div className="bg-slate-800 rounded-lg p-3 border border-slate-700">
+                <p className="text-sm text-slate-200 leading-relaxed">{overview}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Key Moments */}
+          {highlights.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide flex items-center gap-1">
+                <Clock className="w-3.5 h-3.5" /> Key Moments
+              </p>
+              <div className="space-y-2">
+                {highlights.map((h, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex gap-3 p-3 rounded-lg border-l-4 ${
+                      h.importance === 'high'
+                        ? 'border-l-red-500 bg-red-900/20'
+                        : 'border-l-amber-500 bg-amber-900/20'
+                    }`}
+                  >
+                    <div className="flex-shrink-0 mt-0.5">
+                      <Star className={`w-4 h-4 ${h.importance === 'high' ? 'text-red-400' : 'text-amber-400'}`} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      {h.timestamp && (
+                        <span className="text-xs font-bold text-slate-400 mb-0.5 block">{h.timestamp}</span>
+                      )}
+                      <p className="text-sm text-slate-200">{h.description}</p>
+                    </div>
+                    <Badge
+                      className={`self-start text-xs flex-shrink-0 ${
+                        h.importance === 'high'
+                          ? 'bg-red-700 text-white'
+                          : 'bg-amber-700 text-white'
+                      }`}
+                    >
+                      {h.importance}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Tags */}
+          {tags.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide flex items-center gap-1">
+                <Tag className="w-3.5 h-3.5" /> Suggested Tags
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {tags.map((tag, idx) => (
+                  <Badge key={idx} className="bg-slate-700 text-slate-200 hover:bg-slate-600 cursor-default text-xs">
+                    #{tag}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Empty state */}
+          {!overview && highlights.length === 0 && tags.length === 0 && (
+            <div className="text-center py-6 text-slate-500">
+              <Sparkles className="w-8 h-8 mx-auto mb-2 opacity-40" />
+              <p className="text-sm">Click "Generate" to create an AI summary of this stream</p>
+            </div>
+          )}
+        </>
       )}
     </Card>
   );

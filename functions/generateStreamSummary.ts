@@ -9,59 +9,66 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { stream_id, transcript, title, description } = await req.json();
+    const { stream_id, transcript, title, description, sport } = await req.json();
 
-    if (!stream_id || !transcript) {
-      return Response.json({ error: 'Missing stream_id or transcript' }, { status: 400 });
+    if (!stream_id) {
+      return Response.json({ error: 'Missing stream_id' }, { status: 400 });
     }
 
-    // Generate concise summary and highlight moments
+    const contentInput = transcript || `Title: ${title}. Description: ${description}`;
+
     const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are a sports content expert. Analyze this live stream and provide:
-1. A concise 2-3 sentence summary
-2. 3-5 key highlight moments with timestamps (if available) and why they're important
-3. Peak engagement segments
+      prompt: `You are a sports content expert. Analyze this live stream and provide a comprehensive AI summary.
 
 Stream Title: ${title || 'Untitled Stream'}
+Sport: ${sport || 'Unknown'}
 Description: ${description || 'No description'}
 
 Transcript/Chat Content:
-${transcript}
+${contentInput}
 
-Provide your response as JSON with: { summary: string, highlights: [{timestamp: string, description: string, importance: 'high'|'medium'}], peakMoments: string[] }`,
+Provide:
+1. A concise 2-3 sentence overview of what the stream was about.
+2. 3-5 key highlight moments with approximate timestamps (if inferable) and why each is important (high or medium importance).
+3. 5-8 relevant tags or categories that best describe the stream content (e.g. technique, training tips, match recap, Q&A, motivation, drill, beginner, advanced, etc.)`,
       response_json_schema: {
         type: 'object',
         properties: {
-          summary: { type: 'string', description: 'Concise 2-3 sentence summary' },
+          overview: {
+            type: 'string',
+            description: 'Concise 2-3 sentence summary of the stream content'
+          },
           highlights: {
             type: 'array',
             items: {
               type: 'object',
               properties: {
-                timestamp: { type: 'string' },
-                description: { type: 'string' },
+                timestamp: { type: 'string', description: 'Approximate timestamp or label like "Early", "Mid", "Late"' },
+                description: { type: 'string', description: 'What happened and why it matters' },
                 importance: { type: 'string', enum: ['high', 'medium'] }
               }
             }
           },
-          peakMoments: {
+          tags: {
             type: 'array',
-            items: { type: 'string' }
+            items: { type: 'string' },
+            description: 'Relevant tags and categories for the stream'
           }
         }
       }
     });
 
-    // Update the stream with AI summary
+    // Save to the stream entity
     await base44.asServiceRole.entities.LiveStream.update(stream_id, {
-      ai_summary: result.summary,
-      ai_tags: result.peakMoments || []
+      ai_summary: result.overview,
+      ai_tags: result.tags || [],
+      ai_transcript: contentInput.slice(0, 5000)
     });
 
     return Response.json({
-      summary: result.summary,
-      highlights: result.highlights,
-      peakMoments: result.peakMoments
+      overview: result.overview,
+      highlights: result.highlights || [],
+      tags: result.tags || []
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
