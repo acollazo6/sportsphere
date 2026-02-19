@@ -243,6 +243,12 @@ Return ONLY JSON format: {"safe": true/false, "reason": "explanation if unsafe",
                     onChaptersChange={(chapters) =>
                       setVideoMeta(prev => ({ ...prev, [i]: { ...prev[i], chapters } }))
                     }
+                    onFiltersChange={(filter) =>
+                      setVideoMeta(prev => ({ ...prev, [i]: { ...prev[i], filter } }))
+                    }
+                    onTextOverlaysChange={(textOverlays) =>
+                      setVideoMeta(prev => ({ ...prev, [i]: { ...prev[i], textOverlays } }))
+                    }
                   />
                 )}
               </div>
