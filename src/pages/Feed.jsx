@@ -158,28 +158,6 @@ export default function Feed() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
 
-      {/* Quick Action Bar */}
-      <div className="grid grid-cols-3 gap-3">
-        <Link to={createPageUrl("CreatePost")}>
-          <button className="w-full flex flex-col items-center gap-2 py-4 rounded-2xl bg-gradient-to-br from-red-900 to-red-700 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200">
-            <Camera className="w-6 h-6" />
-            <span className="text-xs font-bold">Post Photo/Video</span>
-          </button>
-        </Link>
-        <Link to={createPageUrl("Live")}>
-          <button className="w-full flex flex-col items-center gap-2 py-4 rounded-2xl bg-gradient-to-br from-rose-600 to-pink-600 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200">
-            <Radio className="w-6 h-6" />
-            <span className="text-xs font-bold">Go Live</span>
-          </button>
-        </Link>
-        <Link to={createPageUrl("Reels")}>
-          <button className="w-full flex flex-col items-center gap-2 py-4 rounded-2xl bg-gradient-to-br from-purple-700 to-indigo-700 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200">
-            <Film className="w-6 h-6" />
-            <span className="text-xs font-bold">Reels</span>
-          </button>
-        </Link>
-      </div>
-
       {/* Search Bar */}
       <div className="relative group">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-400 group-focus-within:text-purple-600 transition-colors" />
