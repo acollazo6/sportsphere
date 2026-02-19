@@ -192,7 +192,7 @@ export default function Feed() {
       </div>
 
       {/* Sport Filter Dropdown */}
-      <div className="relative">
+      <div className="relative" onMouseDown={e => e.stopPropagation()}>
         <button
           onClick={() => setShowSportDropdown(s => !s)}
           className="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-white border-2 border-slate-200 hover:border-red-300 shadow-sm transition-all font-semibold text-slate-700"
