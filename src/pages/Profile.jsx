@@ -411,6 +411,9 @@ export default function Profile() {
         </div>
       )}
 
+      {/* Featured Highlight */}
+      <FeaturedHighlight user={user} myPosts={myPosts} />
+
       {/* Sport Profiles */}
       <div>
         <div className="flex items-center justify-between mb-4">
