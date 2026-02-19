@@ -33,6 +33,8 @@ export default function ProfileSettings() {
     cover_url: "",
     location: "",
     website: "",
+    preferred_sports: [],
+    skill_level: "",
     social_links: {},
     contact_preferences: {
       allow_messages: true,
