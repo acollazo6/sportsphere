@@ -362,34 +362,73 @@ Provide a brief, engaging summary that helps viewers decide if they want to watc
 
       {/* Media */}
       {post.media_urls?.length > 0 && hasAccess && (
-        <div className="relative bg-slate-100">
-          {isVideo(post.media_urls[currentMediaIndex]) ? (
-            <video
-              src={post.media_urls[currentMediaIndex]}
-              controls
-              className="w-full max-h-[500px] object-contain bg-black"
-            />
-          ) : (
-            <img
-              src={post.media_urls[currentMediaIndex]}
-              alt=""
-              className="w-full max-h-[500px] object-cover"
-            />
-          )}
+        <div className="relative bg-black">
+          {/* Main media — click to open fullscreen viewer */}
+          <div
+            className="cursor-pointer group relative"
+            onClick={() => { setViewerStartIndex(currentMediaIndex); setViewerOpen(true); }}
+          >
+            {isVideo(post.media_urls[currentMediaIndex]) ? (
+              <div className="relative">
+                <video
+                  src={post.media_urls[currentMediaIndex]}
+                  className="w-full max-h-[420px] object-contain bg-black"
+                  onClick={e => e.stopPropagation()}
+                  controls
+                />
+                {/* Click overlay to open viewer (only on non-controls area) */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                  <div className="bg-black/40 backdrop-blur-sm rounded-full p-3">
+                    <Play className="w-8 h-8 text-white fill-white" />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="relative overflow-hidden">
+                <img
+                  src={post.media_urls[currentMediaIndex]}
+                  alt=""
+                  className="w-full max-h-[420px] object-cover group-hover:scale-[1.02] transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                  <div className="bg-black/0 group-hover:bg-black/40 backdrop-blur-sm rounded-full p-3 opacity-0 group-hover:opacity-100 transition-all">
+                    <ZoomIn className="w-6 h-6 text-white" />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Multi-image grid for 2+ images */}
           {post.media_urls.length > 1 && (
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-              {post.media_urls.map((_, i) => (
+            <div className="flex gap-1 p-1 bg-black">
+              {post.media_urls.map((url, i) => (
                 <button
                   key={i}
-                  onClick={() => setCurrentMediaIndex(i)}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    i === currentMediaIndex ? "bg-white w-6" : "bg-white/50"
+                  onClick={() => { setCurrentMediaIndex(i); setViewerStartIndex(i); setViewerOpen(true); }}
+                  className={`flex-1 h-12 rounded overflow-hidden border-2 transition-all ${
+                    i === currentMediaIndex ? "border-cyan-400" : "border-transparent opacity-60 hover:opacity-100"
                   }`}
-                />
+                >
+                  {isVideo(url) ? (
+                    <div className="w-full h-full bg-slate-800 flex items-center justify-center text-white/60 text-xs">▶</div>
+                  ) : (
+                    <img src={url} alt="" className="w-full h-full object-cover" />
+                  )}
+                </button>
               ))}
             </div>
           )}
         </div>
+      )}
+
+      {/* Fullscreen viewer */}
+      {viewerOpen && post.media_urls?.length > 0 && (
+        <MediaViewer
+          mediaUrls={post.media_urls}
+          startIndex={viewerStartIndex}
+          onClose={() => setViewerOpen(false)}
+        />
       )}
 
       {/* Actions */}
