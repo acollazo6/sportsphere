@@ -109,19 +109,26 @@ export default function Feed() {
   const { data: highlightReels } = useQuery({
     queryKey: ["highlight-reels", highlightSports],
     queryFn: async () => {
-      const reels = await Promise.all(
-        highlightSports.map(async (sport) => {
-          const sportPosts = await base44.entities.Post.filter(
-            { sport, category: "highlight" }, 
-            "-created_date", 
-            5
-          );
-          return { sport, posts: sportPosts };
-        })
+      // Single request instead of N parallel requests to avoid rate limits
+      const allHighlights = await base44.entities.Post.filter(
+        { category: "highlight" },
+        "-created_date",
+        40
       );
-      return reels.filter(reel => reel.posts.length > 0);
+      // Group by sport client-side
+      const bySport = {};
+      for (const post of allHighlights) {
+        if (highlightSports.includes(post.sport)) {
+          if (!bySport[post.sport]) bySport[post.sport] = [];
+          if (bySport[post.sport].length < 5) bySport[post.sport].push(post);
+        }
+      }
+      return Object.entries(bySport)
+        .map(([sport, posts]) => ({ sport, posts }))
+        .filter(r => r.posts.length > 0);
     },
     enabled: highlightSports.length > 0,
+    staleTime: 5 * 60 * 1000, // cache for 5 minutes
   });
 
   return (
