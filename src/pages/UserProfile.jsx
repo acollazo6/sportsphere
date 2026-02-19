@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { MessageCircle, Trophy, MapPin, Clock, Send, Loader2, ArrowLeft, Lightbulb, Users, Heart, Crown, ShoppingBag, Star, CheckCircle, UserCheck, UserPlus, Hourglass } from "lucide-react";
+import { MessageCircle, Trophy, MapPin, Clock, Send, Loader2, ArrowLeft, Lightbulb, Users, Heart, Crown, ShoppingBag, Star, CheckCircle, UserCheck, UserPlus, Hourglass, Instagram, Twitter, Youtube, Globe, Pin } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import PostCard from "../components/feed/PostCard";
