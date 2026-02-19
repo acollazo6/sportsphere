@@ -244,7 +244,7 @@ export default function Explore() {
       </div>
 
       <Tabs defaultValue="trending" className="space-y-4">
-        <TabsList className="bg-white border border-slate-100 p-1 rounded-xl w-full grid grid-cols-4">
+        <TabsList className="bg-white border border-slate-100 p-1 rounded-xl w-full grid grid-cols-5">
           <TabsTrigger value="trending" className="rounded-lg text-xs sm:text-sm">
             <Flame className="w-4 h-4 mr-1 sm:mr-2" />Trending
           </TabsTrigger>

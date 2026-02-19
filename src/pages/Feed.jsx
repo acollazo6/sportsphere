@@ -210,11 +210,6 @@ export default function Feed() {
         <StreamRecommendations user={user} userPreferences={preferences} />
       )}
 
-      {/* Sports Hub Grid */}
-      {!searchQuery && !sportFilter && (
-        <SportHubGrid />
-      )}
-
       {/* Upcoming Streams */}
       {!searchQuery && !sportFilter && (
         <UpcomingStreamsSection user={user} />
