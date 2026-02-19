@@ -105,18 +105,15 @@ export default function UpcomingStreamsSection({ user }) {
   const { data: streams = [] } = useQuery({
     queryKey: ["upcoming-streams-feed"],
     queryFn: () => base44.entities.ScheduledStream.filter({ status: "upcoming" }, "scheduled_at", 20),
-    refetchInterval: 60000,
+    refetchInterval: 120000,
+    staleTime: 60000,
   });
 
-  // Load user reminders (RSVPs)
-  const { data: myRsvps = [] } = useQuery({
-    queryKey: ["my-rsvps", user?.email],
-    queryFn: async () => {
-      const all = await base44.entities.ScheduledStream.filter({ status: "upcoming" }, "scheduled_at", 50);
-      return all.filter(s => s.rsvp_emails?.includes(user.email)).map(s => s.id);
-    },
-    enabled: !!user,
-  });
+  // Derive RSVPs from already-fetched streams instead of a second query
+  const myRsvps = React.useMemo(
+    () => streams.filter(s => s.rsvp_emails?.includes(user?.email)).map(s => s.id),
+    [streams, user?.email]
+  );
 
   const upcoming = streams.filter(s => new Date(s.scheduled_at) > new Date());
 
