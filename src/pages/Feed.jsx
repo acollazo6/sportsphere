@@ -7,7 +7,7 @@ import FeedPreferencesDialog from "../components/reels/FeedPreferencesDialog";
 import UpcomingStreamsSection from "../components/feed/UpcomingStreamsSection";
 import LiveNowSection from "../components/stream/LiveNowSection";
 import StreamRecommendations from "../components/stream/StreamRecommendations";
-import { Loader2, Search, Settings2, Sparkles, Users } from "lucide-react";
+import { Loader2, Search, Settings2, Sparkles, Users, Camera, Radio, Film, ChevronDown, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
