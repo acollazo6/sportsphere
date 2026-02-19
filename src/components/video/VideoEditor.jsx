@@ -1,10 +1,11 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Scissors, Image, Clock, Plus, Trash2, Play, Pause, Check, Loader2, X } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { Scissors, Image, Clock, Plus, Trash2, Play, Pause, Check, Loader2, X, Sliders, Type, AlignLeft, AlignCenter, AlignRight, Bold } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Capture a frame from a video element as a data URL
 function captureFrame(videoEl, time) {
