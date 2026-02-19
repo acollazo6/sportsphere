@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { translations } from "./components/translations";
 import RecommendationNotification from "./components/notifications/RecommendationNotification";
 import SupportChatWidget from "./components/messages/SupportChatWidget";
+import PushNotificationBanner from "./components/notifications/PushNotificationBanner";
 
 export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);

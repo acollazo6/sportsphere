@@ -117,8 +117,11 @@ export default function Notifications() {
     { value: "like", label: "Likes", icon: Heart },
     { value: "comment", label: "Comments", icon: MessageCircle },
     { value: "follow", label: "Follows", icon: UserPlus },
+    { value: "follow_request", label: "Requests", icon: UserPlus },
     { value: "mention", label: "Mentions", icon: AtSign },
+    { value: "live_stream", label: "Streams", icon: Radio },
     { value: "challenge_update", label: "Challenges", icon: Trophy },
+    { value: "tip", label: "Tips", icon: DollarSign },
   ];
 
   if (isLoading) {
