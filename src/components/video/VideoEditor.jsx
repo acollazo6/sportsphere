@@ -40,17 +40,39 @@ function formatTime(s) {
   return `${m}:${sec.toString().padStart(2, "0")}`;
 }
 
-export default function VideoEditor({ videoFile, videoUrl, onThumbnailReady, onTrimReady, onChaptersChange, onClose }) {
+const FILTERS = [
+  { id: "none",        label: "Original",   css: "" },
+  { id: "vivid",       label: "Vivid",      css: "saturate(1.8) contrast(1.1)" },
+  { id: "cool",        label: "Cool",       css: "hue-rotate(20deg) saturate(1.3) brightness(1.05)" },
+  { id: "warm",        label: "Warm",       css: "sepia(0.3) saturate(1.4) brightness(1.05)" },
+  { id: "bw",          label: "B&W",        css: "grayscale(1) contrast(1.1)" },
+  { id: "fade",        label: "Fade",       css: "brightness(1.1) saturate(0.8) contrast(0.9)" },
+  { id: "dramatic",    label: "Dramatic",   css: "contrast(1.4) brightness(0.9) saturate(1.2)" },
+  { id: "vintage",     label: "Vintage",    css: "sepia(0.5) contrast(0.9) brightness(1.1)" },
+];
+
+export default function VideoEditor({ videoFile, videoUrl, onThumbnailReady, onTrimReady, onChaptersChange, onFiltersChange, onTextOverlaysChange, onClose }) {
   const videoRef = useRef(null);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const [trimRange, setTrimRange] = useState([0, 100]); // percentages
-  const [thumbnails, setThumbnails] = useState([]); // captured frame previews
+  const [trimRange, setTrimRange] = useState([0, 100]);
+  const [thumbnails, setThumbnails] = useState([]);
   const [selectedThumb, setSelectedThumb] = useState(null);
   const [generatingThumbs, setGeneratingThumbs] = useState(false);
   const [chapters, setChapters] = useState([]);
   const [newChapterLabel, setNewChapterLabel] = useState("");
+
+  // Filters
+  const [activeFilter, setActiveFilter] = useState("none");
+
+  // Text overlays
+  const [textOverlays, setTextOverlays] = useState([]);
+  const [newText, setNewText] = useState("");
+  const [newTextColor, setNewTextColor] = useState("#ffffff");
+  const [newTextSize, setNewTextSize] = useState("lg");
+  const [newTextAlign, setNewTextAlign] = useState("center");
+  const [newTextBold, setNewTextBold] = useState(false);
 
   const src = videoUrl || (videoFile ? URL.createObjectURL(videoFile) : null);
 
