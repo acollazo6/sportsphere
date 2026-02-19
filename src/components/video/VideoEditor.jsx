@@ -213,13 +213,28 @@ export default function VideoEditor({ videoFile, videoUrl, onThumbnailReady, onT
       </div>
 
       {/* Video preview */}
-      <div className="bg-black relative">
+      <div className="bg-black relative overflow-hidden">
         <video
           ref={videoRef}
           src={src}
           className="w-full max-h-56 mx-auto block"
+          style={{ filter: currentFilter.css || "none" }}
           onEnded={() => setPlaying(false)}
         />
+        {/* Text overlays preview */}
+        {textOverlays.map(o => (
+          <div
+            key={o.id}
+            className={`absolute inset-x-0 bottom-10 flex ${o.align === "left" ? "justify-start px-4" : o.align === "right" ? "justify-end px-4" : "justify-center"}`}
+          >
+            <span
+              style={{ color: o.color }}
+              className={`drop-shadow-lg px-2 py-0.5 rounded text-${o.size} ${o.bold ? "font-black" : "font-semibold"} bg-black/30 backdrop-blur-sm`}
+            >
+              {o.text}
+            </span>
+          </div>
+        ))}
         <button
           onClick={togglePlay}
           className="absolute inset-0 flex items-center justify-center group"
@@ -231,6 +246,9 @@ export default function VideoEditor({ videoFile, videoUrl, onThumbnailReady, onT
         <div className="absolute bottom-2 right-3 text-xs text-white/80 bg-black/40 px-2 py-0.5 rounded-full">
           {formatTime(currentTime)} / {formatTime(duration)}
         </div>
+        {currentFilter.id !== "none" && (
+          <div className="absolute top-2 left-2 text-xs text-white bg-black/50 px-2 py-0.5 rounded-full">{currentFilter.label}</div>
+        )}
       </div>
 
       {/* Scrubber */}
