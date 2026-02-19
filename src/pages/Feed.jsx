@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FeedPagination, { PAGE_SIZE } from "@/components/feed/FeedPagination";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 
 export default function Feed() {
   const [user, setUser] = useState(null);
