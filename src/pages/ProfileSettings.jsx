@@ -12,6 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft, Camera, Loader2, Instagram, Twitter, Youtube, Linkedin, Globe, MessageCircle, Phone, Mail, Check, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 
+const SPORTS = ["Basketball", "Soccer", "Football", "Baseball", "Tennis", "Golf", "Swimming", "Boxing", "MMA", "Track", "Volleyball", "Hockey", "Cycling", "Yoga", "CrossFit", "Other"];
+const LEVELS = ["Beginner", "Intermediate", "Advanced", "Professional", "Elite"];
+
 const SOCIAL_PLATFORMS = [
   { key: "instagram", label: "Instagram", icon: Instagram, placeholder: "username", prefix: "instagram.com/" },
   { key: "twitter", label: "X / Twitter", icon: Twitter, placeholder: "username", prefix: "x.com/" },
