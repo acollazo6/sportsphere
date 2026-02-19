@@ -166,6 +166,11 @@ export default function Live() {
         {/* Hero */}
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-700 via-red-600 to-orange-500 p-6 md:p-8 text-white">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+          <img
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698f6f4f4e61dd2806b88ed2/15137601c_392DC896-FFC0-4491-BCB6-20C0C160BF03.png"
+            alt="SportSphere"
+            className="absolute right-6 top-1/2 -translate-y-1/2 h-20 w-20 object-contain opacity-20 pointer-events-none"
+          />
           <div className="relative z-10 flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2 mb-1">
