@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Camera, Loader2, Instagram, Twitter, Youtube, Linkedin, Globe, MessageCircle, Phone, Mail, Check, Upload } from "lucide-react";
+import { ArrowLeft, Camera, Loader2, Instagram, Twitter, Youtube, Linkedin, Globe, MessageCircle, Phone, Mail, Check, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 
 const SOCIAL_PLATFORMS = [
