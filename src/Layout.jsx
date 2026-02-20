@@ -255,13 +255,13 @@ export default function Layout({ children, currentPageName }) {
               key={item.page}
               to={createPageUrl(item.page)}
               className={`relative flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-2xl transition-all duration-300 ${
-                isActive ? "text-red-900 scale-110" : "text-gray-500 hover:text-red-900"
+                isActive ? "text-blue-700 scale-110" : "text-gray-500 hover:text-blue-700"
               }`}
               >
                 <Icon className={`w-5 h-5 ${isActive ? "drop-shadow-lg" : ""}`} />
-                <span className={`text-[10px] font-bold ${isActive ? "text-red-900" : ""}`}>{item.name}</span>
+                <span className={`text-[10px] font-bold ${isActive ? "text-blue-700" : ""}`}>{item.name}</span>
                 {item.badge > 0 && (
-                  <span className="absolute -top-0.5 right-1 w-4 h-4 bg-red-900 text-white text-[9px] rounded-full flex items-center justify-center font-bold shadow-lg">
+                  <span className="absolute -top-0.5 right-1 w-4 h-4 bg-orange-500 text-white text-[9px] rounded-full flex items-center justify-center font-bold shadow-lg">
                     {item.badge}
                   </span>
                 )}
