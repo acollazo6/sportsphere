@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Edit2, Trophy, MapPin, Clock, Star, Trash2, Loader2, Camera, LogOut, Settings, TrendingUp, BarChart3, Dumbbell, Sparkles, DollarSign, Crown, Award, Zap } from "lucide-react";
+import { Plus, Edit2, Trophy, MapPin, Clock, Star, Trash2, Loader2, Camera, LogOut, Settings, TrendingUp, BarChart3, Dumbbell, Sparkles, DollarSign, Crown, Award, Zap, Film } from "lucide-react";
 import PostCard from "../components/feed/PostCard";
 import StatInputDialog from "../components/stats/StatInputDialog";
 import StatsChart from "../components/stats/StatsChart";
@@ -719,6 +719,15 @@ export default function Profile() {
           />
         </div>
       )}
+
+      {/* Reels Stats */}
+      <div>
+        <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <Film className="w-5 h-5 text-blue-600" />
+          My Reels
+        </h2>
+        <ReelsStatsPanel posts={myPosts || []} isOwnProfile={true} />
+      </div>
 
       {/* My Posts */}
       <div>
