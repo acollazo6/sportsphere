@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { MessageCircle, Trophy, MapPin, Clock, Send, Loader2, ArrowLeft, Lightbulb, Users, Heart, Crown, ShoppingBag, Star, CheckCircle, UserCheck, UserPlus, Hourglass, Instagram, Twitter, Youtube, Globe, Pin } from "lucide-react";
+import { MessageCircle, Trophy, MapPin, Clock, Send, Loader2, ArrowLeft, Lightbulb, Users, Heart, Crown, ShoppingBag, Star, CheckCircle, UserCheck, UserPlus, Hourglass, Instagram, Twitter, Youtube, Globe, Pin, Film } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import PostCard from "../components/feed/PostCard";
@@ -362,6 +362,14 @@ export default function UserProfile() {
           currentUser={currentUser}
         />
       )}
+
+      {/* Reels Stats */}
+      <div>
+        <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <Film className="w-5 h-5 text-blue-600" /> Reels
+        </h2>
+        <ReelsStatsPanel posts={posts || []} isOwnProfile={false} />
+      </div>
 
       {/* Posts */}
       <div>
