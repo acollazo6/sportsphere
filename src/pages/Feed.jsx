@@ -100,16 +100,22 @@ export default function Feed() {
 
   const activePosts = feedTab === "following" ? followingPosts : filteredPosts;
 
-  const searchedPosts = activePosts?.filter(post => {
-    if (!searchQuery) return true;
-    const query = searchQuery.toLowerCase();
-    return (
-      post.content?.toLowerCase().includes(query) ||
-      post.author_name?.toLowerCase().includes(query) ||
-      post.sport?.toLowerCase().includes(query) ||
-      post.category?.toLowerCase().includes(query)
-    );
-  });
+  const searchedPosts = activePosts
+    ?.map(post => {
+      if (!searchQuery) return { ...post, _score: 0 };
+      const q = searchQuery.toLowerCase();
+      let score = 0;
+      if (post.author_name?.toLowerCase() === q) score += 100;
+      if (post.sport?.toLowerCase() === q) score += 80;
+      if (post.author_name?.toLowerCase().includes(q)) score += 40;
+      if (post.sport?.toLowerCase().includes(q)) score += 30;
+      if (post.content?.toLowerCase().includes(q)) score += 20;
+      if (post.category?.toLowerCase().includes(q)) score += 10;
+      if (post.ai_tags?.some(t => t.toLowerCase().includes(q))) score += 15;
+      return { ...post, _score: score };
+    })
+    .filter(post => !searchQuery || post._score > 0)
+    .sort((a, b) => searchQuery ? b._score - a._score : 0);
 
   const totalPosts = searchedPosts?.length || 0;
   const posts = searchedPosts?.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
