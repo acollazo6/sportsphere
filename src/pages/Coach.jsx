@@ -182,9 +182,23 @@ export default function CoachPage() {
             </div>
           </div>
 
-          {/* Main Chat Area */}
+          {/* Main Content Area */}
           <div className="bg-white rounded-2xl border border-slate-200 flex flex-col" style={{ height: "calc(100vh - 180px)" }}>
             {currentConversation ? (
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1">
+                <TabsList className="rounded-t-xl rounded-b-none border-b border-slate-200 px-4 pt-3 pb-0 bg-slate-50">
+                  <TabsTrigger value="chat" className="rounded-t-lg rounded-b-none gap-2">
+                    <MessageSquare className="w-4 h-4" />
+                    Chat
+                  </TabsTrigger>
+                  <TabsTrigger value="analysis" className="rounded-t-lg rounded-b-none gap-2">
+                    <Zap className="w-4 h-4" />
+                    Form Analysis
+                  </TabsTrigger>
+                </TabsList>
+
+                {/* Chat Tab */}
+                <TabsContent value="chat" className="flex-1 flex flex-col mt-0">
               <>
                 {/* Messages */}
                 <div className="flex-1 overflow-y-auto p-6 space-y-4">
