@@ -182,8 +182,7 @@ export default function Feed() {
         {/* Post Photo/Video */}
         <Link to={createPageUrl("CreatePost")}>
           <button className="relative w-full overflow-hidden flex flex-col items-center justify-end gap-1.5 pt-2 pb-3 px-2 rounded-2xl bg-gradient-to-br from-[#1a3a6b] via-[#1e4d8c] to-[#0f2a52] text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 h-20">
-            {/* Big S background */}
-            <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[72px] font-black text-white/10 leading-none select-none pointer-events-none" style={{fontFamily:"serif"}}>S</span>
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698f6f4f4e61dd2806b88ed2/15137601c_392DC896-FFC0-4491-BCB6-20C0C160BF03.png" alt="" className="absolute inset-0 w-full h-full object-contain opacity-10 scale-125 pointer-events-none select-none" />
             {/* Icon */}
             <div className="relative z-10 w-8 h-8 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20 shadow-inner">
               <Camera className="w-4 h-4" />
