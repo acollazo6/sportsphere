@@ -351,7 +351,7 @@ Return JSON with:
             )}
           </div>
 
-          {/* 2. Trending Audio */}
+          {/* 4. Trending Audio */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Music className="w-4 h-4 text-pink-600" />
@@ -385,7 +385,7 @@ Return JSON with:
             )}
           </div>
 
-          {/* 3. AI Editing Suggestions */}
+          {/* 5. AI Editing Suggestions */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Zap className="w-4 h-4 text-amber-500" />
