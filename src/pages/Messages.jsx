@@ -166,6 +166,11 @@ export default function Messages() {
     clearMedia();
     queryClient.invalidateQueries({ queryKey: ["my-conversations"] });
     setSending(false);
+    // Remove typing indicator
+    if (selectedConv && user) {
+      const ind = await base44.entities.TypingIndicator.filter({ conversation_id: selectedConv, user_email: user.email });
+      if (ind.length > 0) await base44.entities.TypingIndicator.delete(ind[0].id);
+    }
   };
 
   const handleTyping = async (value) => {
