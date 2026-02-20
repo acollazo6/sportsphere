@@ -51,6 +51,7 @@ export default function PostCard({ post, currentUser, onUpdate }) {
   const [showSummary, setShowSummary] = useState(false);
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewerStartIndex, setViewerStartIndex] = useState(0);
+  const [showShareDialog, setShowShareDialog] = useState(false);
 
   useEffect(() => {
     if (!currentUser) return;
