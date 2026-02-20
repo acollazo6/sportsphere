@@ -124,7 +124,6 @@ export default function Notifications() {
     { value: "mention", label: "Mentions", icon: AtSign },
     { value: "live_stream", label: "Streams", icon: Radio },
     { value: "challenge_update", label: "Challenges", icon: Trophy },
-    { value: "tip", label: "Tips", icon: DollarSign },
   ];
 
   if (isLoading) {
