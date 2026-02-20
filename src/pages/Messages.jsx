@@ -168,6 +168,24 @@ export default function Messages() {
     setSending(false);
   };
 
+  const handleTyping = async (value) => {
+    setNewMessage(value);
+    if (!selectedConv || !user) return;
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    // Upsert typing indicator
+    const indicators = await base44.entities.TypingIndicator.filter({ conversation_id: selectedConv, user_email: user.email });
+    if (indicators.length > 0) {
+      await base44.entities.TypingIndicator.update(indicators[0].id, { updated_at: new Date().toISOString() });
+    } else {
+      await base44.entities.TypingIndicator.create({ conversation_id: selectedConv, user_email: user.email, user_name: user.full_name, updated_at: new Date().toISOString() });
+    }
+    // Clear typing indicator after 4s of inactivity
+    typingTimeoutRef.current = setTimeout(async () => {
+      const ind = await base44.entities.TypingIndicator.filter({ conversation_id: selectedConv, user_email: user.email });
+      if (ind.length > 0) await base44.entities.TypingIndicator.delete(ind[0].id);
+    }, 4000);
+  };
+
   const markAsRead = async () => {
     if (!selectedConversation || !selectedConversation.unread_by?.includes(user.email)) return;
     await base44.entities.Conversation.update(selectedConv, {
