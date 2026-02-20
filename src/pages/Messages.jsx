@@ -414,7 +414,7 @@ export default function Messages() {
                     />
                     <Input
                       value={newMessage}
-                      onChange={e => setNewMessage(e.target.value)}
+                      onChange={e => handleTyping(e.target.value)}
                       onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage()}
                       placeholder="Type or record a message..."
                       className="flex-1 rounded-xl bg-slate-50 border-0 focus:ring-2 focus:ring-orange-200"
