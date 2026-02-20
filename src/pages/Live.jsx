@@ -181,11 +181,11 @@ export default function Live() {
     });
 
     // Notify followers if going live (not VOD)
-    if (!isVod && follows.length > 0) {
+    if (!isVod && myFollowers.length > 0) {
       await Promise.all(
-        follows.map(f =>
+        myFollowers.map(f =>
           base44.entities.Notification.create({
-            recipient_email: f.following_email || f.follower_email,
+            recipient_email: f.follower_email,
             actor_email: user.email,
             actor_name: user.full_name,
             actor_avatar: user.avatar_url,
