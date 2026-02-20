@@ -37,6 +37,7 @@ export default function Messages() {
   const [mediaPreview, setMediaPreview] = useState(null);
   const [mediaType, setMediaType] = useState(null);
   const [preferredLanguage, setPreferredLanguage] = useState(() => localStorage.getItem("msg_lang") || "en");
+  const [showVideoCall, setShowVideoCall] = useState(false);
   const [isTyping, setIsTyping] = useState(false); // current user is typing
   const [typingUsers, setTypingUsers] = useState([]); // other users typing
   const messagesEndRef = useRef(null);
