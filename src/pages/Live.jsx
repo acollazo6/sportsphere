@@ -66,6 +66,14 @@ export default function Live() {
   const [user, setUser] = useState(null);
   const [showGoLive, setShowGoLive] = useState(false);
   const [liveData, setLiveData] = useState({ title: "", description: "", sport: "", is_premium: false, price: 0, stream_url: "" });
+  const [streamQuality, setStreamQuality] = useState("1080p");
+  const [maxDuration, setMaxDuration] = useState("unlimited");
+  const [vodFile, setVodFile] = useState(null);
+  const [vodUploading, setVodUploading] = useState(false);
+  const [vodUrl, setVodUrl] = useState("");
+  const [thumbnailFile, setThumbnailFile] = useState(null);
+  const [thumbnailUrl, setThumbnailUrl] = useState("");
+  const [liveMode, setLiveMode] = useState("live"); // "live" | "upload"
   const [goingLive, setGoingLive] = useState(false);
   const [tab, setTab] = useState("live");
   const [filters, setFilters] = useState({ query: "", sport: "all", sort: "recent" });
