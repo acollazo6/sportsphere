@@ -307,6 +307,30 @@ export default function ReelCard({ item, currentUser, isActive }) {
                   </div>
                 </button>
               )}
+
+              {/* Author-only: turn off comments */}
+              {currentUser?.email === item.author_email && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex flex-col items-center gap-1 group">
+                      <div className="w-12 h-12 rounded-full bg-slate-900/60 backdrop-blur-xl border border-cyan-500/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <MoreVertical className="w-6 h-6 text-white" />
+                      </div>
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="rounded-xl">
+                    <DropdownMenuItem onClick={async () => {
+                      const newVal = !commentsDisabled;
+                      setCommentsDisabled(newVal);
+                      await base44.entities.Post.update(item.id, { comments_disabled: newVal });
+                      if (newVal) setShowComments(false);
+                    }} className="gap-2">
+                      <MessageCircle className="w-4 h-4" />
+                      {commentsDisabled ? "Enable Comments" : "Turn Off Comments"}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </div>
           )}
 
