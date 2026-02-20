@@ -129,10 +129,10 @@ export default function Layout({ children, currentPageName }) {
                   key={item.page}
                   to={createPageUrl(item.page)}
                   className={`relative flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 ${
-                    isActive
-                      ? "bg-gradient-to-r from-red-900 to-red-800 text-white shadow-xl shadow-red-900/50 scale-105"
-                      : "text-gray-600 hover:text-red-900 hover:bg-gray-100 hover:scale-105"
-                  }`}
+                        isActive
+                          ? "bg-gradient-to-r from-blue-700 to-blue-600 text-white shadow-xl shadow-blue-700/40 scale-105"
+                          : "text-gray-600 hover:text-blue-700 hover:bg-blue-50 hover:scale-105"
+                      }`}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{item.name}</span>
