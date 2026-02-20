@@ -116,7 +116,7 @@ export default function Layout({ children, currentPageName }) {
               alt="SportSphere"
               className="w-10 h-10 object-contain group-hover:scale-110 transition-all duration-300"
             />
-            <span className="text-xl font-black tracking-tight text-red-900 hidden sm:block">{t("appName")}</span>
+            <span className="text-xl font-black tracking-tight text-blue-900 hidden sm:block">{t("appName")}</span>
           </Link>
 
           {/* Desktop nav */}
