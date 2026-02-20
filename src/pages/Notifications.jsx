@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Bell, Heart, MessageCircle, UserPlus, AtSign, Loader2, Settings, Trophy, Radio, DollarSign, Filter, Check, X } from "lucide-react";
+import { Bell, Heart, MessageCircle, UserPlus, AtSign, Loader2, Settings, Trophy, Radio, DollarSign, Filter, Check, X, Zap } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
