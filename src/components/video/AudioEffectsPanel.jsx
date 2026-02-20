@@ -2,12 +2,17 @@ import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Music, Volume2, X } from "lucide-react";
+import { Music, Volume2, X, Plus, Trash2, Waves, Zap } from "lucide-react";
 
-export default function AudioEffectsPanel({ onAudioChange }) {
+export default function AudioEffectsPanel({ onAudioChange, videoFile }) {
   const [audioFile, setAudioFile] = useState(null);
   const [audioVolume, setAudioVolume] = useState(100);
+  const [soundEffects, setSoundEffects] = useState([]);
+  const [micVolume, setMicVolume] = useState(70);
+  const [useVideoAudio, setUseVideoAudio] = useState(true);
+  const [equalizerPreset, setEqualizerPreset] = useState("balanced");
   const audioRef = useRef(null);
+  const sfxRef = useRef(null);
 
   const handleAudioUpload = (e) => {
     const file = e.target.files?.[0];
@@ -27,8 +32,59 @@ export default function AudioEffectsPanel({ onAudioChange }) {
     const newVolume = vals[0];
     setAudioVolume(newVolume);
     if (audioFile) {
-      onAudioChange?.({ file: audioFile, volume: newVolume });
+      onAudioChange?.({ 
+        file: audioFile, 
+        volume: newVolume,
+        micVolume: useVideoAudio ? micVolume : 0,
+        soundEffects,
+        equalizerPreset
+      });
     }
+  };
+
+  const handleAddSoundEffect = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const effect = {
+        id: Date.now(),
+        file,
+        volume: 80,
+        startTime: 0
+      };
+      setSoundEffects(prev => [...prev, effect]);
+      onAudioChange?.({ 
+        file: audioFile, 
+        volume: audioVolume,
+        micVolume: useVideoAudio ? micVolume : 0,
+        soundEffects: [...soundEffects, effect],
+        equalizerPreset
+      });
+    }
+    e.target.value = "";
+  };
+
+  const removeSoundEffect = (id) => {
+    const updated = soundEffects.filter(s => s.id !== id);
+    setSoundEffects(updated);
+    onAudioChange?.({ 
+      file: audioFile, 
+      volume: audioVolume,
+      micVolume: useVideoAudio ? micVolume : 0,
+      soundEffects: updated,
+      equalizerPreset
+    });
+  };
+
+  const updateSoundEffect = (id, updates) => {
+    const updated = soundEffects.map(s => s.id === id ? { ...s, ...updates } : s);
+    setSoundEffects(updated);
+    onAudioChange?.({ 
+      file: audioFile, 
+      volume: audioVolume,
+      micVolume: useVideoAudio ? micVolume : 0,
+      soundEffects: updated,
+      equalizerPreset
+    });
   };
 
   return (
