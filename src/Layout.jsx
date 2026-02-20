@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "./utils";
 import { base44 } from "@/api/base44Client";
-import { Home, User, MessageCircle, Search, Bell, Plus, Menu, X, Trophy, Flame, Globe, Sparkles, Radio, Activity, Bookmark, Crown, Video, Shield, Settings } from "lucide-react";
+import { Home, User, MessageCircle, Search, Bell, Plus, Menu, X, Trophy, Flame, Globe, Sparkles, Radio, Activity, Bookmark, Crown, Video, Shield, ShieldAlert, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
