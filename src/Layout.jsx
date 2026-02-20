@@ -50,6 +50,7 @@ export default function Layout({ children, currentPageName }) {
 
   const navItems = [
     { name: "GitHub Export", page: "GitHubExport", icon: Shield },
+    { name: "Moderation", page: "ModerationQueue", icon: ShieldAlert },
     { name: t("feed"), page: "Feed", icon: Home },
     { name: "For You", page: "ForYou", icon: Sparkles },
     { name: "Reels", page: "Reels", icon: Flame },
