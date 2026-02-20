@@ -161,7 +161,7 @@ export default function CoachPage() {
               {conversations.map(conv => (
                 <button
                   key={conv.id}
-                  onClick={() => loadConversation(conv.id)}
+                  onClick={() => { loadConversation(conv.id); setActiveTab("chat"); }}
                   className={`w-full text-left p-3 rounded-xl transition-colors ${
                     currentConversation?.id === conv.id
                       ? "bg-orange-50 text-orange-700"
