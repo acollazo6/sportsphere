@@ -282,6 +282,18 @@ export default function CreateReel() {
         onApplySuggestion={(type, value) => { if (type === "caption") setContent(value); }}
       />
 
+      {/* Comments toggle */}
+      <div className="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl">
+        <div className="flex items-center gap-2">
+          <MessageCircle className="w-4 h-4 text-slate-500" />
+          <div>
+            <Label className="text-sm font-medium text-slate-700">Allow Comments</Label>
+            <p className="text-xs text-slate-500">Let others comment on this reel</p>
+          </div>
+        </div>
+        <Switch checked={!commentsDisabled} onCheckedChange={v => setCommentsDisabled(!v)} />
+      </div>
+
       {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
 
       <Button
