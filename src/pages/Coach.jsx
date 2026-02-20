@@ -199,168 +199,167 @@ export default function CoachPage() {
 
                 {/* Chat Tab */}
                 <TabsContent value="chat" className="flex-1 flex flex-col mt-0">
-              <>
-                {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                  {messages.length === 0 && (
-                    <div className="text-center py-12">
-                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center mx-auto mb-4">
-                        <Sparkles className="w-8 h-8 text-white" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Ready to level up your training?</h3>
-                      <p className="text-slate-500 text-sm max-w-md mx-auto mb-4">
-                        Ask me to analyze your stats, create a custom training plan, upload a video for technique analysis, or get advice on improving your performance!
-                      </p>
-                      <div className="flex flex-wrap gap-2 justify-center max-w-2xl mx-auto">
-                        <Button
-                          onClick={() => setInput("Create a personalized weekly workout plan for me based on my sport and current performance level")}
-                          variant="outline"
-                          className="rounded-xl text-xs"
-                        >
-                          📋 Generate Workout Plan
-                        </Button>
-                        <Button
-                          onClick={() => setInput("Analyze my recent stats and suggest areas for improvement")}
-                          variant="outline"
-                          className="rounded-xl text-xs"
-                        >
-                          📊 Analyze My Stats
-                        </Button>
-                        <Button
-                          onClick={() => setInput("Based on my recent training intensity, do I need a rest day? What recovery strategies should I use?")}
-                          variant="outline"
-                          className="rounded-xl text-xs"
-                        >
-                          😴 Recovery Advice
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                  {messages.map((msg, idx) => (
-                    <div key={idx} className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                      {msg.role === "assistant" && (
-                        <Avatar className="w-8 h-8 mt-1">
-                          <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-sm">
-                            AI
-                          </AvatarFallback>
-                        </Avatar>
-                      )}
-                      <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                       msg.role === "user"
-                         ? "bg-slate-900 text-white"
-                         : "bg-slate-50 text-slate-800"
-                      }`}>
-                       {msg.role === "user" ? (
-                         <>
-                           {msg.file_urls && msg.file_urls.length > 0 && (
-                             <div className="mb-2">
-                               {msg.file_urls.map((url, i) => (
-                                 <video
-                                   key={i}
-                                   src={url}
-                                   controls
-                                   className="rounded-lg max-w-full mb-2"
-                                   style={{ maxHeight: "200px" }}
-                                 />
-                               ))}
-                             </div>
-                           )}
-                           <p className="text-sm leading-relaxed">{msg.content}</p>
-                         </>
-                       ) : (
-                          <ReactMarkdown
-                            className="text-sm prose prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0"
-                            components={{
-                              p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
-                              ul: ({ children }) => <ul className="ml-4 mb-2 list-disc">{children}</ul>,
-                              ol: ({ children }) => <ol className="ml-4 mb-2 list-decimal">{children}</ol>,
-                              li: ({ children }) => <li className="mb-1">{children}</li>,
-                              strong: ({ children }) => <strong className="font-semibold text-orange-600">{children}</strong>,
-                              h3: ({ children }) => <h3 className="font-semibold text-base mb-2 mt-3 first:mt-0">{children}</h3>,
-                              code: ({ children }) => <code className="bg-slate-200 px-1.5 py-0.5 rounded text-xs">{children}</code>,
-                            }}
+                  {/* Messages */}
+                  <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                    {messages.length === 0 && (
+                      <div className="text-center py-12">
+                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center mx-auto mb-4">
+                          <Sparkles className="w-8 h-8 text-white" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-slate-900 mb-2">Ready to level up your training?</h3>
+                        <p className="text-slate-500 text-sm max-w-md mx-auto mb-4">
+                          Ask me to analyze your stats, create a custom training plan, upload a video for technique analysis, or get advice on improving your performance!
+                        </p>
+                        <div className="flex flex-wrap gap-2 justify-center max-w-2xl mx-auto">
+                          <Button
+                            onClick={() => setInput("Create a personalized weekly workout plan for me based on my sport and current performance level")}
+                            variant="outline"
+                            className="rounded-xl text-xs"
                           >
-                            {msg.content}
-                          </ReactMarkdown>
-                        )}
+                            📋 Generate Workout Plan
+                          </Button>
+                          <Button
+                            onClick={() => setInput("Analyze my recent stats and suggest areas for improvement")}
+                            variant="outline"
+                            className="rounded-xl text-xs"
+                          >
+                            📊 Analyze My Stats
+                          </Button>
+                          <Button
+                            onClick={() => setInput("Based on my recent training intensity, do I need a rest day? What recovery strategies should I use?")}
+                            variant="outline"
+                            className="rounded-xl text-xs"
+                          >
+                            😴 Recovery Advice
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                  <div ref={messagesEndRef} />
+                    )}
+                    {messages.map((msg, idx) => (
+                      <div key={idx} className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                        {msg.role === "assistant" && (
+                          <Avatar className="w-8 h-8 mt-1">
+                            <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-sm">
+                              AI
+                            </AvatarFallback>
+                          </Avatar>
+                        )}
+                        <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                         msg.role === "user"
+                           ? "bg-slate-900 text-white"
+                           : "bg-slate-50 text-slate-800"
+                        }`}>
+                         {msg.role === "user" ? (
+                           <>
+                             {msg.file_urls && msg.file_urls.length > 0 && (
+                               <div className="mb-2">
+                                 {msg.file_urls.map((url, i) => (
+                                   <video
+                                     key={i}
+                                     src={url}
+                                     controls
+                                     className="rounded-lg max-w-full mb-2"
+                                     style={{ maxHeight: "200px" }}
+                                   />
+                                 ))}
+                               </div>
+                             )}
+                             <p className="text-sm leading-relaxed">{msg.content}</p>
+                           </>
+                         ) : (
+                            <ReactMarkdown
+                              className="text-sm prose prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0"
+                              components={{
+                                p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
+                                ul: ({ children }) => <ul className="ml-4 mb-2 list-disc">{children}</ul>,
+                                ol: ({ children }) => <ol className="ml-4 mb-2 list-decimal">{children}</ol>,
+                                li: ({ children }) => <li className="mb-1">{children}</li>,
+                                strong: ({ children }) => <strong className="font-semibold text-orange-600">{children}</strong>,
+                                h3: ({ children }) => <h3 className="font-semibold text-base mb-2 mt-3 first:mt-0">{children}</h3>,
+                                code: ({ children }) => <code className="bg-slate-200 px-1.5 py-0.5 rounded text-xs">{children}</code>,
+                              }}
+                            >
+                              {msg.content}
+                            </ReactMarkdown>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    <div ref={messagesEndRef} />
                   </div>
 
                   {/* Input */}
                   <div className="p-4 border-t border-slate-100">
-                  {videoPreview && (
-                    <div className="mb-3 relative inline-block">
-                      <video
-                        src={videoPreview}
-                        controls
-                        className="rounded-lg border border-slate-200"
-                        style={{ maxHeight: "120px", maxWidth: "200px" }}
-                      />
-                      <button
-                        onClick={removeVideo}
-                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
+                    {videoPreview && (
+                      <div className="mb-3 relative inline-block">
+                        <video
+                          src={videoPreview}
+                          controls
+                          className="rounded-lg border border-slate-200"
+                          style={{ maxHeight: "120px", maxWidth: "200px" }}
+                        />
+                        <button
+                          onClick={removeVideo}
+                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                    <div className="flex gap-3">
+                      <div className="flex-1">
+                        <Textarea
+                          value={input}
+                          onChange={e => setInput(e.target.value)}
+                          onKeyDown={e => {
+                            if (e.key === "Enter" && !e.shiftKey) {
+                              e.preventDefault();
+                              sendMessage();
+                            }
+                          }}
+                          placeholder={videoFile ? "Add a note about this video (optional)..." : "Ask about your performance, request a training plan, upload a video for analysis..."}
+                          className="rounded-xl resize-none min-h-[50px] max-h-[120px]"
+                          rows={2}
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <input
+                          ref={videoInputRef}
+                          type="file"
+                          accept="video/*"
+                          onChange={handleVideoSelect}
+                          className="hidden"
+                        />
+                        <Button
+                          onClick={() => videoInputRef.current?.click()}
+                          variant="outline"
+                          className="rounded-xl"
+                          disabled={sending}
+                        >
+                          <Video className="w-5 h-5" />
+                        </Button>
+                        <Button
+                          onClick={sendMessage}
+                          disabled={(!input.trim() && !videoFile) || sending}
+                          className="rounded-xl bg-gradient-to-r from-orange-500 to-amber-400 hover:from-orange-600 hover:to-amber-500 text-white"
+                        >
+                          {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+                        </Button>
+                      </div>
                     </div>
-                  )}
-                  <div className="flex gap-3">
-                    <div className="flex-1">
-                      <Textarea
-                        value={input}
-                        onChange={e => setInput(e.target.value)}
-                        onKeyDown={e => {
-                          if (e.key === "Enter" && !e.shiftKey) {
-                            e.preventDefault();
-                            sendMessage();
-                          }
-                        }}
-                        placeholder={videoFile ? "Add a note about this video (optional)..." : "Ask about your performance, request a training plan, upload a video for analysis..."}
-                        className="rounded-xl resize-none min-h-[50px] max-h-[120px]"
-                        rows={2}
-                      />
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <input
-                        ref={videoInputRef}
-                        type="file"
-                        accept="video/*"
-                        onChange={handleVideoSelect}
-                        className="hidden"
-                      />
-                      <Button
-                        onClick={() => videoInputRef.current?.click()}
-                        variant="outline"
-                        className="rounded-xl"
-                        disabled={sending}
-                      >
-                        <Video className="w-5 h-5" />
-                      </Button>
-                      <Button
-                        onClick={sendMessage}
-                        disabled={(!input.trim() && !videoFile) || sending}
-                        className="rounded-xl bg-gradient-to-r from-orange-500 to-amber-400 hover:from-orange-600 hover:to-amber-500 text-white"
-                      >
-                        {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
-                      </Button>
-                      </div>
-                      </div>
-                      </div>
-                      </TabsContent>
+                  </div>
+                </TabsContent>
 
-                      {/* Form Analysis Tab */}
-                      <TabsContent value="analysis" className="flex-1 overflow-y-auto p-6">
-                      <div className="max-w-2xl mx-auto">
-                      <div className="mb-6">
+                {/* Form Analysis Tab */}
+                <TabsContent value="analysis" className="flex-1 overflow-y-auto p-6">
+                  <div className="max-w-2xl mx-auto">
+                    <div className="mb-6">
                       <h3 className="text-lg font-semibold text-slate-900 mb-2">Video Form Analysis</h3>
                       <p className="text-sm text-slate-500">Upload a training video to get AI-powered form analysis and correction feedback.</p>
-                      </div>
+                    </div>
 
-                      {/* Video Upload */}
-                      <div className="mb-6 p-4 border-2 border-dashed border-slate-300 rounded-xl">
+                    {/* Video Upload */}
+                    <div className="mb-6 p-4 border-2 border-dashed border-slate-300 rounded-xl">
                       {videoPreview ? (
                         <div className="relative inline-block">
                           <video
@@ -385,16 +384,16 @@ export default function CoachPage() {
                           <p className="text-xs text-slate-500">MP4, WebM or MOV (Max 50MB)</p>
                         </div>
                       )}
-                      </div>
+                    </div>
 
-                      {/* Analysis Component */}
-                      <VideoFormAnalysis
+                    {/* Analysis Component */}
+                    <VideoFormAnalysis
                       videoFile={videoFile}
                       onAnalysisComplete={setLastAnalysis}
-                      />
-                      </div>
-                      </TabsContent>
-                      </Tabs>
+                    />
+                  </div>
+                </TabsContent>
+              </Tabs>
                       ) : (
                       <div className="flex-1 flex items-center justify-center">
                       <div className="text-center">
