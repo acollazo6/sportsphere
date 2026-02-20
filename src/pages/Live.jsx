@@ -104,6 +104,13 @@ export default function Live() {
     enabled: !!user,
   });
 
+  // Followers of the current user (people to notify when going live)
+  const { data: myFollowers = [] } = useQuery({
+    queryKey: ["my-followers-live", user?.email],
+    queryFn: () => base44.entities.Follow.filter({ following_email: user.email, status: "accepted" }),
+    enabled: !!user,
+  });
+
   const { data: preferences } = useQuery({
     queryKey: ["prefs-live", user?.email],
     queryFn: async () => { const p = await base44.entities.FeedPreferences.filter({ user_email: user.email }); return p[0]; },
