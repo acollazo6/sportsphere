@@ -528,6 +528,15 @@ Provide a brief, engaging summary that helps viewers decide if they want to watc
         </div>
       )}
 
+      {/* Share Post Dialog */}
+      {showShareDialog && currentUser && (
+        <SharePostDialog
+          post={post}
+          user={currentUser}
+          onClose={() => setShowShareDialog(false)}
+        />
+      )}
+
       {/* Report Dialog */}
       <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
         <DialogContent className="sm:max-w-md rounded-2xl">
