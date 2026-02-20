@@ -138,18 +138,44 @@ export default function Live() {
   const filteredLive = applyFilters(liveStreams);
   const filteredPast = applyFilters(pastStreams);
 
+  const handleVodUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setVodFile(file);
+    setVodUploading(true);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    setVodUrl(file_url);
+    setVodUploading(false);
+  };
+
+  const handleThumbnailUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setThumbnailFile(file);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    setThumbnailUrl(file_url);
+  };
+
   const goLive = async () => {
     if (!liveData.title.trim()) return;
     setGoingLive(true);
+    const isVod = liveMode === "upload";
     await base44.entities.LiveStream.create({
       host_email: user.email, host_name: user.full_name, host_avatar: user.avatar_url,
       title: liveData.title, description: liveData.description, sport: liveData.sport,
       is_premium: liveData.is_premium, price: parseFloat(liveData.price) || 0,
-      stream_url: liveData.stream_url, status: "live", viewers: [], started_at: new Date().toISOString(),
+      stream_url: isVod ? vodUrl : liveData.stream_url,
+      thumbnail_url: thumbnailUrl || undefined,
+      status: isVod ? "ended" : "live",
+      viewers: [],
+      started_at: new Date().toISOString(),
+      ended_at: isVod ? new Date().toISOString() : undefined,
+      ai_tags: streamQuality ? [`quality:${streamQuality}`] : [],
     });
     setGoingLive(false);
     setShowGoLive(false);
     setLiveData({ title: "", description: "", sport: "", is_premium: false, price: 0, stream_url: "" });
+    setVodFile(null); setVodUrl(""); setThumbnailFile(null); setThumbnailUrl("");
     refetch();
   };
 
