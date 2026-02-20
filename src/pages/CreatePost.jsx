@@ -71,42 +71,27 @@ export default function CreatePost() {
     setPosting(true);
     
     // AI Content moderation check
-    try {
-      const moderationResult = await base44.integrations.Core.InvokeLLM({
-        prompt: `Analyze this post content for inappropriate material. Check for: politics, profanity, cyberbullying, hate speech, harassment, or discriminatory language. Return JSON with "safe" (boolean), "reason" (string if unsafe), and "severity" (low/medium/high).
-
-Content to check: "${content}"
-
-Return ONLY JSON format: {"safe": true/false, "reason": "explanation if unsafe", "severity": "low|medium|high", "action": "allow|flag|block"}`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            safe: { type: "boolean" },
-            reason: { type: "string" },
-            severity: { type: "string", enum: ["low", "medium", "high"] },
-            action: { type: "string", enum: ["allow", "flag", "block"] }
-          }
-        }
-      });
-
-      if (moderationResult.action === "block") {
-        alert(`Content blocked: ${moderationResult.reason}\n\nPlease keep SportHub focused on sports, training, and positive motivation.`);
-        setPosting(false);
-        return;
-      }
-
-      if (moderationResult.action === "flag") {
-        await base44.entities.Report.create({
-          reporter_email: "system",
-          reported_item_type: "post",
-          reported_item_id: "pending",
-          reason: "inappropriate",
-          details: `AI flagged: ${moderationResult.reason} (${moderationResult.severity} severity)`,
-          status: "pending"
+    if (content.trim()) {
+      try {
+        const modResult = await base44.functions.invoke("moderateContent", {
+          content_type: "post",
+          content_id: `draft_${Date.now()}`,
+          content_text: content,
+          author_email: user.email,
+          author_name: user.full_name,
         });
+        const { action, severity } = modResult?.data || {};
+        if (action === "auto_remove" && severity === "critical") {
+          toast.error("Post blocked: content violates community guidelines. Please keep SportHub sports-focused.");
+          setPosting(false);
+          return;
+        }
+        if (action === "flag_for_review") {
+          toast.warning("Your post has been flagged for admin review before appearing publicly.");
+        }
+      } catch (e) {
+        // moderation errors shouldn't block posting
       }
-    } catch (error) {
-      console.error("Moderation check failed:", error);
     }
     
     // Extract mentions
