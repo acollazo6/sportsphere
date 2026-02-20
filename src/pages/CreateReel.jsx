@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Upload, Film, X, Loader2, Image } from "lucide-react";
 import { Link } from "react-router-dom";
+import AIReelAssistant from "../components/reels/AIReelAssistant";
 
 const SPORTS = ["Basketball","Soccer","Football","Baseball","Tennis","Golf","Swimming","Boxing","MMA","Track","Volleyball","Hockey","Cycling","Yoga","CrossFit"];
 const CATEGORIES = ["training","game","coaching","instruction","motivation","highlight","other"];
