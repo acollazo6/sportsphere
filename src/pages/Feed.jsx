@@ -179,22 +179,38 @@ export default function Feed() {
 
       {/* Quick Action Bar */}
       <div className="grid grid-cols-3 gap-3">
+        {/* Post Photo/Video */}
         <Link to={createPageUrl("CreatePost")}>
-          <button className="w-full flex flex-col items-center gap-2 py-3 rounded-2xl bg-gradient-to-br from-[#1a3a6b] to-[#1e4d8c] text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200">
-            <Camera className="w-5 h-5" />
-            <span className="text-xs font-bold">Post Photo/Video</span>
+          <button className="relative w-full overflow-hidden flex flex-col items-center justify-end gap-1.5 pt-2 pb-3 px-2 rounded-2xl bg-gradient-to-br from-[#1a3a6b] via-[#1e4d8c] to-[#0f2a52] text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 h-20">
+            {/* Big S background */}
+            <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[72px] font-black text-white/10 leading-none select-none pointer-events-none" style={{fontFamily:"serif"}}>S</span>
+            {/* Icon */}
+            <div className="relative z-10 w-8 h-8 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20 shadow-inner">
+              <Camera className="w-4 h-4" />
+            </div>
+            <span className="relative z-10 text-[11px] font-bold tracking-wide">Post</span>
           </button>
         </Link>
+
+        {/* Go Live */}
         <Link to={createPageUrl("Live")}>
-          <button className="w-full flex flex-col items-center gap-2 py-3 rounded-2xl bg-gradient-to-br from-[#f97316] to-[#fb923c] text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200">
-            <Radio className="w-5 h-5" />
-            <span className="text-xs font-bold">Go Live</span>
+          <button className="relative w-full overflow-hidden flex flex-col items-center justify-end gap-1.5 pt-2 pb-3 px-2 rounded-2xl bg-gradient-to-br from-[#f97316] via-[#ea6508] to-[#c2490a] text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 h-20">
+            <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[72px] font-black text-white/10 leading-none select-none pointer-events-none" style={{fontFamily:"serif"}}>S</span>
+            <div className="relative z-10 w-8 h-8 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20 shadow-inner">
+              <Radio className="w-4 h-4" />
+            </div>
+            <span className="relative z-10 text-[11px] font-bold tracking-wide">Go Live</span>
           </button>
         </Link>
+
+        {/* Reels */}
         <Link to={createPageUrl("Reels")}>
-          <button className="w-full flex flex-col items-center gap-2 py-3 rounded-2xl bg-gradient-to-br from-[#1a3a6b] to-[#f97316] text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200">
-            <Film className="w-5 h-5" />
-            <span className="text-xs font-bold">Reels</span>
+          <button className="relative w-full overflow-hidden flex flex-col items-center justify-end gap-1.5 pt-2 pb-3 px-2 rounded-2xl text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 h-20" style={{background:"linear-gradient(135deg, #1a3a6b 0%, #2d5fa8 50%, #f97316 100%)"}}>
+            <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[72px] font-black text-white/10 leading-none select-none pointer-events-none" style={{fontFamily:"serif"}}>S</span>
+            <div className="relative z-10 w-8 h-8 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20 shadow-inner">
+              <Film className="w-4 h-4" />
+            </div>
+            <span className="relative z-10 text-[11px] font-bold tracking-wide">Reels</span>
           </button>
         </Link>
       </div>
