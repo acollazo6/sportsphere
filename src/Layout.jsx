@@ -167,10 +167,10 @@ export default function Layout({ children, currentPageName }) {
             </Select>
             <div className="flex gap-2">
               <Link to={createPageUrl("Live")}>
-                  <Button variant="outline" className="rounded-2xl gap-2 hidden sm:flex border-red-300 text-red-900 hover:bg-red-50 hover:border-red-900 font-bold shadow transition-all">
-                    <Radio className="w-4 h-4" />
-                    Live
-                  </Button>
+                  <Button variant="outline" className="rounded-2xl gap-2 hidden sm:flex border-orange-400 text-orange-600 hover:bg-orange-50 hover:border-orange-500 font-bold shadow transition-all">
+                      <Radio className="w-4 h-4" />
+                      Live
+                    </Button>
                 </Link>
                 <Link to={createPageUrl("CreatePost")}>
                   <Button className="bg-gradient-to-r from-red-900 to-red-800 hover:from-red-800 hover:to-red-700 text-white rounded-2xl shadow-xl hover:shadow-2xl gap-2 hidden sm:flex font-bold transition-all duration-300 hover:scale-105">
