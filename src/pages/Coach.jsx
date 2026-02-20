@@ -21,6 +21,8 @@ export default function CoachPage() {
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [videoPreview, setVideoPreview] = useState(null);
   const [videoFile, setVideoFile] = useState(null);
+  const [activeTab, setActiveTab] = useState("chat");
+  const [lastAnalysis, setLastAnalysis] = useState(null);
   const messagesEndRef = useRef(null);
   const videoInputRef = useRef(null);
 
