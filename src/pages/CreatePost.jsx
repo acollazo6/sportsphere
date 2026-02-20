@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { ImagePlus, Video, X, Loader2, ArrowLeft, Crown, Sliders } from "lucide-react";
+import { ImagePlus, Video, X, Loader2, ArrowLeft, Crown, Sliders, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import AIPostGenerator from "../components/feed/AIPostGenerator";
 import VideoEditor from "../components/video/VideoEditor";
@@ -34,6 +34,7 @@ export default function CreatePost() {
   const [uploading, setUploading] = useState(false);
   const [posting, setPosting] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
+  const [commentsDisabled, setCommentsDisabled] = useState(false);
   const [editingVideoIndex, setEditingVideoIndex] = useState(null);
   const [videoMeta, setVideoMeta] = useState({}); // index -> { trimStart, trimEnd, thumbnailFile, thumbnailPreview, chapters, filter, textOverlays }
 
