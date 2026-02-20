@@ -127,20 +127,8 @@ export default function ReelCard({ item, currentUser, isActive }) {
     }
   };
 
-  const handleShare = async () => {
-    await base44.entities.Post.update(item.id, { 
-      shares: (item.shares || 0) + 1 
-    });
-    
-    if (navigator.share) {
-      navigator.share({ 
-        title: item.content || item.title, 
-        url: window.location.href 
-      });
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      toast.success("Link copied to clipboard!");
-    }
+  const handleShare = () => {
+    setShowShareDialog(true);
   };
 
   const handleSave = async () => {
