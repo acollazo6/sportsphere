@@ -70,10 +70,11 @@ export default function Notifications() {
       case "mention": return <AtSign className="w-5 h-5 text-orange-500" />;
       case "follow": return <UserPlus className="w-5 h-5 text-green-500" />;
       case "follow_request": return <UserPlus className="w-5 h-5 text-orange-500" />;
+      case "challenge_joined": return <Trophy className="w-5 h-5 text-cyan-400" />;
       case "challenge_update": return <Trophy className="w-5 h-5 text-amber-500" />;
+      case "challenge_completed": return <Trophy className="w-5 h-5 text-yellow-400" />;
       case "live_stream": return <Radio className="w-5 h-5 text-red-500" />;
-      case "tip": return <DollarSign className="w-5 h-5 text-green-500" />;
-      case "subscription": return <DollarSign className="w-5 h-5 text-purple-500" />;
+      case "subscription": return <Zap className="w-5 h-5 text-purple-500" />;
       default: return <Bell className="w-5 h-5 text-slate-400" />;
     }
   };
