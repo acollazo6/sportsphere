@@ -232,10 +232,10 @@ export default function Layout({ children, currentPageName }) {
       {/* Footer Links */}
       <footer className="hidden md:block max-w-6xl mx-auto px-4 py-6 text-center space-y-2 border-t border-gray-200 mt-8">
         <div className="flex justify-center gap-6 text-sm text-gray-500">
-          <Link to={createPageUrl("Terms")} className="hover:text-red-900 transition-colors">
+          <Link to={createPageUrl("Terms")} className="hover:text-blue-700 transition-colors">
             Terms of Service
           </Link>
-          <Link to={createPageUrl("Guidelines")} className="hover:text-red-900 transition-colors">
+          <Link to={createPageUrl("Guidelines")} className="hover:text-blue-700 transition-colors">
             Community Guidelines
           </Link>
         </div>
