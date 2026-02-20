@@ -129,7 +129,7 @@ export default function AudioEffectsPanel({ onAudioChange, videoFile }) {
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label className="text-xs text-slate-500 uppercase tracking-wide">Volume</Label>
+              <Label className="text-xs text-slate-500 uppercase tracking-wide">Background Music Volume</Label>
               <span className="text-sm font-semibold text-slate-700">{audioVolume}%</span>
             </div>
             <Slider
@@ -140,24 +140,63 @@ export default function AudioEffectsPanel({ onAudioChange, videoFile }) {
               onValueChange={handleVolumeChange}
               className="my-2"
             />
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => handleVolumeChange([0])}
-                className="rounded-xl text-xs flex-1"
-              >
-                <Volume2 className="w-3 h-3 mr-1" /> Mute
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => handleVolumeChange([100])}
-                className="rounded-xl text-xs flex-1"
-              >
-                Full Volume
-              </Button>
+          </div>
+
+          {videoFile && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs text-slate-500 uppercase tracking-wide">Original Video Audio</Label>
+                <span className="text-sm font-semibold text-slate-700">{useVideoAudio ? micVolume : 0}%</span>
+              </div>
+              <Slider
+                min={0}
+                max={100}
+                step={1}
+                value={[useVideoAudio ? micVolume : 0]}
+                onValueChange={(vals) => setMicVolume(vals[0])}
+                className="my-2"
+              />
             </div>
+          )}
+
+          <div className="space-y-2">
+            <Label className="text-xs text-slate-500 uppercase tracking-wide">Equalizer Preset</Label>
+            <div className="grid grid-cols-3 gap-2">
+              {["balanced", "bass_boost", "treble_boost"].map(preset => (
+                <button
+                  key={preset}
+                  onClick={() => setEqualizerPreset(preset)}
+                  className={`py-2 rounded-lg text-xs font-semibold transition-all border-2 ${
+                    equalizerPreset === preset
+                      ? "border-blue-500 bg-blue-50 text-blue-700"
+                      : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
+                  }`}
+                >
+                  {preset === "balanced" && "Balanced"}
+                  {preset === "bass_boost" && "Bass+"}
+                  {preset === "treble_boost" && "Treble+"}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => handleVolumeChange([0])}
+              className="rounded-xl text-xs flex-1"
+            >
+              <Volume2 className="w-3 h-3 mr-1" /> Mute Music
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => handleVolumeChange([100])}
+              className="rounded-xl text-xs flex-1"
+            >
+              Full Volume
+            </Button>
           </div>
 
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
@@ -165,6 +204,78 @@ export default function AudioEffectsPanel({ onAudioChange, videoFile }) {
               ℹ️ Audio will be mixed with your video. Ensure you have rights to use this audio.
             </p>
           </div>
+        </div>
+      )}
+
+      {audioFile && (
+        <div className="space-y-2 border-t pt-3">
+          <div className="flex items-center justify-between">
+            <Label className="text-xs text-slate-500 uppercase tracking-wide">Sound Effects</Label>
+            <input
+              type="file"
+              accept="audio/*"
+              onChange={handleAddSoundEffect}
+              className="hidden"
+              ref={sfxRef}
+              multiple
+            />
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => sfxRef.current?.click()}
+              className="rounded-lg text-xs h-7 gap-1"
+            >
+              <Plus className="w-3 h-3" /> Add SFX
+            </Button>
+          </div>
+
+          {soundEffects.length > 0 && (
+            <div className="space-y-2">
+              {soundEffects.map(effect => (
+                <div key={effect.id} className="bg-purple-50 border border-purple-200 rounded-lg p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Zap className="w-4 h-4 text-purple-600" />
+                      <span className="text-xs font-medium text-purple-900">{effect.file.name}</span>
+                    </div>
+                    <button
+                      onClick={() => removeSoundEffect(effect.id)}
+                      className="p-1 hover:bg-purple-100 rounded transition-colors"
+                    >
+                      <X className="w-3.5 h-3.5 text-purple-600" />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <Label className="text-[10px] text-purple-600">Volume</Label>
+                      <div className="flex items-center gap-1">
+                        <Slider
+                          min={0}
+                          max={100}
+                          step={1}
+                          value={[effect.volume]}
+                          onValueChange={(vals) => updateSoundEffect(effect.id, { volume: vals[0] })}
+                          className="flex-1 min-w-0"
+                        />
+                        <span className="text-[10px] font-semibold text-purple-700 w-6">{effect.volume}%</span>
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-[10px] text-purple-600">Start Time (s)</Label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        value={effect.startTime}
+                        onChange={(e) => updateSoundEffect(effect.id, { startTime: parseFloat(e.target.value) || 0 })}
+                        className="w-full h-7 px-2 rounded-lg border border-purple-200 text-xs"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
