@@ -473,15 +473,7 @@ Provide a brief, engaging summary that helps viewers decide if they want to watc
             <span className="text-sm font-medium text-slate-500">{post.views || 0}</span>
           </div>
 
-          {currentUser && post.author_email !== currentUser.email && (
-            <TipButton
-              creator={{ email: post.author_email, name: post.author_name }}
-              contextType="post"
-              contextId={post.id}
-              variant="ghost"
-              size="sm"
-            />
-          )}
+
         </div>
         <Bookmark className="w-5 h-5 text-slate-600 hover:text-cyan-400 cursor-pointer transition-colors" />
       </div>
