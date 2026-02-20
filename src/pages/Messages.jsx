@@ -212,6 +212,15 @@ export default function Messages() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6">
+    {showVideoCall && selectedConversation && (
+      <VideoCallModal
+        conversation={selectedConversation}
+        currentUser={user}
+        otherName={getOtherName(selectedConversation)}
+        otherAvatar={getOtherAvatar(selectedConversation)}
+        onClose={() => setShowVideoCall(false)}
+      />
+    )}
     {showNewChat && (
       <NewChatDialog
         user={user}
