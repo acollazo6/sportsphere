@@ -73,6 +73,33 @@ const TRANSITIONS = [
   { id: "flash",    label: "Flash",    icon: "✦" },
 ];
 
+const AI_SUGGESTIONS = {
+  fast_paced: {
+    transitions: ["zoom", "flash", "wipe"],
+    effects: ["vivid", "neon"],
+    speed: [1.5, 2],
+    label: "🚀 Fast-Paced Energy"
+  },
+  slow_dramatic: {
+    transitions: ["fade", "slide"],
+    effects: ["dramatic", "cold"],
+    speed: [0.75, 1],
+    label: "🎬 Dramatic Mood"
+  },
+  uplifting: {
+    transitions: ["fade", "zoom"],
+    effects: ["vivid", "warm"],
+    speed: [1, 1.25],
+    label: "✨ Uplifting Vibes"
+  },
+  cinematic: {
+    transitions: ["slide", "fade"],
+    effects: ["cold", "dramatic"],
+    speed: [0.5, 0.75],
+    label: "🎥 Cinematic Feel"
+  }
+};
+
 const SPEED_OPTIONS = [
   { label: "0.25×", value: 0.25 },
   { label: "0.5×",  value: 0.5  },
@@ -184,6 +211,11 @@ export default function VideoEditor({
   const [thumbnails, setThumbnails] = useState([]);
   const [selectedThumb, setSelectedThumb] = useState(null);
   const [generatingThumbs, setGeneratingThumbs] = useState(false);
+  
+  // AI Suggestions
+  const [showAISuggestions, setShowAISuggestions] = useState(false);
+  const [selectedMood, setSelectedMood] = useState(null);
+  const [suggestionsLoading, setS uggestionsLoading] = useState(false);
 
   // Multi-clip mode
   const multiClipMode = !!externalClips;
