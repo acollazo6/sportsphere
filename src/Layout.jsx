@@ -84,24 +84,28 @@ export default function Layout({ children, currentPageName }) {
       <SupportChatWidget user={user} />
       <PushNotificationBanner user={user} />
       <style>{`
-        :root {
-          --brand: #7f1d1d;
-          --brand-accent: #991b1b;
-          --brand-light: #dc2626;
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-        }
-        @keyframes glow {
-          0%, 100% { box-shadow: 0 0 20px rgba(127, 29, 29, 0.4); }
-          50% { box-shadow: 0 0 40px rgba(127, 29, 29, 0.7); }
-        }
-        @keyframes neon-pulse {
-          0%, 100% { box-shadow: 0 0 15px rgba(127, 29, 29, 0.5), 0 0 30px rgba(127, 29, 29, 0.3); }
-          50% { box-shadow: 0 0 25px rgba(127, 29, 29, 0.7), 0 0 50px rgba(127, 29, 29, 0.5); }
-        }
-      `}</style>
+          :root {
+            --brand: #1a3a6b;
+            --brand-accent: #f97316;
+            --brand-light: #38bdf8;
+            --brand-green: #22c55e;
+          }
+          body {
+            background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 50%, #f0fdf4 100%);
+          }
+          @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+          }
+          @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(26, 58, 107, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(26, 58, 107, 0.7); }
+          }
+          @keyframes neon-pulse {
+            0%, 100% { box-shadow: 0 0 15px rgba(249, 115, 22, 0.5), 0 0 30px rgba(249, 115, 22, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(249, 115, 22, 0.7), 0 0 50px rgba(249, 115, 22, 0.5); }
+          }
+        `}</style>
 
       {/* Top navbar */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-2xl border-b border-gray-200 shadow-lg">
