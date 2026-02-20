@@ -341,6 +341,13 @@ export default function Messages() {
                       <p className="text-xs text-slate-400 flex items-center gap-1"><Languages className="w-3 h-3" /> AI translation active</p>
                     )}
                   </div>
+                  <button
+                    onClick={() => setShowVideoCall(true)}
+                    className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-600 hover:text-green-600"
+                    title="Start video call"
+                  >
+                    <Video className="w-5 h-5" />
+                  </button>
                   <Select value={preferredLanguage} onValueChange={(v) => { setPreferredLanguage(v); localStorage.setItem("msg_lang", v); }}>
                     <SelectTrigger className="w-32 h-8 text-xs rounded-xl border-slate-200">
                       <SelectValue />
