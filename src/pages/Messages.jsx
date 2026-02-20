@@ -352,8 +352,20 @@ export default function Messages() {
                         msg={msg}
                         isMine={msg.sender_email === user.email}
                         preferredLanguage={preferredLanguage}
+                        allParticipants={selectedConversation?.participants}
                       />
                     ))
+                  )}
+                  {/* Typing indicator */}
+                  {typingUsers.length > 0 && (
+                    <div className="flex gap-2 items-center">
+                      <div className="flex gap-1 bg-slate-100 rounded-2xl px-4 py-2.5">
+                        <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                        <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                        <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                      </div>
+                      <span className="text-xs text-slate-400">{typingUsers[0]} is typing…</span>
+                    </div>
                   )}
                   <div ref={messagesEndRef} />
                 </div>
