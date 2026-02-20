@@ -453,6 +453,16 @@ Provide a brief, engaging summary that helps viewers decide if they want to watc
             <span className="text-sm font-medium text-slate-500">{post.shares || 0}</span>
           </button>
 
+          {currentUser && (
+            <button
+              onClick={() => setShowShareDialog(true)}
+              className="flex items-center gap-1.5 group"
+              title="Share via message"
+            >
+              <Send className="w-5 h-5 text-slate-500 group-hover:text-orange-400 transition-colors" />
+            </button>
+          )}
+
           <div className="flex items-center gap-1.5">
             <Eye className="w-5 h-5 text-slate-600" />
             <span className="text-sm font-medium text-slate-500">{post.views || 0}</span>
