@@ -374,10 +374,11 @@ export default function ReelCard({ item, currentUser, isActive }) {
       )}
 
       {/* Comments Drawer */}
-      {showComments && (
+      {showComments && !commentsDisabled && (
         <div className="absolute bottom-0 left-0 right-0 bg-slate-950/95 backdrop-blur-2xl border-t-2 border-cyan-500/30 rounded-t-3xl max-h-[60vh] overflow-hidden flex flex-col z-20">
-          <div className="p-4 border-b border-cyan-500/20">
+          <div className="p-4 border-b border-cyan-500/20 flex items-center justify-between">
             <h3 className="font-bold text-white text-lg">Comments ({comments.length})</h3>
+            <button onClick={() => setShowComments(false)} className="text-slate-400 hover:text-white text-sm">✕</button>
           </div>
           
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
