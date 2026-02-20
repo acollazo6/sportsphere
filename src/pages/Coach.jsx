@@ -3,11 +3,13 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Send, Sparkles, Loader2, Plus, MessageSquare, Video, X } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Send, Sparkles, Loader2, Plus, MessageSquare, Video, X, Zap } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import PremiumGate from "../components/premium/PremiumGate";
+import VideoFormAnalysis from "../components/coaching/VideoFormAnalysis";
 
 export default function CoachPage() {
   const [user, setUser] = useState(null);

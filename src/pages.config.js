@@ -71,6 +71,7 @@ import GitHubExport from './pages/GitHubExport';
 import GroupDetail from './pages/GroupDetail';
 import Groups from './pages/Groups';
 import Guidelines from './pages/Guidelines';
+import ImportVideos from './pages/ImportVideos';
 import Leaderboard from './pages/Leaderboard';
 import Live from './pages/Live';
 import LiveCoaching from './pages/LiveCoaching';
@@ -99,7 +100,6 @@ import UploadVideo from './pages/UploadVideo';
 import UserProfile from './pages/UserProfile';
 import VideoReview from './pages/VideoReview';
 import ViewLive from './pages/ViewLive';
-import ImportVideos from './pages/ImportVideos';
 import __Layout from './Layout.jsx';
 
 
@@ -128,6 +128,7 @@ export const PAGES = {
     "GroupDetail": GroupDetail,
     "Groups": Groups,
     "Guidelines": Guidelines,
+    "ImportVideos": ImportVideos,
     "Leaderboard": Leaderboard,
     "Live": Live,
     "LiveCoaching": LiveCoaching,
@@ -156,7 +157,6 @@ export const PAGES = {
     "UserProfile": UserProfile,
     "VideoReview": VideoReview,
     "ViewLive": ViewLive,
-    "ImportVideos": ImportVideos,
 }
 
 export const pagesConfig = {
