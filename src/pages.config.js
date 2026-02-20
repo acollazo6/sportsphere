@@ -74,6 +74,7 @@ import Leaderboard from './pages/Leaderboard';
 import Live from './pages/Live';
 import LiveCoaching from './pages/LiveCoaching';
 import Messages from './pages/Messages';
+import ModerationQueue from './pages/ModerationQueue';
 import MyTraining from './pages/MyTraining';
 import Notifications from './pages/Notifications';
 import Onboarding from './pages/Onboarding';
@@ -96,7 +97,7 @@ import UploadVideo from './pages/UploadVideo';
 import UserProfile from './pages/UserProfile';
 import VideoReview from './pages/VideoReview';
 import ViewLive from './pages/ViewLive';
-import ModerationQueue from './pages/ModerationQueue';
+import CreateReel from './pages/CreateReel';
 import __Layout from './Layout.jsx';
 
 
@@ -128,6 +129,7 @@ export const PAGES = {
     "Live": Live,
     "LiveCoaching": LiveCoaching,
     "Messages": Messages,
+    "ModerationQueue": ModerationQueue,
     "MyTraining": MyTraining,
     "Notifications": Notifications,
     "Onboarding": Onboarding,
@@ -150,7 +152,7 @@ export const PAGES = {
     "UserProfile": UserProfile,
     "VideoReview": VideoReview,
     "ViewLive": ViewLive,
-    "ModerationQueue": ModerationQueue,
+    "CreateReel": CreateReel,
 }
 
 export const pagesConfig = {
