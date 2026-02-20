@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Radio, Eye, VideoOff, Loader2, PlayCircle, Users, Crown, Clock, Sparkles, Search, X, Filter } from "lucide-react";
+import { Radio, Eye, VideoOff, Loader2, PlayCircle, Users, Crown, Clock, Sparkles, Search, X, Filter, Upload, Settings2, Zap, Shield, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { Switch } from "@/components/ui/switch";
