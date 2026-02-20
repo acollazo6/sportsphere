@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import moment from "moment";
 import SharePostDialog from "../messages/SharePostDialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import EnhancedVideoPlayer from "../video/EnhancedVideoPlayer";
 
 export default function ReelCard({ item, currentUser, isActive }) {
   const queryClient = useQueryClient();
@@ -170,13 +171,11 @@ export default function ReelCard({ item, currentUser, isActive }) {
         </div>
       ) : item.media_urls?.length > 0 ? (
         isVideo(item.media_urls[0]) ? (
-          <video
+          <EnhancedVideoPlayer
             src={item.media_urls[0]}
-            className="absolute inset-0 w-full h-full object-cover"
-            loop
-            playsInline
-            autoPlay={isActive}
-            muted
+            isActive={isActive}
+            onDoubleTap={handleLike}
+            className="absolute inset-0"
           />
         ) : (
           <img
