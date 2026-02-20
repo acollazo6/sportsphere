@@ -180,19 +180,19 @@ export default function Feed() {
       {/* Quick Action Bar */}
       <div className="grid grid-cols-3 gap-3">
         <Link to={createPageUrl("CreatePost")}>
-          <button className="w-full flex flex-col items-center gap-2 py-3 rounded-2xl bg-gradient-to-br from-red-900 to-red-700 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200">
+          <button className="w-full flex flex-col items-center gap-2 py-3 rounded-2xl bg-gradient-to-br from-[#1a3a6b] to-[#1e4d8c] text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200">
             <Camera className="w-5 h-5" />
             <span className="text-xs font-bold">Post Photo/Video</span>
           </button>
         </Link>
         <Link to={createPageUrl("Live")}>
-          <button className="w-full flex flex-col items-center gap-2 py-3 rounded-2xl bg-gradient-to-br from-rose-600 to-pink-600 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200">
+          <button className="w-full flex flex-col items-center gap-2 py-3 rounded-2xl bg-gradient-to-br from-[#f97316] to-[#fb923c] text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200">
             <Radio className="w-5 h-5" />
             <span className="text-xs font-bold">Go Live</span>
           </button>
         </Link>
         <Link to={createPageUrl("Reels")}>
-          <button className="w-full flex flex-col items-center gap-2 py-3 rounded-2xl bg-gradient-to-br from-purple-700 to-indigo-700 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200">
+          <button className="w-full flex flex-col items-center gap-2 py-3 rounded-2xl bg-gradient-to-br from-[#1a3a6b] to-[#f97316] text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200">
             <Film className="w-5 h-5" />
             <span className="text-xs font-bold">Reels</span>
           </button>
