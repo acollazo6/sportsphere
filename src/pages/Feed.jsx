@@ -203,7 +203,7 @@ export default function Feed() {
         </Link>
 
         {/* Reels */}
-        <Link to={createPageUrl("Reels")}>
+        <Link to={createPageUrl("CreateReel")}>
           <button className="relative w-full overflow-hidden flex flex-col items-center justify-end gap-1.5 pt-2 pb-3 px-2 rounded-2xl text-white shadow-2xl shadow-indigo-700/50 hover:shadow-indigo-700/70 hover:scale-110 active:scale-95 transition-all duration-200 h-24 border border-white/10" style={{background:"linear-gradient(135deg, #1a3a6b 0%, #2d5fa8 50%, #f97316 100%)"}}>
             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698f6f4f4e61dd2806b88ed2/15137601c_392DC896-FFC0-4491-BCB6-20C0C160BF03.png" alt="" className="absolute inset-0 w-full h-full object-contain opacity-30 scale-125 pointer-events-none select-none" />
             <div className="relative z-10 w-8 h-8 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20 shadow-inner">
