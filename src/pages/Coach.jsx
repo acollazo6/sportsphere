@@ -346,19 +346,64 @@ export default function CoachPage() {
                       >
                         {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
                       </Button>
-                    </div>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <div className="flex-1 flex items-center justify-center">
-                <div className="text-center">
-                  <Sparkles className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                  <p className="text-slate-400">Start a new coaching session</p>
-                </div>
-              </div>
-            )}
-          </div>
+                      </div>
+                      </div>
+                      </div>
+                      </TabsContent>
+
+                      {/* Form Analysis Tab */}
+                      <TabsContent value="analysis" className="flex-1 overflow-y-auto p-6">
+                      <div className="max-w-2xl mx-auto">
+                      <div className="mb-6">
+                      <h3 className="text-lg font-semibold text-slate-900 mb-2">Video Form Analysis</h3>
+                      <p className="text-sm text-slate-500">Upload a training video to get AI-powered form analysis and correction feedback.</p>
+                      </div>
+
+                      {/* Video Upload */}
+                      <div className="mb-6 p-4 border-2 border-dashed border-slate-300 rounded-xl">
+                      {videoPreview ? (
+                        <div className="relative inline-block">
+                          <video
+                            src={videoPreview}
+                            controls
+                            className="rounded-lg border border-slate-200 w-full max-w-md"
+                          />
+                          <button
+                            onClick={removeVideo}
+                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div
+                          className="text-center py-8 cursor-pointer hover:bg-slate-50 rounded-lg transition-colors"
+                          onClick={() => videoInputRef.current?.click()}
+                        >
+                          <Video className="w-8 h-8 text-slate-400 mx-auto mb-3" />
+                          <p className="font-medium text-slate-700 mb-1">Click to upload video</p>
+                          <p className="text-xs text-slate-500">MP4, WebM or MOV (Max 50MB)</p>
+                        </div>
+                      )}
+                      </div>
+
+                      {/* Analysis Component */}
+                      <VideoFormAnalysis
+                      videoFile={videoFile}
+                      onAnalysisComplete={setLastAnalysis}
+                      />
+                      </div>
+                      </TabsContent>
+                      </Tabs>
+                      ) : (
+                      <div className="flex-1 flex items-center justify-center">
+                      <div className="text-center">
+                      <Sparkles className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                      <p className="text-slate-400">Start a new coaching session</p>
+                      </div>
+                      </div>
+                      )}
+                      </div>
         </div>
       </div>
     </div>
