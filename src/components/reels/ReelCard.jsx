@@ -264,8 +264,9 @@ export default function ReelCard({ item, currentUser, isActive }) {
               </button>
 
               <button
-                onClick={loadComments}
-                className="flex flex-col items-center gap-1 group"
+                onClick={commentsDisabled ? undefined : loadComments}
+                className={`flex flex-col items-center gap-1 group ${commentsDisabled ? "opacity-40" : ""}`}
+                title={commentsDisabled ? "Comments are turned off" : "Comments"}
               >
                 <div className="w-12 h-12 rounded-full bg-slate-900/60 backdrop-blur-xl border border-cyan-500/30 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <MessageCircle className="w-6 h-6 text-white" />
