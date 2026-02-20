@@ -293,7 +293,7 @@ export default function CreateReel() {
       {/* Audio Effects Panel */}
       <div className="space-y-2">
         <Label>Add Audio (optional)</Label>
-        <AudioEffectsPanel onAudioChange={setAudioData} />
+        <AudioEffectsPanel onAudioChange={setAudioData} videoFile={clips[activeClipIdx]?.file} />
       </div>
 
       {/* AI Reel Assistant */}
