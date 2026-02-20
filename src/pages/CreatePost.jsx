@@ -136,6 +136,7 @@ export default function CreatePost() {
       shares: 0,
       mentioned_users: mentions.length > 0 ? mentions : [],
       is_premium: isPremium,
+      comments_disabled: commentsDisabled,
     });
     
     // Notify mentioned users
