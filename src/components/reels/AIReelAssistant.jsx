@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, Music, Scissors, Zap, ChevronDown, ChevronUp, Loader2, Check } from "lucide-react";
+import { Sparkles, Music, Scissors, Zap, ChevronDown, ChevronUp, Loader2, Check, Hash, Wand2 } from "lucide-react";
 
 const TRENDING_AUDIO = [
   { title: "Epic Sports Anthem", genre: "Cinematic", bpm: 128, mood: "Hype", emoji: "🎵" },
@@ -17,8 +17,12 @@ export default function AIReelAssistant({ sport, category, videoFile, caption, o
   const [open, setOpen] = useState(false);
   const [loadingHighlight, setLoadingHighlight] = useState(false);
   const [loadingEditing, setLoadingEditing] = useState(false);
+  const [loadingCaption, setLoadingCaption] = useState(false);
+  const [loadingHashtags, setLoadingHashtags] = useState(false);
   const [highlightSuggestion, setHighlightSuggestion] = useState(null);
   const [editingSuggestions, setEditingSuggestions] = useState(null);
+  const [captionSuggestion, setCaptionSuggestion] = useState(null);
+  const [hashtagSuggestions, setHashtagSuggestions] = useState(null);
   const [selectedAudio, setSelectedAudio] = useState(null);
 
   const trendingAudio = React.useMemo(() => {
@@ -92,6 +96,74 @@ Return JSON with:
     setLoadingEditing(false);
   };
 
+  const generateCaption = async () => {
+    setLoadingCaption(true);
+    const result = await base44.integrations.Core.InvokeLLM({
+      prompt: `You are an expert social media content creator for sports content. Create an engaging, viral-worthy caption for a "${sport || "sports"}" reel in the "${category || "general"}" category.
+
+Current caption (if any): "${caption || "no caption yet"}"
+
+Generate a new, improved caption that:
+1. Grabs attention immediately
+2. Includes a call-to-action
+3. Is between 50-150 characters
+4. Uses relevant sports terminology
+5. Is authentic and conversational
+
+Return JSON with:
+- caption: string (the improved caption)
+- hook: string (the first phrase to grab attention)
+- call_to_action: string (suggested engagement prompt)
+- tips: array of strings (content tips for this type of reel)`,
+      response_json_schema: {
+        type: "object",
+        properties: {
+          caption: { type: "string" },
+          hook: { type: "string" },
+          call_to_action: { type: "string" },
+          tips: { type: "array", items: { type: "string" } }
+        }
+      }
+    });
+    setCaptionSuggestion(result);
+    setLoadingCaption(false);
+  };
+
+  const generateHashtags = async () => {
+    setLoadingHashtags(true);
+    const result = await base44.integrations.Core.InvokeLLM({
+      prompt: `You are a social media expert specializing in sports content. Generate relevant hashtags for a "${sport || "sports"}" reel in the "${category || "general"}" category.
+
+Current caption: "${caption || "no caption"}"
+
+Generate hashtags that:
+1. Are trending in sports community
+2. Match the ${sport} niche
+3. Mix popular (1M+ posts) with niche tags
+4. Are relevant to the ${category} category
+5. Include both general and specific tags
+
+Return JSON with:
+- trending_hashtags: array of strings (popular tags with high reach)
+- niche_hashtags: array of strings (specific to ${sport} community)
+- engagement_hashtags: array of strings (tags that boost comments/shares)
+- recommended_count: number (ideal number to use)
+- strategy: string (brief strategy explanation)`,
+      response_json_schema: {
+        type: "object",
+        properties: {
+          trending_hashtags: { type: "array", items: { type: "string" } },
+          niche_hashtags: { type: "array", items: { type: "string" } },
+          engagement_hashtags: { type: "array", items: { type: "string" } },
+          recommended_count: { type: "number" },
+          strategy: { type: "string" }
+        }
+      }
+    });
+    setHashtagSuggestions(result);
+    setLoadingHashtags(false);
+  };
+
   return (
     <div className="rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 overflow-hidden">
       <button
@@ -109,7 +181,122 @@ Return JSON with:
       {open && (
         <div className="px-4 pb-4 space-y-5 border-t border-blue-200">
 
-          {/* 1. Highlight Reel Generator */}
+          {/* 1. Caption Generator */}
+          <div className="pt-4 space-y-3">
+            <div className="flex items-center gap-2">
+              <Wand2 className="w-4 h-4 text-purple-600" />
+              <h3 className="font-bold text-sm text-slate-800">Auto Caption Generator</h3>
+            </div>
+            <p className="text-xs text-slate-500">Let AI create an engaging, viral-ready caption for your reel.</p>
+            <Button
+              onClick={generateCaption}
+              disabled={loadingCaption}
+              size="sm"
+              className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl gap-2"
+            >
+              {loadingCaption ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Wand2 className="w-3.5 h-3.5" />}
+              {loadingCaption ? "Writing..." : "Generate Caption"}
+            </Button>
+            {captionSuggestion && (
+              <div className="space-y-2 bg-white rounded-xl p-3 border border-purple-100">
+                <div>
+                  <p className="text-xs font-bold text-purple-700 mb-1">✨ Suggested Caption</p>
+                  <p className="text-sm text-slate-800 p-2 bg-purple-50 rounded-lg border border-purple-200">{captionSuggestion.caption}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-slate-600 mb-1">🎣 Hook</p>
+                  <p className="text-xs text-slate-700">{captionSuggestion.hook}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-slate-600 mb-1">📢 Call-to-Action</p>
+                  <p className="text-xs text-slate-700">{captionSuggestion.call_to_action}</p>
+                </div>
+                {captionSuggestion.tips?.length > 0 && (
+                  <div className="bg-purple-50 rounded-lg p-2 border border-purple-200">
+                    <p className="text-xs font-bold text-purple-800 mb-1">💡 Content Tips</p>
+                    <ul className="space-y-1">
+                      {captionSuggestion.tips.map((tip, i) => (
+                        <li key={i} className="text-xs text-purple-700">• {tip}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="w-full text-xs h-7 rounded-lg border-purple-300 text-purple-700 hover:bg-purple-50"
+                  onClick={() => onApplySuggestion?.("caption", captionSuggestion.caption)}
+                >
+                  Use This Caption
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {/* 2. Hashtag Suggestions */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Hash className="w-4 h-4 text-pink-600" />
+              <h3 className="font-bold text-sm text-slate-800">Hashtag Suggestions</h3>
+            </div>
+            <p className="text-xs text-slate-500">Get trending and niche hashtags to boost visibility.</p>
+            <Button
+              onClick={generateHashtags}
+              disabled={loadingHashtags}
+              size="sm"
+              className="bg-pink-600 hover:bg-pink-700 text-white rounded-xl gap-2"
+            >
+              {loadingHashtags ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Hash className="w-3.5 h-3.5" />}
+              {loadingHashtags ? "Generating..." : "Generate Hashtags"}
+            </Button>
+            {hashtagSuggestions && (
+              <div className="space-y-3 bg-white rounded-xl p-3 border border-pink-100">
+                {hashtagSuggestions.trending_hashtags?.length > 0 && (
+                  <div>
+                    <p className="text-xs font-bold text-pink-700 mb-1.5">🔥 Trending Tags</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {hashtagSuggestions.trending_hashtags.map((tag, i) => (
+                        <Badge key={i} variant="outline" className="text-xs bg-pink-50 border-pink-200 text-pink-700 cursor-pointer hover:bg-pink-100">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {hashtagSuggestions.niche_hashtags?.length > 0 && (
+                  <div>
+                    <p className="text-xs font-bold text-blue-700 mb-1.5">🎯 Niche Tags</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {hashtagSuggestions.niche_hashtags.map((tag, i) => (
+                        <Badge key={i} variant="outline" className="text-xs bg-blue-50 border-blue-200 text-blue-700 cursor-pointer hover:bg-blue-100">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {hashtagSuggestions.engagement_hashtags?.length > 0 && (
+                  <div>
+                    <p className="text-xs font-bold text-orange-700 mb-1.5">⭐ Engagement Tags</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {hashtagSuggestions.engagement_hashtags.map((tag, i) => (
+                        <Badge key={i} variant="outline" className="text-xs bg-orange-50 border-orange-200 text-orange-700 cursor-pointer hover:bg-orange-100">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div className="bg-pink-50 rounded-lg p-2 border border-pink-200">
+                  <p className="text-xs font-bold text-pink-800">💡 Strategy</p>
+                  <p className="text-xs text-pink-700 mt-0.5">{hashtagSuggestions.strategy}</p>
+                  <p className="text-xs text-pink-600 mt-1">Use ~{hashtagSuggestions.recommended_count} hashtags for best results</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 3. Highlight Reel Generator */}
           <div className="pt-4 space-y-3">
             <div className="flex items-center gap-2">
               <Scissors className="w-4 h-4 text-indigo-600" />
