@@ -58,6 +58,19 @@ export default function ChallengeDetail() {
       participants_count: (challenge.participants_count || 0) + 1,
     });
 
+    // Notify challenge creator
+    if (challenge.creator_email && challenge.creator_email !== user.email) {
+      await base44.entities.Notification.create({
+        recipient_email: challenge.creator_email,
+        actor_email: user.email,
+        actor_name: user.full_name,
+        actor_avatar: user.avatar_url,
+        type: "challenge_joined",
+        challenge_id: challengeId,
+        message: `joined your challenge "${challenge.title}"`,
+      });
+    }
+
     queryClient.invalidateQueries({ queryKey: ["challenge-participants"] });
     queryClient.invalidateQueries({ queryKey: ["challenge"] });
   };
