@@ -169,6 +169,17 @@ export default function CreateReel() {
         </Select>
       </div>
 
+      {/* AI Reel Assistant */}
+      <AIReelAssistant
+        sport={sport}
+        category={category}
+        videoFile={videoFile}
+        caption={content}
+        onApplySuggestion={(type, value) => {
+          if (type === "caption") setContent(value);
+        }}
+      />
+
       {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
 
       <Button
