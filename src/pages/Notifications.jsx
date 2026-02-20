@@ -82,7 +82,9 @@ export default function Notifications() {
   const getNotificationLink = (notif) => {
     if (notif.post_id) return createPageUrl("Feed");
     if (notif.challenge_id) return createPageUrl("ChallengeDetail") + `?id=${notif.challenge_id}`;
+    if (notif.stream_id) return createPageUrl("ViewLive") + `?id=${notif.stream_id}`;
     if (notif.conversation_id) return createPageUrl("Messages") + `?conv=${notif.conversation_id}`;
+    if (["follow", "follow_request"].includes(notif.type)) return createPageUrl("UserProfile") + `?email=${notif.actor_email}`;
     return createPageUrl("Profile");
   };
 
