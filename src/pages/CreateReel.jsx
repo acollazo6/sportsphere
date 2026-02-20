@@ -115,6 +115,7 @@ export default function CreateReel() {
       sport: sport || undefined,
       category: category || "other",
       ai_analysis: { edit_metadata: editMetadata, clip_count: clips.length },
+      comments_disabled: commentsDisabled,
     });
 
     navigate(createPageUrl("Reels"));
