@@ -165,10 +165,12 @@ export default function Notifications() {
       <div className="flex flex-wrap gap-2">
         {filterOptions.map(option => {
           const Icon = option.icon;
-          const count = option.value === "all" 
-            ? allNotifications?.length 
+          const count = option.value === "all"
+            ? allNotifications?.length
             : option.value === "unread"
             ? allNotifications?.filter(n => !n.is_read).length
+            : option.value === "challenge_update"
+            ? allNotifications?.filter(n => ["challenge_update", "challenge_joined", "challenge_completed"].includes(n.type)).length
             : allNotifications?.filter(n => n.type === option.value).length;
           
           return (
