@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import ReelCard from "../components/reels/ReelCard";
-import { Loader2, Sparkles, Settings } from "lucide-react";
+import { Loader2, Sparkles, Settings, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import FeedPreferencesDialog from "../components/reels/FeedPreferencesDialog";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 
 export default function Reels() {
   const [user, setUser] = useState(null);
