@@ -182,7 +182,7 @@ export default function Feed() {
         {/* Post Photo/Video */}
         <Link to={createPageUrl("CreatePost")}>
           <button className="relative w-full overflow-hidden flex flex-col items-center justify-end gap-1.5 pt-2 pb-3 px-2 rounded-2xl bg-gradient-to-br from-[#1a3a6b] via-[#1e4d8c] to-[#0f2a52] text-white shadow-2xl shadow-blue-900/50 hover:shadow-blue-900/70 hover:scale-110 active:scale-95 transition-all duration-200 h-24 border border-white/10">
-            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698f6f4f4e61dd2806b88ed2/15137601c_392DC896-FFC0-4491-BCB6-20C0C160BF03.png" alt="" className="absolute inset-0 w-full h-full object-contain opacity-50 scale-[2.2] pointer-events-none select-none" />
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698f6f4f4e61dd2806b88ed2/15137601c_392DC896-FFC0-4491-BCB6-20C0C160BF03.png" alt="" className="absolute inset-0 w-full h-full object-contain opacity-50 scale-[3.5] pointer-events-none select-none" />
             {/* Icon */}
             <div className="relative z-10 w-8 h-8 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20 shadow-inner">
               <Camera className="w-4 h-4" />
@@ -194,7 +194,7 @@ export default function Feed() {
         {/* Go Live */}
         <Link to={createPageUrl("Live")}>
           <button className="relative w-full overflow-hidden flex flex-col items-center justify-end gap-1.5 pt-2 pb-3 px-2 rounded-2xl bg-gradient-to-br from-[#1a3a6b] via-[#1e4d8c] to-[#0f2a52] text-white shadow-2xl shadow-blue-900/50 hover:shadow-blue-900/70 hover:scale-110 active:scale-95 transition-all duration-200 h-24 border border-white/10">
-            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698f6f4f4e61dd2806b88ed2/15137601c_392DC896-FFC0-4491-BCB6-20C0C160BF03.png" alt="" className="absolute inset-0 w-full h-full object-contain opacity-50 scale-[2.2] pointer-events-none select-none" />
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698f6f4f4e61dd2806b88ed2/15137601c_392DC896-FFC0-4491-BCB6-20C0C160BF03.png" alt="" className="absolute inset-0 w-full h-full object-contain opacity-50 scale-[3.5] pointer-events-none select-none" />
             <div className="relative z-10 w-8 h-8 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20 shadow-inner">
               <Radio className="w-4 h-4" />
             </div>
@@ -205,7 +205,7 @@ export default function Feed() {
         {/* Reels */}
         <Link to={createPageUrl("CreateReel")}>
           <button className="relative w-full overflow-hidden flex flex-col items-center justify-end gap-1.5 pt-2 pb-3 px-2 rounded-2xl text-white shadow-2xl shadow-indigo-700/50 hover:shadow-indigo-700/70 hover:scale-110 active:scale-95 transition-all duration-200 h-24 border border-white/10" style={{background:"linear-gradient(135deg, #0f2a52 0%, #1a3a6b 50%, #1e4d8c 100%)"}}>
-            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698f6f4f4e61dd2806b88ed2/15137601c_392DC896-FFC0-4491-BCB6-20C0C160BF03.png" alt="" className="absolute inset-0 w-full h-full object-contain opacity-50 scale-[2.2] pointer-events-none select-none" />
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/698f6f4f4e61dd2806b88ed2/15137601c_392DC896-FFC0-4491-BCB6-20C0C160BF03.png" alt="" className="absolute inset-0 w-full h-full object-contain opacity-50 scale-[3.5] pointer-events-none select-none" />
             <div className="relative z-10 w-8 h-8 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20 shadow-inner">
               <Film className="w-4 h-4" />
             </div>
