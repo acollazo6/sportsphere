@@ -522,7 +522,7 @@ export default function VideoEditor({
 
       {/* Tabs */}
       <Tabs defaultValue="trim" className="px-3 pb-4">
-        <TabsList className="w-full bg-slate-100 rounded-xl mb-3 mt-2 h-9 grid grid-cols-6">
+        <TabsList className="w-full bg-slate-100 rounded-xl mb-3 mt-2 h-9 grid grid-cols-6 gap-1 p-1">
           <TabsTrigger value="trim" className="text-[11px] rounded-lg gap-0.5 flex-col sm:flex-row">
             <Scissors className="w-3.5 h-3.5" /><span className="hidden sm:inline">Trim</span>
           </TabsTrigger>
@@ -538,10 +538,48 @@ export default function VideoEditor({
           <TabsTrigger value="transition" className="text-[11px] rounded-lg gap-0.5">
             <Layers className="w-3.5 h-3.5" /><span className="hidden sm:inline">Trans.</span>
           </TabsTrigger>
-          <TabsTrigger value="thumbnail" className="text-[11px] rounded-lg gap-0.5">
+          <TabsTrigger value="thumbnail" className="text-[11px] rounded-lg gap-0.5 relative">
             <Image className="w-3.5 h-3.5" /><span className="hidden sm:inline">Thumb</span>
+            {multiClipMode && (
+              <button
+                onClick={(e) => { e.stopPropagation(); setShowAISuggestions(!showAISuggestions); }}
+                className="absolute -top-3 -right-3 w-5 h-5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full text-white text-xs font-bold flex items-center justify-center hover:scale-110 transition-transform"
+                title="AI Suggestions"
+              >
+                ✨
+              </button>
+            )}
           </TabsTrigger>
         </TabsList>
+
+        {/* AI Mood Suggestions */}
+        {multiClipMode && showAISuggestions && (
+          <div className="mb-3 bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <h4 className="font-bold text-purple-900 text-sm">✨ AI-Suggested Edits</h4>
+              <button onClick={() => setShowAISuggestions(false)} className="text-slate-400 hover:text-slate-600">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <p className="text-xs text-purple-700">Auto-apply transitions, effects & speed based on mood:</p>
+            <div className="grid grid-cols-2 gap-2">
+              {Object.entries(AI_SUGGESTIONS).map(([key, sugg]) => (
+                <button
+                  key={key}
+                  onClick={() => applySuggestions(key)}
+                  className={`p-3 rounded-lg text-xs font-semibold transition-all border-2 ${
+                    selectedMood === key
+                      ? "border-purple-500 bg-purple-100 text-purple-900 scale-105"
+                      : "border-purple-200 bg-white text-purple-800 hover:border-purple-300"
+                  }`}
+                >
+                  {sugg.label}
+                </button>
+              ))}
+            </div>
+            <p className="text-[10px] text-purple-600 italic">💡 Suggestions are randomly selected from recommended effects for each mood.</p>
+          </div>
+        )}
 
         {/* ── TRIM ─────────────────────────────────────────────────────────── */}
         <TabsContent value="trim" className="space-y-3 mt-0">
