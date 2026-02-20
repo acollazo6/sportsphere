@@ -34,6 +34,7 @@ export default function CreateReel() {
   const [sport, setSport] = useState("");
   const [category, setCategory] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [commentsDisabled, setCommentsDisabled] = useState(false);
   const [error, setError] = useState("");
 
   const handleAddClips = (e) => {
