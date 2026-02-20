@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Heart, MessageCircle, Share2, Play, MoreHorizontal, Bookmark, Flag, AlertTriangle, Star, Eye, Crown, DollarSign, Sparkles, ZoomIn, Send } from "lucide-react";
+import { Heart, MessageCircle, Share2, Play, MoreHorizontal, Bookmark, Flag, AlertTriangle, Star, Eye, Crown, DollarSign, Sparkles, ZoomIn } from "lucide-react";
 import SharePostDialog from "../messages/SharePostDialog";
 import MediaViewer from "./MediaViewer";
 import TipButton from "../monetization/TipButton";
