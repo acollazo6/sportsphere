@@ -458,24 +458,14 @@ Provide a brief, engaging summary that helps viewers decide if they want to watc
             <span className="text-sm font-medium text-slate-500">{post.comments_count || 0}</span>
           </button>
 
-          <button
-            onClick={async () => {
-              await base44.entities.Post.update(post.id, { shares: (post.shares || 0) + 1 });
-              navigator.share?.({ title: post.content, url: window.location.href });
-            }}
-            className="flex items-center gap-1.5 group"
-          >
-            <Share2 className="w-5 h-5 text-slate-500 group-hover:text-emerald-400 transition-colors" />
-            <span className="text-sm font-medium text-slate-500">{post.shares || 0}</span>
-          </button>
-
           {currentUser && (
             <button
               onClick={() => setShowShareDialog(true)}
               className="flex items-center gap-1.5 group"
-              title="Share via message"
+              title="Share"
             >
-              <Send className="w-5 h-5 text-slate-500 group-hover:text-orange-400 transition-colors" />
+              <Share2 className="w-5 h-5 text-slate-500 group-hover:text-emerald-400 transition-colors" />
+              <span className="text-sm font-medium text-slate-500">{post.shares || 0}</span>
             </button>
           )}
 
