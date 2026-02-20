@@ -344,6 +344,15 @@ export default function ReelCard({ item, currentUser, isActive }) {
         </div>
       </div>
 
+      {/* Share Dialog */}
+      {showShareDialog && currentUser && (
+        <SharePostDialog
+          post={item}
+          user={currentUser}
+          onClose={() => setShowShareDialog(false)}
+        />
+      )}
+
       {/* Recommendation Explanation */}
       {showRecommendation && item.recommendationReasons && (
         <div className="absolute top-20 right-4 z-20 bg-slate-900/95 backdrop-blur-2xl border border-cyan-500/30 rounded-2xl p-4 max-w-xs">
