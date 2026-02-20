@@ -287,10 +287,10 @@ export default function CoachPage() {
                     </div>
                   ))}
                   <div ref={messagesEndRef} />
-                </div>
+                  </div>
 
-                {/* Input */}
-                <div className="p-4 border-t border-slate-100">
+                  {/* Input */}
+                  <div className="p-4 border-t border-slate-100">
                   {videoPreview && (
                     <div className="mb-3 relative inline-block">
                       <video
