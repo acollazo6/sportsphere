@@ -11,6 +11,7 @@ import { MessageCircle, Trophy, MapPin, Clock, Send, Loader2, ArrowLeft, Lightbu
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import PostCard from "../components/feed/PostCard";
+import ReelsStatsPanel from "../components/profile/ReelsStatsPanel";
 import SubscriptionTiers from "../components/monetization/SubscriptionTiers";
 
 export default function UserProfile() {
