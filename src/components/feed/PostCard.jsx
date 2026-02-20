@@ -113,38 +113,25 @@ export default function PostCard({ post, currentUser, onUpdate }) {
 
   const addComment = async () => {
     if (!newComment.trim()) return;
-    
+
     // AI Content moderation for comments
     try {
-      const moderation = await base44.integrations.Core.InvokeLLM({
-        prompt: `Analyze this comment for inappropriate content (profanity, harassment, spam, hate speech): "${newComment}". Return JSON: {"is_appropriate": boolean, "reason": string, "action": "allow"|"flag"|"block"}`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            is_appropriate: { type: "boolean" },
-            reason: { type: "string" },
-            action: { type: "string", enum: ["allow", "flag", "block"] }
-          }
-        }
+      const result = await base44.functions.invoke("moderateContent", {
+        content_type: "comment",
+        content_id: `pending_${Date.now()}`,
+        content_text: newComment,
+        author_email: currentUser.email,
+        author_name: currentUser.full_name,
       });
-
-      if (moderation.action === "block") {
-        toast.error(`Comment blocked: ${moderation.reason}`);
+      if (result?.data?.action === "auto_remove" && result?.data?.severity === "critical") {
+        toast.error("Your comment was blocked as it violates community guidelines.");
         return;
       }
-
-      if (moderation.action === "flag") {
-        await base44.entities.Report.create({
-          reporter_email: "system",
-          reported_item_type: "comment",
-          reported_item_id: "pending",
-          reason: "inappropriate",
-          details: `AI flagged comment: ${moderation.reason}`,
-          status: "pending"
-        });
+      if (result?.data?.action === "flag_for_review") {
+        toast.warning("Your comment has been flagged for review before appearing publicly.");
       }
-    } catch (error) {
-      console.error("Moderation failed:", error);
+    } catch (e) {
+      // moderation error shouldn't block commenting
     }
     
     // Extract mentions (@username)
