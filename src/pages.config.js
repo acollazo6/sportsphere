@@ -56,6 +56,7 @@ import Challenges from './pages/Challenges';
 import Coach from './pages/Coach';
 import CoachingSessionDetail from './pages/CoachingSessionDetail';
 import CreatePost from './pages/CreatePost';
+import CreateReel from './pages/CreateReel';
 import CreatorAI from './pages/CreatorAI';
 import CreatorHub from './pages/CreatorHub';
 import CreatorShop from './pages/CreatorShop';
@@ -97,7 +98,7 @@ import UploadVideo from './pages/UploadVideo';
 import UserProfile from './pages/UserProfile';
 import VideoReview from './pages/VideoReview';
 import ViewLive from './pages/ViewLive';
-import CreateReel from './pages/CreateReel';
+import Search from './pages/Search';
 import __Layout from './Layout.jsx';
 
 
@@ -111,6 +112,7 @@ export const PAGES = {
     "Coach": Coach,
     "CoachingSessionDetail": CoachingSessionDetail,
     "CreatePost": CreatePost,
+    "CreateReel": CreateReel,
     "CreatorAI": CreatorAI,
     "CreatorHub": CreatorHub,
     "CreatorShop": CreatorShop,
@@ -152,7 +154,7 @@ export const PAGES = {
     "UserProfile": UserProfile,
     "VideoReview": VideoReview,
     "ViewLive": ViewLive,
-    "CreateReel": CreateReel,
+    "Search": Search,
 }
 
 export const pagesConfig = {
