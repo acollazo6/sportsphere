@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Send, ArrowLeft, Loader2, MessageCircle, User, Plus, Search, ImagePlus, X, Play, Languages } from "lucide-react";
+import { Send, ArrowLeft, Loader2, MessageCircle, User, Plus, Search, ImagePlus, X, Play, Languages, Users } from "lucide-react";
 import NewChatDialog from "../components/messages/NewChatDialog";
 import MessageBubble from "../components/messages/MessageBubble";
 import VoiceRecorder from "../components/messages/VoiceRecorder";
