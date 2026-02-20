@@ -42,6 +42,7 @@ export default function Notifications() {
   const notifications = allNotifications?.filter(n => {
     if (filter === "unread") return !n.is_read;
     if (filter === "all") return true;
+    if (filter === "challenge_update") return ["challenge_update", "challenge_joined", "challenge_completed"].includes(n.type);
     return n.type === filter;
   });
 
