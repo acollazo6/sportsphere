@@ -203,7 +203,7 @@ export default function Reels() {
         ))}
       </div>
 
-      {/* Personalization controls */}
+      {/* Top controls */}
       {user && (
         <div className="fixed top-4 left-4 z-50 flex items-center gap-2">
           <div className="bg-slate-900/80 backdrop-blur-xl border border-cyan-500/30 rounded-2xl px-4 py-2 flex items-center gap-2">
@@ -218,6 +218,16 @@ export default function Reels() {
             <Settings className="w-4 h-4 text-cyan-400" />
           </Button>
         </div>
+      )}
+
+      {/* Create Reel Button */}
+      {user && (
+        <Link to={createPageUrl("CreateReel")} className="fixed top-4 right-4 z-50">
+          <Button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-2xl gap-2 shadow-xl font-bold">
+            <Plus className="w-4 h-4" />
+            Create Reel
+          </Button>
+        </Link>
       )}
 
       {/* Preferences Dialog */}
