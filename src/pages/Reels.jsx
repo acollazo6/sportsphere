@@ -166,8 +166,27 @@ export default function Reels() {
       }
     };
 
+    const handleSwipeNext = () => {
+      if (currentIndex < feedItems.length - 1) {
+        setCurrentIndex(prev => prev + 1);
+      }
+    };
+
+    const handleSwipePrev = () => {
+      if (currentIndex > 0) {
+        setCurrentIndex(prev => prev - 1);
+      }
+    };
+
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("reelSwipeNext", handleSwipeNext);
+    window.addEventListener("reelSwipePrev", handleSwipePrev);
+    
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("reelSwipeNext", handleSwipeNext);
+      window.removeEventListener("reelSwipePrev", handleSwipePrev);
+    };
   }, [currentIndex, feedItems.length]);
 
   if (postsLoading) {
