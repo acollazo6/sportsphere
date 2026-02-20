@@ -215,7 +215,7 @@ export default function VideoEditor({
   // AI Suggestions
   const [showAISuggestions, setShowAISuggestions] = useState(false);
   const [selectedMood, setSelectedMood] = useState(null);
-  const [suggestionsLoading, setS uggestionsLoading] = useState(false);
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false);
 
   // Multi-clip mode
   const multiClipMode = !!externalClips;
@@ -381,6 +381,24 @@ export default function VideoEditor({
     const dataUrl = await captureFrame(v, v.currentTime);
     setSelectedThumb(dataUrl);
     onThumbnailReady?.(dataURLtoFile(dataUrl, "thumbnail.jpg"), dataUrl);
+  };
+
+  const applySuggestions = (moodKey) => {
+    const suggestion = AI_SUGGESTIONS[moodKey];
+    if (!multiClipMode || !activeClip) return;
+    
+    const randomTransition = suggestion.transitions[Math.floor(Math.random() * suggestion.transitions.length)];
+    const randomEffect = suggestion.effects[Math.floor(Math.random() * suggestion.effects.length)];
+    const randomSpeed = suggestion.speed[Math.floor(Math.random() * suggestion.speed.length)];
+    
+    updateClip({
+      transition: randomTransition,
+      filter: randomEffect,
+      speed: randomSpeed
+    });
+    
+    setSelectedMood(moodKey);
+    setTimeout(() => setShowAISuggestions(false), 500);
   };
 
   // ── layout helpers ────────────────────────────────────────────────────────
