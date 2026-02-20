@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { Heart, MessageCircle, Share2, Radio, Crown, Play, Pause, Bookmark, Info } from "lucide-react";
+import { Heart, MessageCircle, Share2, Radio, Crown, Play, Pause, Bookmark, Info, MoreVertical } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,8 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "../../utils";
 import { toast } from "sonner";
 import moment from "moment";
+import SharePostDialog from "../messages/SharePostDialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 export default function ReelCard({ item, currentUser, isActive }) {
   const queryClient = useQueryClient();
