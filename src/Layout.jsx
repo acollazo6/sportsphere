@@ -137,7 +137,7 @@ export default function Layout({ children, currentPageName }) {
                   <Icon className="w-4 h-4" />
                   <span>{item.name}</span>
                   {item.badge > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-900 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-lg">
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-orange-500 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-lg">
                       {item.badge}
                     </span>
                   )}
