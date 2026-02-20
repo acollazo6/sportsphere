@@ -207,7 +207,7 @@ export default function Layout({ children, currentPageName }) {
                   to={createPageUrl(item.page)}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                    isActive ? "bg-gradient-to-r from-red-900 to-red-800 text-white shadow-lg" : "text-gray-600 hover:bg-gray-100 hover:text-red-900"
+                    isActive ? "bg-gradient-to-r from-blue-700 to-blue-600 text-white shadow-lg" : "text-gray-600 hover:bg-blue-50 hover:text-blue-700"
                   }`}
                 >
                   <Icon className="w-5 h-5" />
