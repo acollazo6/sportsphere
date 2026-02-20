@@ -302,6 +302,17 @@ Provide a brief, engaging summary that helps viewers decide if they want to watc
                     {isHighlighted ? "Remove from" : "Add to"} Highlights
                   </DropdownMenuItem>
                 )}
+                {currentUser.email === post.author_email && (
+                  <DropdownMenuItem onClick={async () => {
+                    const newVal = !commentsDisabled;
+                    setCommentsDisabled(newVal);
+                    await base44.entities.Post.update(post.id, { comments_disabled: newVal });
+                    if (newVal) setShowComments(false);
+                  }} className="gap-2">
+                    <MessageCircle className="w-4 h-4" />
+                    {commentsDisabled ? "Enable Comments" : "Turn Off Comments"}
+                  </DropdownMenuItem>
+                )}
                 {currentUser.email !== post.author_email && (
                   <DropdownMenuItem onClick={() => setShowReportDialog(true)} className="text-red-600 gap-2">
                     <Flag className="w-4 h-4" /> Report Post
