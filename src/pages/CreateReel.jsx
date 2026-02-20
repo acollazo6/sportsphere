@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { Link } from "react-router-dom";
 import AIReelAssistant from "../components/reels/AIReelAssistant";
 import VideoEditor from "../components/video/VideoEditor";
+import AudioEffectsPanel from "../components/video/AudioEffectsPanel";
 
 const SPORTS = ["Basketball","Soccer","Football","Baseball","Tennis","Golf","Swimming","Boxing","MMA","Track","Volleyball","Hockey","Cycling","Yoga","CrossFit"];
 const CATEGORIES = ["training","game","coaching","instruction","motivation","highlight","other"];
@@ -23,9 +24,10 @@ export default function CreateReel() {
   const navigate = useNavigate();
   const addClipRef = useRef();
 
-  const [clips, setClips] = useState([]); // [{id, file, objectUrl, previewUrl, trimStart, trimEnd, speed, filter, textOverlays, transition}]
+  const [clips, setClips] = useState([]); // [{id, file, objectUrl, previewUrl, trimStart, trimEnd, speed, filter, textOverlays, transition, audio}]
   const [activeClipIdx, setActiveClipIdx] = useState(0);
   const [showEditor, setShowEditor] = useState(false);
+  const [audioData, setAudioData] = useState(null);
 
   const [thumbnailFile, setThumbnailFile] = useState(null);
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
@@ -104,7 +106,15 @@ export default function CreateReel() {
       filter: c.filter,
       textOverlays: c.textOverlays,
       transition: c.transition,
+      audio: c.audio,
     }));
+    
+    // Store audio metadata
+    const audioMetadata = audioData ? {
+      fileName: audioData.file.name,
+      fileSize: audioData.file.size,
+      volume: audioData.volume
+    } : null;
 
     await base44.entities.Post.create({
       author_email: user.email,
@@ -115,7 +125,13 @@ export default function CreateReel() {
       media_type: "video",
       sport: sport || undefined,
       category: category || "other",
-      ai_analysis: { edit_metadata: editMetadata, clip_count: clips.length },
+      ai_analysis: { 
+        edit_metadata: editMetadata, 
+        clip_count: clips.length,
+        audio_metadata: audioMetadata,
+        has_custom_audio: !!audioData,
+        has_effects: clips.some(c => c.filter !== "none" || c.textOverlays?.length > 0)
+      },
       comments_disabled: commentsDisabled,
     });
 
@@ -272,6 +288,12 @@ export default function CreateReel() {
             <SelectContent>{CATEGORIES.map(c => <SelectItem key={c} value={c} className="capitalize">{c}</SelectItem>)}</SelectContent>
           </Select>
         </div>
+      </div>
+
+      {/* Audio Effects Panel */}
+      <div className="space-y-2">
+        <Label>Add Audio (optional)</Label>
+        <AudioEffectsPanel onAudioChange={setAudioData} />
       </div>
 
       {/* AI Reel Assistant */}
