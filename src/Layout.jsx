@@ -173,7 +173,7 @@ export default function Layout({ children, currentPageName }) {
                     </Button>
                 </Link>
                 <Link to={createPageUrl("CreatePost")}>
-                  <Button className="bg-gradient-to-r from-red-900 to-red-800 hover:from-red-800 hover:to-red-700 text-white rounded-2xl shadow-xl hover:shadow-2xl gap-2 hidden sm:flex font-bold transition-all duration-300 hover:scale-105">
+                  <Button className="bg-gradient-to-r from-blue-700 to-blue-600 hover:from-blue-800 hover:to-blue-700 text-white rounded-2xl shadow-xl hover:shadow-2xl gap-2 hidden sm:flex font-bold transition-all duration-300 hover:scale-105">
                     <Plus className="w-4 h-4" />
                     {t("post")}
                   </Button>
