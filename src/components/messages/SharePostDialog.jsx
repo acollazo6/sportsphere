@@ -33,6 +33,10 @@ export default function SharePostDialog({ post, user, onClose }) {
 
   const shareToConv = async (conv) => {
     setSending(conv.id);
+    // Increment share count
+    if (post.id) {
+      await base44.entities.Post.update(post.id, { shares: (post.shares || 0) + 1 });
+    }
     await base44.entities.Message.create({
       conversation_id: conv.id,
       sender_email: user.email,
