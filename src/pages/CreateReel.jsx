@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Upload, Film, X, Loader2, Image, Plus, Layers, MessageCircle } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { Link } from "react-router-dom";
 import AIReelAssistant from "../components/reels/AIReelAssistant";
 import VideoEditor from "../components/video/VideoEditor";
