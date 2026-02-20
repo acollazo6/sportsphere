@@ -36,8 +36,11 @@ export default function Messages() {
   const [mediaPreview, setMediaPreview] = useState(null);
   const [mediaType, setMediaType] = useState(null);
   const [preferredLanguage, setPreferredLanguage] = useState(() => localStorage.getItem("msg_lang") || "en");
+  const [isTyping, setIsTyping] = useState(false); // current user is typing
+  const [typingUsers, setTypingUsers] = useState([]); // other users typing
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => base44.auth.redirectToLogin());
