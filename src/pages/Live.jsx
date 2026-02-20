@@ -160,7 +160,7 @@ export default function Live() {
     if (!liveData.title.trim()) return;
     setGoingLive(true);
     const isVod = liveMode === "upload";
-    await base44.entities.LiveStream.create({
+    const stream = await base44.entities.LiveStream.create({
       host_email: user.email, host_name: user.full_name, host_avatar: user.avatar_url,
       title: liveData.title, description: liveData.description, sport: liveData.sport,
       is_premium: liveData.is_premium, price: parseFloat(liveData.price) || 0,
@@ -172,6 +172,24 @@ export default function Live() {
       ended_at: isVod ? new Date().toISOString() : undefined,
       ai_tags: streamQuality ? [`quality:${streamQuality}`] : [],
     });
+
+    // Notify followers if going live (not VOD)
+    if (!isVod && follows.length > 0) {
+      await Promise.all(
+        follows.map(f =>
+          base44.entities.Notification.create({
+            recipient_email: f.following_email || f.follower_email,
+            actor_email: user.email,
+            actor_name: user.full_name,
+            actor_avatar: user.avatar_url,
+            type: "live_stream",
+            stream_id: stream.id,
+            message: `is live now: "${liveData.title}"`,
+          })
+        )
+      );
+    }
+
     setGoingLive(false);
     setShowGoLive(false);
     setLiveData({ title: "", description: "", sport: "", is_premium: false, price: 0, stream_url: "" });
