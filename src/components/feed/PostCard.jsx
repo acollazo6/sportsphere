@@ -449,7 +449,11 @@ Provide a brief, engaging summary that helps viewers decide if they want to watc
             </span>
           </button>
 
-          <button onClick={loadComments} className="flex items-center gap-1.5 group">
+          <button
+            onClick={commentsDisabled ? undefined : loadComments}
+            className={`flex items-center gap-1.5 group ${commentsDisabled ? "opacity-40 cursor-not-allowed" : ""}`}
+            title={commentsDisabled ? "Comments are turned off" : ""}
+          >
             <MessageCircle className="w-5 h-5 text-slate-500 group-hover:text-blue-400 transition-colors" />
             <span className="text-sm font-medium text-slate-500">{post.comments_count || 0}</span>
           </button>
