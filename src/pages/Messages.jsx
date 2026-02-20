@@ -109,12 +109,13 @@ export default function Messages() {
 
   const getOtherName = (conv) => {
     if (!conv || !user) return "Unknown";
+    if (conv.is_group) return conv.group_name || conv.participant_names?.filter((_, i) => conv.participants[i] !== user.email).join(", ") || "Group";
     const idx = conv.participants?.indexOf(user.email);
     return conv.participant_names?.[idx === 0 ? 1 : 0] || conv.participants?.find(p => p !== user.email) || "Unknown";
   };
 
   const getOtherAvatar = (conv) => {
-    if (!conv || !user) return "";
+    if (!conv || !user || conv.is_group) return "";
     const idx = conv.participants?.indexOf(user.email);
     return conv.participant_avatars?.[idx === 0 ? 1 : 0] || "";
   };
