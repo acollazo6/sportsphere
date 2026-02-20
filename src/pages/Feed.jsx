@@ -67,6 +67,8 @@ export default function Feed() {
     },
     staleTime: 60000,
     refetchInterval: 120000,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   // Apply user preferences filtering
