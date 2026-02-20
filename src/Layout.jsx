@@ -79,7 +79,7 @@ export default function Layout({ children, currentPageName }) {
   if (currentPageName === "Login") return <>{children}</>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
       <RecommendationNotification user={user} />
       <SupportChatWidget user={user} />
       <PushNotificationBanner user={user} />
