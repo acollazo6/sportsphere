@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Loader2, Languages, ChevronDown, Play } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Loader2, Languages, CheckCheck, Check, ExternalLink } from "lucide-react";
 import moment from "moment";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 
 const LANGUAGE_NAMES = {
   en: "English", es: "Spanish", fr: "French", de: "German",
@@ -10,16 +12,35 @@ const LANGUAGE_NAMES = {
   hi: "Hindi", ru: "Russian", it: "Italian", ko: "Korean",
 };
 
-export default function MessageBubble({ msg, isMine, preferredLanguage }) {
+function SharedPostPreview({ post }) {
+  if (!post) return null;
+  return (
+    <Link
+      to={createPageUrl("Feed")}
+      className="block mt-2 rounded-xl overflow-hidden border border-white/20 bg-white/10 hover:bg-white/20 transition-colors"
+    >
+      {post.media_urls?.[0] && (
+        <img src={post.media_urls[0]} alt="" className="w-full h-28 object-cover" />
+      )}
+      <div className="p-2.5">
+        <p className="text-xs font-semibold opacity-80">{post.author_name}</p>
+        <p className="text-xs mt-0.5 opacity-70 line-clamp-2">{post.content}</p>
+        <div className="flex items-center gap-1 mt-1.5 text-[10px] opacity-60">
+          <ExternalLink className="w-3 h-3" />
+          <span>View post</span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+export default function MessageBubble({ msg, isMine, preferredLanguage, allParticipants }) {
   const [translated, setTranslated] = useState(null);
   const [translating, setTranslating] = useState(false);
   const [showOriginal, setShowOriginal] = useState(false);
 
   const handleTranslate = async () => {
-    if (translated) {
-      setShowOriginal(prev => !prev);
-      return;
-    }
+    if (translated) { setShowOriginal(prev => !prev); return; }
     setTranslating(true);
     const result = await base44.integrations.Core.InvokeLLM({
       prompt: `Translate the following message to ${LANGUAGE_NAMES[preferredLanguage] || "English"}. Return ONLY the translated text, nothing else.\n\nMessage: "${msg.content}"`,
@@ -30,6 +51,10 @@ export default function MessageBubble({ msg, isMine, preferredLanguage }) {
 
   const displayText = translated && !showOriginal ? translated : msg.content;
   const isTranslated = !!translated && !showOriginal;
+
+  // Read receipt: check how many participants have read (excluding sender)
+  const readers = (msg.read_by || []).filter(e => e !== msg.sender_email);
+  const allRead = allParticipants && readers.length >= (allParticipants.filter(p => p !== msg.sender_email).length);
 
   return (
     <div className={`flex gap-2 ${isMine ? "justify-end" : "justify-start"}`}>
@@ -48,45 +73,51 @@ export default function MessageBubble({ msg, isMine, preferredLanguage }) {
               <img src={msg.media_url} alt="" className="max-w-[240px] rounded-t-2xl block" />
             </a>
           ) : null}
-          {displayText && (
+
+          {(displayText || msg.shared_post_data) && (
             <div className="px-4 py-2.5">
-              <p className="text-sm whitespace-pre-wrap break-words">{displayText}</p>
+              {displayText && (
+                <p className="text-sm whitespace-pre-wrap break-words">{displayText}</p>
+              )}
               {isTranslated && (
-                <p className={`text-[10px] mt-1 ${isMine ? "text-slate-400" : "text-slate-400"}`}>
+                <p className={`text-[10px] mt-1 opacity-60`}>
                   Translated · <button onClick={() => setShowOriginal(true)} className="underline">Show original</button>
                 </p>
               )}
               {showOriginal && translated && (
-                <p className={`text-[10px] mt-1 ${isMine ? "text-slate-400" : "text-slate-400"}`}>
+                <p className={`text-[10px] mt-1 opacity-60`}>
                   Original · <button onClick={() => setShowOriginal(false)} className="underline">Show translation</button>
                 </p>
               )}
+              {msg.shared_post_data && (
+                <SharedPostPreview post={msg.shared_post_data} />
+              )}
             </div>
           )}
-          {!msg.content && msg.media_url && <div className="pb-1" />}
+          {!msg.content && !msg.shared_post_data && msg.media_url && <div className="pb-1" />}
         </div>
 
-        {/* Translate button (only for text messages) */}
-        {msg.content && preferredLanguage && (
-          <button
-            onClick={handleTranslate}
-            disabled={translating}
-            className={`flex items-center gap-1 mt-1 text-[10px] px-1 transition-colors ${
-              isMine ? "self-end text-slate-500 hover:text-orange-400" : "self-start text-slate-400 hover:text-orange-500"
-            }`}
-          >
-            {translating ? (
-              <Loader2 className="w-3 h-3 animate-spin" />
-            ) : (
-              <Languages className="w-3 h-3" />
-            )}
-            {translating ? "Translating..." : isTranslated ? "Translated" : `Translate`}
-          </button>
-        )}
-
-        <span className={`text-[10px] text-slate-400 mt-0.5 px-1 ${isMine ? "self-end" : "self-start"}`}>
-          {moment(msg.created_date).format("h:mm A")}
-        </span>
+        {/* Translate + read receipt row */}
+        <div className={`flex items-center gap-2 mt-0.5 px-1 ${isMine ? "justify-end" : "justify-start"}`}>
+          {msg.content && preferredLanguage && (
+            <button
+              onClick={handleTranslate}
+              disabled={translating}
+              className={`flex items-center gap-1 text-[10px] transition-colors ${
+                isMine ? "text-slate-500 hover:text-orange-400" : "text-slate-400 hover:text-orange-500"
+              }`}
+            >
+              {translating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Languages className="w-3 h-3" />}
+              {translating ? "Translating..." : isTranslated ? "Translated" : "Translate"}
+            </button>
+          )}
+          <span className="text-[10px] text-slate-400">{moment(msg.created_date).format("h:mm A")}</span>
+          {isMine && (
+            <span className={`text-[10px] ${allRead ? "text-blue-500" : "text-slate-400"}`} title={allRead ? "Read" : "Delivered"}>
+              {allRead ? <CheckCheck className="w-3 h-3" /> : <Check className="w-3 h-3" />}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );
