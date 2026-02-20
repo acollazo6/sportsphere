@@ -23,6 +23,8 @@ export default function ReelCard({ item, currentUser, isActive }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showRecommendation, setShowRecommendation] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [commentsDisabled, setCommentsDisabled] = useState(item.comments_disabled || false);
 
   // Check if content is saved
   const { data: savedContent } = useQuery({
