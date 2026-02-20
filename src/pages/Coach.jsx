@@ -394,15 +394,15 @@ export default function CoachPage() {
                   </div>
                 </TabsContent>
               </Tabs>
-                      ) : (
-                      <div className="flex-1 flex items-center justify-center">
-                      <div className="text-center">
-                      <Sparkles className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                      <p className="text-slate-400">Start a new coaching session</p>
-                      </div>
-                      </div>
-                      )}
-                      </div>
+              ) : (
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center">
+                  <Sparkles className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                  <p className="text-slate-400">Start a new coaching session</p>
+                </div>
+              </div>
+              )}
+              </div>
         </div>
       </div>
     </div>
