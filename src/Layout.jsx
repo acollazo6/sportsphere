@@ -248,7 +248,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Mobile bottom nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white backdrop-blur-2xl border-t border-gray-200 shadow-2xl">
         <div className="flex items-center justify-around py-2">
-          {navItems.filter(item => ["Feed", "Discover", "Reels", "Explore", "Messages"].includes(item.page)).map(item => {
+          {navItems.filter(item => ["Feed", "Search", "Reels", "Explore", "Messages"].includes(item.page)).map(item => {
             const Icon = item.icon;
             const isActive = currentPageName === item.page;
             return (
