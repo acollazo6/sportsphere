@@ -221,34 +221,172 @@ export default function Live() {
           </div>
         </div>
 
-        {/* Go Live Form */}
+        {/* Go Live / Upload Form */}
         {showGoLive && (
-          <div className="bg-white rounded-2xl border border-slate-100 p-6 space-y-4">
-            <h2 className="text-lg font-bold text-slate-900">Start Your Live Stream</h2>
-            <Input placeholder="Stream title" value={liveData.title} onChange={e => setLiveData({ ...liveData, title: e.target.value })} className="rounded-xl" />
-            <Textarea placeholder="Description (optional)" value={liveData.description} onChange={e => setLiveData({ ...liveData, description: e.target.value })} className="rounded-xl resize-none" rows={2} />
-            <Select value={liveData.sport} onValueChange={sport => setLiveData({ ...liveData, sport })}>
-              <SelectTrigger className="rounded-xl"><SelectValue placeholder="Select sport" /></SelectTrigger>
-              <SelectContent>{SPORTS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
-            </Select>
-            <div className="space-y-1">
-              <Label>Stream URL (YouTube/Twitch embed)</Label>
-              <Input value={liveData.stream_url} onChange={e => setLiveData({ ...liveData, stream_url: e.target.value })} placeholder="Optional embed URL" className="rounded-xl" />
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            {/* Mode toggle */}
+            <div className="grid grid-cols-2 bg-slate-50 border-b border-slate-100">
+              <button
+                onClick={() => setLiveMode("live")}
+                className={`flex items-center justify-center gap-2 py-3.5 text-sm font-bold transition-all ${liveMode === "live" ? "bg-white text-red-600 border-b-2 border-red-600" : "text-slate-500 hover:text-slate-700"}`}
+              >
+                <Radio className="w-4 h-4" /> Go Live
+              </button>
+              <button
+                onClick={() => setLiveMode("upload")}
+                className={`flex items-center justify-center gap-2 py-3.5 text-sm font-bold transition-all ${liveMode === "upload" ? "bg-white text-blue-600 border-b-2 border-blue-600" : "text-slate-500 hover:text-slate-700"}`}
+              >
+                <Upload className="w-4 h-4" /> Upload Video
+              </button>
             </div>
-            {user?.subscription_price > 0 && (
-              <div className="flex items-center justify-between p-3 bg-purple-50 border border-purple-200 rounded-xl">
-                <div className="flex items-center gap-2">
-                  <Crown className="w-4 h-4 text-purple-600" />
-                  <Label className="text-sm font-medium text-purple-900">Premium Only</Label>
-                </div>
-                <Switch checked={liveData.is_premium} onCheckedChange={v => setLiveData({ ...liveData, is_premium: v })} />
+
+            <div className="p-6 space-y-4">
+              {/* Basic info */}
+              <div className="space-y-3">
+                <Input placeholder="Title *" value={liveData.title} onChange={e => setLiveData({ ...liveData, title: e.target.value })} className="rounded-xl" />
+                <Textarea placeholder="Description (optional)" value={liveData.description} onChange={e => setLiveData({ ...liveData, description: e.target.value })} className="rounded-xl resize-none" rows={2} />
+                <Select value={liveData.sport} onValueChange={sport => setLiveData({ ...liveData, sport })}>
+                  <SelectTrigger className="rounded-xl"><SelectValue placeholder="Select sport" /></SelectTrigger>
+                  <SelectContent>{SPORTS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+                </Select>
               </div>
-            )}
-            <div className="flex gap-2">
-              <Button onClick={goLive} disabled={goingLive} className="rounded-xl bg-red-600 hover:bg-red-700 flex-1">
-                {goingLive ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Starting...</> : "Start Live Stream"}
-              </Button>
-              <Button onClick={() => setShowGoLive(false)} variant="outline" className="rounded-xl">Cancel</Button>
+
+              {liveMode === "live" ? (
+                /* ── Live mode ── */
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs font-semibold text-slate-500">Stream URL (YouTube / Twitch embed)</Label>
+                    <Input value={liveData.stream_url} onChange={e => setLiveData({ ...liveData, stream_url: e.target.value })} placeholder="Paste embed URL (optional)" className="rounded-xl" />
+                  </div>
+
+                  {/* Quality & Duration settings */}
+                  <div className="grid grid-cols-2 gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-semibold text-slate-500 flex items-center gap-1"><Settings2 className="w-3 h-3" /> Stream Quality</Label>
+                      <Select value={streamQuality} onValueChange={setStreamQuality}>
+                        <SelectTrigger className="rounded-lg h-9 text-sm bg-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="480p">480p — SD</SelectItem>
+                          <SelectItem value="720p">720p — HD</SelectItem>
+                          <SelectItem value="1080p">1080p — Full HD</SelectItem>
+                          <SelectItem value="4K">4K — Ultra HD</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-semibold text-slate-500 flex items-center gap-1"><Clock className="w-3 h-3" /> Max Duration</Label>
+                      <Select value={maxDuration} onValueChange={setMaxDuration}>
+                        <SelectTrigger className="rounded-lg h-9 text-sm bg-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="30min">30 minutes</SelectItem>
+                          <SelectItem value="1h">1 hour</SelectItem>
+                          <SelectItem value="2h">2 hours</SelectItem>
+                          <SelectItem value="unlimited">Unlimited</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  {/* Quality indicator */}
+                  <div className="flex items-center gap-2 text-xs text-slate-500 px-1">
+                    <Zap className="w-3.5 h-3.5 text-amber-500" />
+                    <span>{streamQuality === "4K" ? "Ultra HD requires strong upload bandwidth (25+ Mbps)" : streamQuality === "1080p" ? "Full HD recommended for sports content (10+ Mbps)" : streamQuality === "720p" ? "HD — good balance of quality & stability (5+ Mbps)" : "SD — best for low bandwidth connections (2+ Mbps)"}</span>
+                  </div>
+                </div>
+              ) : (
+                /* ── Upload mode ── */
+                <div className="space-y-3">
+                  {/* Video upload */}
+                  <div className={`relative border-2 border-dashed rounded-xl p-6 text-center transition-all ${vodUrl ? "border-green-400 bg-green-50" : "border-slate-200 hover:border-blue-300 bg-slate-50"}`}>
+                    {vodUrl ? (
+                      <div className="space-y-2">
+                        <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                          <PlayCircle className="w-5 h-5 text-green-600" />
+                        </div>
+                        <p className="text-sm font-semibold text-green-700">Video uploaded!</p>
+                        <p className="text-xs text-green-600 truncate max-w-xs mx-auto">{vodFile?.name}</p>
+                        <button onClick={() => { setVodFile(null); setVodUrl(""); }} className="text-xs text-red-500 hover:text-red-700 underline">Remove</button>
+                      </div>
+                    ) : vodUploading ? (
+                      <div className="space-y-2">
+                        <Loader2 className="w-8 h-8 animate-spin text-blue-500 mx-auto" />
+                        <p className="text-sm text-slate-500">Uploading video…</p>
+                      </div>
+                    ) : (
+                      <label className="cursor-pointer space-y-2 block">
+                        <Upload className="w-8 h-8 text-slate-300 mx-auto" />
+                        <p className="text-sm font-semibold text-slate-600">Click to upload video</p>
+                        <p className="text-xs text-slate-400">MP4, MOV, AVI up to 2GB</p>
+                        <input type="file" accept="video/*" onChange={handleVodUpload} className="hidden" />
+                      </label>
+                    )}
+                  </div>
+
+                  {/* Thumbnail upload */}
+                  <div className="flex items-center gap-3">
+                    <div className={`w-20 h-14 rounded-xl border-2 border-dashed flex items-center justify-center flex-shrink-0 overflow-hidden ${thumbnailUrl ? "border-transparent" : "border-slate-200"}`}>
+                      {thumbnailUrl ? (
+                        <img src={thumbnailUrl} alt="thumb" className="w-full h-full object-cover rounded-xl" />
+                      ) : (
+                        <span className="text-xs text-slate-400 text-center leading-tight px-1">No thumb</span>
+                      )}
+                    </div>
+                    <label className="flex-1 cursor-pointer">
+                      <div className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 hover:border-blue-300 bg-slate-50 hover:bg-blue-50 transition-all text-sm text-slate-600 font-medium">
+                        <Upload className="w-4 h-4" /> Upload Thumbnail (optional)
+                      </div>
+                      <input type="file" accept="image/*" onChange={handleThumbnailUpload} className="hidden" />
+                    </label>
+                  </div>
+
+                  {/* Quality tag for VOD */}
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold text-slate-500 flex items-center gap-1"><Settings2 className="w-3 h-3" /> Video Quality Tag</Label>
+                    <Select value={streamQuality} onValueChange={setStreamQuality}>
+                      <SelectTrigger className="rounded-xl h-9 text-sm">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="480p">480p — SD</SelectItem>
+                        <SelectItem value="720p">720p — HD</SelectItem>
+                        <SelectItem value="1080p">1080p — Full HD</SelectItem>
+                        <SelectItem value="4K">4K — Ultra HD</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
+
+              {/* Premium toggle */}
+              {user?.subscription_price > 0 && (
+                <div className="flex items-center justify-between p-3 bg-purple-50 border border-purple-200 rounded-xl">
+                  <div className="flex items-center gap-2">
+                    <Crown className="w-4 h-4 text-purple-600" />
+                    <Label className="text-sm font-medium text-purple-900">Premium subscribers only</Label>
+                  </div>
+                  <Switch checked={liveData.is_premium} onCheckedChange={v => setLiveData({ ...liveData, is_premium: v })} />
+                </div>
+              )}
+
+              <div className="flex gap-2 pt-1">
+                <Button
+                  onClick={goLive}
+                  disabled={goingLive || (liveMode === "upload" && !vodUrl)}
+                  className={`rounded-xl flex-1 font-bold ${liveMode === "live" ? "bg-red-600 hover:bg-red-700" : "bg-blue-600 hover:bg-blue-700"}`}
+                >
+                  {goingLive
+                    ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Processing…</>
+                    : liveMode === "live"
+                      ? <><Radio className="w-4 h-4 mr-2 animate-pulse" />Start Live Stream</>
+                      : <><Upload className="w-4 h-4 mr-2" />Publish VOD</>
+                  }
+                </Button>
+                <Button onClick={() => setShowGoLive(false)} variant="outline" className="rounded-xl px-5">Cancel</Button>
+              </div>
             </div>
           </div>
         )}
