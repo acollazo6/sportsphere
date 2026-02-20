@@ -11,9 +11,6 @@ import { createPageUrl } from "@/utils";
 import moment from "moment";
 
 export default function LiveNowSection({ user, userPreferences }) {
-  const [sportFilter, setSportFilter] = useState("all");
-  const [sortBy, setSortBy] = useState("viewers");
-
   const { data: liveStreams = [] } = useQuery({
     queryKey: ["liveStreams"],
     queryFn: () => base44.entities.LiveStream.filter({ status: "live" }),
@@ -29,29 +26,26 @@ export default function LiveNowSection({ user, userPreferences }) {
   });
 
   const followingEmails = follows.map(f => f.following_email);
+  const preferredSports = userPreferences?.preferred_sports || [];
 
-  const filtered = useMemo(() => {
-    let results = [...liveStreams];
-
-    if (sportFilter !== "all") {
-      results = results.filter(s => s.sport === sportFilter);
-    }
-
-    return results.sort((a, b) => {
-      if (sortBy === "viewers") {
-        return (b.viewers?.length || 0) - (a.viewers?.length || 0);
-      } else if (sortBy === "follows") {
-        const aIsFollowed = followingEmails.includes(a.host_email);
-        const bIsFollowed = followingEmails.includes(b.host_email);
-        return aIsFollowed === bIsFollowed ? 0 : aIsFollowed ? -1 : 1;
-      } else if (sortBy === "recent") {
-        return new Date(b.started_at) - new Date(a.started_at);
-      }
-      return 0;
-    });
-  }, [liveStreams, sportFilter, sortBy, followingEmails]);
-
-  const sports = Array.from(new Set(liveStreams.map(s => s.sport).filter(Boolean)));
+  // Smart recommendation scoring
+  const scored = useMemo(() => {
+    return liveStreams
+      .map(stream => {
+        let score = 0;
+        // Followed creator = highest priority
+        if (followingEmails.includes(stream.host_email)) score += 100;
+        // Preferred sport
+        if (preferredSports.includes(stream.sport)) score += 50;
+        // Viewer popularity (log scale to avoid dominating)
+        score += Math.log1p(stream.viewers?.length || 0) * 5;
+        // Recency boost (newer = +up to 10)
+        const ageMinutes = (Date.now() - new Date(stream.started_at)) / 60000;
+        score += Math.max(0, 10 - ageMinutes / 6);
+        return { ...stream, _score: score };
+      })
+      .sort((a, b) => b._score - a._score);
+  }, [liveStreams, followingEmails, preferredSports]);
 
   if (liveStreams.length === 0) return null;
 
