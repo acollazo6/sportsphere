@@ -54,15 +54,45 @@ export default function PostChallengeUpdateDialog({ challenge, user, participati
       });
 
       // Update participation progress
+      let isNowCompleted = false;
       if (participation) {
         const newDaysCompleted = Math.max(participation.days_completed, dayNumber);
         const progressPercentage = Math.round((newDaysCompleted / challenge.duration_days) * 100);
+        isNowCompleted = progressPercentage >= 100 && participation.status !== "completed";
         
         await base44.entities.ChallengeParticipant.update(participation.id, {
           days_completed: newDaysCompleted,
           progress_percentage: progressPercentage,
           status: progressPercentage >= 100 ? "completed" : "active",
           completed_date: progressPercentage >= 100 ? new Date().toISOString() : null,
+        });
+      }
+
+      // Notify challenge creator of progress update
+      if (challenge.creator_email && challenge.creator_email !== user.email) {
+        await base44.entities.Notification.create({
+          recipient_email: challenge.creator_email,
+          actor_email: user.email,
+          actor_name: user.full_name,
+          actor_avatar: user.avatar_url,
+          type: isNowCompleted ? "challenge_completed" : "challenge_update",
+          challenge_id: challenge.id,
+          message: isNowCompleted
+            ? `completed your challenge "${challenge.title}" 🏆`
+            : `posted a progress update on "${challenge.title}" (Day ${dayNumber})`,
+        });
+      }
+
+      // If completed, notify the participant themselves too (self-celebration)
+      if (isNowCompleted) {
+        await base44.entities.Notification.create({
+          recipient_email: user.email,
+          actor_email: user.email,
+          actor_name: user.full_name,
+          actor_avatar: user.avatar_url,
+          type: "challenge_completed",
+          challenge_id: challenge.id,
+          message: `You completed the challenge "${challenge.title}" 🎉`,
         });
       }
 
