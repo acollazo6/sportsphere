@@ -6,9 +6,10 @@ import { AlertCircle, CheckCircle2, TrendingUp, Zap, Loader2, Share2 } from "luc
 import { toast } from "sonner";
 import SocialShareDialog from "../sharing/SocialShareDialog";
 
-export default function VideoFormAnalysis({ videoFile, videoUrl, onAnalysisComplete }) {
+export default function VideoFormAnalysis({ videoFile, videoUrl, onAnalysisComplete, user }) {
   const [analyzing, setAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState(null);
+  const [shareOpen, setShareOpen] = useState(false);
 
   const analyzeForm = async () => {
     if (!videoFile && !videoUrl) {
