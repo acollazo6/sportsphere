@@ -100,6 +100,7 @@ import UploadVideo from './pages/UploadVideo';
 import UserProfile from './pages/UserProfile';
 import VideoReview from './pages/VideoReview';
 import ViewLive from './pages/ViewLive';
+import BecomeCreator from './pages/BecomeCreator';
 import __Layout from './Layout.jsx';
 
 
@@ -157,6 +158,7 @@ export const PAGES = {
     "UserProfile": UserProfile,
     "VideoReview": VideoReview,
     "ViewLive": ViewLive,
+    "BecomeCreator": BecomeCreator,
 }
 
 export const pagesConfig = {
