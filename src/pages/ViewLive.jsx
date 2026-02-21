@@ -157,6 +157,9 @@ export default function ViewLive() {
     queryClient.invalidateQueries({ queryKey: ["stream-chat", streamId] });
   };
 
+  const isHost = stream?.host_email === user?.email;
+  const isLive = stream?.status === "live";
+
   // Start camera when host is viewing their own live stream with no external URL
   useEffect(() => {
     if (!isHost || !isLive || stream?.stream_url) return;
