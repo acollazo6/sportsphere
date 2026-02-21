@@ -12,6 +12,13 @@ export default function StreamSummaryPanel({ stream, transcript, onSummaryGenera
   const [tags, setTags] = useState(stream?.ai_tags || []);
   const [error, setError] = useState(null);
 
+  // Auto-generate summary when stream has ended and no summary exists yet
+  useEffect(() => {
+    if (stream?.status === "ended" && !stream?.ai_summary && !overview && !loading) {
+      generateSummary();
+    }
+  }, [stream?.id]);
+
   const generateSummary = async () => {
     try {
       setLoading(true);
