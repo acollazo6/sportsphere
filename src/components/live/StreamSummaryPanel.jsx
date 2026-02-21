@@ -88,6 +88,11 @@ export default function StreamSummaryPanel({ stream, transcript, onSummaryGenera
         </div>
       )}
 
+      {/* Auto-generating notice */}
+      {loading && !overview && (
+        <p className="text-xs text-slate-500 text-center -mt-2">Automatically generating summary for this ended stream…</p>
+      )}
+
       {!loading && (
         <>
           {/* Overview */}
