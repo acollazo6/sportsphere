@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Edit2, Trophy, MapPin, Clock, Star, Trash2, Loader2, Camera, LogOut, Settings, TrendingUp, BarChart3, Dumbbell, Sparkles, DollarSign, Crown, Award, Zap, Film } from "lucide-react";
+import { Plus, Edit2, Trophy, MapPin, Clock, Star, Trash2, Loader2, Camera, LogOut, Settings, TrendingUp, BarChart3, Dumbbell, Sparkles, DollarSign, Crown, Award, Zap, Film, Radio, Video, Users } from "lucide-react";
 import PostCard from "../components/feed/PostCard";
 import StatInputDialog from "../components/stats/StatInputDialog";
 import StatsChart from "../components/stats/StatsChart";
