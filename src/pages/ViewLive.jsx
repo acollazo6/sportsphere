@@ -220,6 +220,28 @@ export default function ViewLive() {
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                       />
+                    ) : isHost && isLive ? (
+                      <div className="w-full h-full relative bg-black">
+                        {cameraError ? (
+                          <div className="w-full h-full flex items-center justify-center text-center text-white p-8">
+                            <div>
+                              <Radio className="w-10 h-10 text-red-400 animate-pulse mx-auto mb-3" />
+                              <p className="text-slate-400 text-sm">Camera access denied: {cameraError}</p>
+                            </div>
+                          </div>
+                        ) : (
+                          <video
+                            ref={cameraRef}
+                            autoPlay
+                            muted
+                            playsInline
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                        <div className="absolute bottom-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-lg">
+                          📷 Your camera (only you can see this)
+                        </div>
+                      </div>
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <div className="text-center text-white p-8">
@@ -227,12 +249,7 @@ export default function ViewLive() {
                             <Radio className="w-10 h-10 text-red-400 animate-pulse" />
                           </div>
                           <p className="text-2xl font-bold mb-1">{stream.title}</p>
-                          <p className="text-slate-400">Stream is active — host hasn't added a stream URL yet</p>
-                          {isHost && (
-                            <p className="text-amber-400 text-sm mt-3">
-                              Tip: Add a YouTube/Twitch embed URL when you go live so viewers can watch!
-                            </p>
-                          )}
+                          <p className="text-slate-400">Stream is live — waiting for host video</p>
                         </div>
                       </div>
                     )}
