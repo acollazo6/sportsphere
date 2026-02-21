@@ -154,6 +154,14 @@ export default function MyTraining() {
             </div>
           )}
 
+          <SocialShareDialog
+            open={shareOpen}
+            onClose={() => setShareOpen(false)}
+            title="Training Plan"
+            summary={`🏋️ Check out my training plan: "${activePlan.title}"${activePlan.goal ? `\n🎯 Goal: ${activePlan.goal}` : ""}${activePlan.sport ? `\n🏅 Sport: ${activePlan.sport}` : ""}\n\nTracking my progress on SportHub!`}
+            user={user}
+          />
+
           {/* Notes from coach */}
           {activePlan.notes && (
             <Card className="border-0 shadow-md border-l-4 border-l-red-900">
