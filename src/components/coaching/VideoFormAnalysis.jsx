@@ -104,6 +104,24 @@ Provide your analysis in the following JSON structure:
 
       {analysis && (
         <div className="space-y-4">
+          {/* Share button */}
+          <Button
+            variant="outline"
+            onClick={() => setShareOpen(true)}
+            className="w-full gap-2 border-blue-200 text-blue-700 hover:bg-blue-50"
+          >
+            <Share2 className="w-4 h-4" />
+            Share Analysis Report
+          </Button>
+
+          <SocialShareDialog
+            open={shareOpen}
+            onClose={() => setShareOpen(false)}
+            title="Form Analysis Report"
+            summary={`🎯 My AI form analysis score: ${analysis.overallScore}%\n\n✅ Strengths: ${analysis.strengths?.slice(0, 2).join(", ")}\n📈 Working on: ${analysis.areasForImprovement?.[0]?.area || "technique improvements"}\n\nGot this from my AI Coach on SportHub!`}
+            user={user}
+          />
+
           {/* Overall Score */}
           <Card className="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200">
             <div className="flex items-center justify-between">
