@@ -160,7 +160,7 @@ export default function Feed() {
     { name: "MMA", emoji: "🥋" }, { name: "Track", emoji: "🏃" },
     { name: "Volleyball", emoji: "🏐" }, { name: "Hockey", emoji: "🏒" },
     { name: "Cycling", emoji: "🚴" }, { name: "Yoga", emoji: "🧘" },
-    { name: "CrossFit", emoji: "💪" },
+    { name: "CrossFit", emoji: "💪" }, { name: "Softball", emoji: "🥎" },
   ];
 
   return (

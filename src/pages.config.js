@@ -51,6 +51,7 @@ import AdminHealth from './pages/AdminHealth';
 import Advice from './pages/Advice';
 import Analytics from './pages/Analytics';
 import AthleteInsights from './pages/AthleteInsights';
+import BecomeCreator from './pages/BecomeCreator';
 import ChallengeDetail from './pages/ChallengeDetail';
 import Challenges from './pages/Challenges';
 import Coach from './pages/Coach';
@@ -100,7 +101,6 @@ import UploadVideo from './pages/UploadVideo';
 import UserProfile from './pages/UserProfile';
 import VideoReview from './pages/VideoReview';
 import ViewLive from './pages/ViewLive';
-import BecomeCreator from './pages/BecomeCreator';
 import __Layout from './Layout.jsx';
 
 
@@ -109,6 +109,7 @@ export const PAGES = {
     "Advice": Advice,
     "Analytics": Analytics,
     "AthleteInsights": AthleteInsights,
+    "BecomeCreator": BecomeCreator,
     "ChallengeDetail": ChallengeDetail,
     "Challenges": Challenges,
     "Coach": Coach,
@@ -158,7 +159,6 @@ export const PAGES = {
     "UserProfile": UserProfile,
     "VideoReview": VideoReview,
     "ViewLive": ViewLive,
-    "BecomeCreator": BecomeCreator,
 }
 
 export const pagesConfig = {
