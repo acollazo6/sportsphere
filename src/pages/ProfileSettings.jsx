@@ -78,6 +78,7 @@ export default function ProfileSettings() {
   // Identity form
   const [form, setForm] = useState({
     full_name: "",
+    username: "",
     bio: "",
     cover_url: "",
     location: "",
@@ -88,6 +89,7 @@ export default function ProfileSettings() {
     contact_phone: "",
     contact_preferences: { allow_messages: true, allow_email_contact: false, allow_phone_contact: false },
   });
+  const [usernameError, setUsernameError] = useState("");
 
   // Language
   const [language, setLanguage] = useState(() => localStorage.getItem("sporthub_language") || "en");
