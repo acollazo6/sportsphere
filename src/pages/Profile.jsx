@@ -49,7 +49,9 @@ export default function Profile() {
     base44.auth.me().then(u => {
       setUser(u);
       setPersonalInfo({
+        full_name: u.full_name || "",
         bio: u.bio || "",
+        avatar_url: u.avatar_url || "",
         weight: u.weight || "",
         height: u.height || "",
         age: u.age || "",
