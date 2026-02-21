@@ -32,7 +32,7 @@ const categoryIcons = {
   other: "💬",
 };
 
-export default function PostCard({ post, currentUser, onUpdate }) {
+export default function PostCard({ post, currentUser, onUpdate, onDelete }) {
   const [liked, setLiked] = useState(post.likes?.includes(currentUser?.email));
   const [likeCount, setLikeCount] = useState(post.likes?.length || 0);
   const [showComments, setShowComments] = useState(false);
@@ -293,6 +293,19 @@ Provide a brief, engaging summary that helps viewers decide if they want to watc
                   <DropdownMenuItem onClick={generateSummary} disabled={generatingSummary} className="gap-2">
                     <Sparkles className="w-4 h-4" />
                     Generate Summary
+                  </DropdownMenuItem>
+                )}
+                {currentUser.email === post.author_email && (
+                  <DropdownMenuItem
+                    onClick={async () => {
+                      if (!confirm("Delete this post?")) return;
+                      await base44.entities.Post.delete(post.id);
+                      if (onDelete) onDelete(post.id);
+                    }}
+                    className="gap-2 text-red-600"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete Post
                   </DropdownMenuItem>
                 )}
                 {currentUser.email === post.author_email && (
