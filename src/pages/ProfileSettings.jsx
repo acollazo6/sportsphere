@@ -287,7 +287,7 @@ export default function ProfileSettings() {
 
           {/* Display Name */}
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 space-y-4">
-            <h2 className="font-bold text-slate-900">Display Name</h2>
+            <h2 className="font-bold text-slate-900">Display Name & Username</h2>
             <div className="space-y-1.5">
               <Label className="text-xs font-medium text-slate-500">Name shown to others</Label>
               <Input
@@ -296,6 +296,20 @@ export default function ProfileSettings() {
                 placeholder="Your full name"
                 className="rounded-xl"
               />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-slate-500">Username</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">@</span>
+                <Input
+                  value={form.username}
+                  onChange={e => handleUsernameChange(e.target.value)}
+                  placeholder="yourhandle"
+                  className="rounded-xl pl-7"
+                />
+              </div>
+              {usernameError && <p className="text-xs text-red-500">{usernameError}</p>}
+              <p className="text-xs text-slate-400">Lowercase letters, numbers, and underscores only.</p>
             </div>
           </div>
 
