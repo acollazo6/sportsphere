@@ -1,8 +1,9 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Eye, Heart, MessageCircle, Film, TrendingUp, BarChart3 } from "lucide-react";
+import { Eye, Heart, MessageCircle, Film, TrendingUp, BarChart3, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { base44 } from "@/api/base44Client";
 
 function StatBox({ icon: Icon, label, value, color }) {
   return (
@@ -14,8 +15,9 @@ function StatBox({ icon: Icon, label, value, color }) {
   );
 }
 
-export default function ReelsStatsPanel({ posts = [], isOwnProfile = false }) {
-  const reels = useMemo(() => posts.filter(p => p.media_type === "video"), [posts]);
+export default function ReelsStatsPanel({ posts = [], isOwnProfile = false, onDelete }) {
+  const [localDeleted, setLocalDeleted] = useState([]);
+  const reels = useMemo(() => posts.filter(p => p.media_type === "video" && !localDeleted.includes(p.id)), [posts, localDeleted]);
 
   const totalViews = useMemo(() => reels.reduce((sum, p) => sum + (p.views || 0), 0), [reels]);
   const totalLikes = useMemo(() => reels.reduce((sum, p) => sum + (p.likes?.length || 0), 0), [reels]);
@@ -124,6 +126,20 @@ export default function ReelsStatsPanel({ posts = [], isOwnProfile = false }) {
           <div className="grid sm:grid-cols-3 gap-3">
             {topReels.map((reel, i) => (
               <div key={reel.id} className="relative bg-slate-900 rounded-2xl overflow-hidden aspect-[9/16] max-h-52 group cursor-pointer">
+                {isOwnProfile && (
+                  <button
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      if (!confirm("Delete this reel?")) return;
+                      await base44.entities.Post.delete(reel.id);
+                      setLocalDeleted(prev => [...prev, reel.id]);
+                      if (onDelete) onDelete(reel.id);
+                    }}
+                    className="absolute top-2 right-2 z-10 p-1.5 bg-black/60 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                  >
+                    <Trash2 className="w-3 h-3 text-white" />
+                  </button>
+                )}
                 <video
                   src={reel.media_urls?.[0]}
                   className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
