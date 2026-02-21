@@ -501,6 +501,10 @@ export default function Profile() {
           </DialogHeader>
           <div className="space-y-4 mt-2">
             <div className="space-y-1.5">
+              <Label className="text-xs text-slate-500">Full Name</Label>
+              <Input value={personalInfo.full_name} onChange={e => setPersonalInfo({...personalInfo, full_name: e.target.value})} className="rounded-xl" placeholder="Your full name" />
+            </div>
+            <div className="space-y-1.5">
               <Label className="text-xs text-slate-500">Bio</Label>
               <Textarea value={personalInfo.bio} onChange={e => setPersonalInfo({...personalInfo, bio: e.target.value})} className="rounded-xl resize-none" rows={3} placeholder="Tell us about yourself..." />
             </div>
