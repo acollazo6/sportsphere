@@ -61,7 +61,18 @@ export default function MyTraining() {
           {/* Plan header */}
           <Card className="border-0 shadow-md bg-gradient-to-r from-red-900 to-red-700 text-white">
             <CardContent className="p-6">
-              <Badge className="bg-white/20 text-white mb-3">{activePlan.status?.toUpperCase()}</Badge>
+              <div className="flex items-start justify-between">
+                <Badge className="bg-white/20 text-white mb-3">{activePlan.status?.toUpperCase()}</Badge>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setShareOpen(true)}
+                  className="text-white/80 hover:text-white hover:bg-white/20 gap-1.5 -mt-1"
+                >
+                  <Share2 className="w-4 h-4" />
+                  Share
+                </Button>
+              </div>
               <h2 className="text-xl font-black">{activePlan.title}</h2>
               {activePlan.goal && (
                 <p className="flex items-center gap-2 mt-3 text-white/90 text-sm">
