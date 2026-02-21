@@ -30,9 +30,6 @@ export default function ViewLive() {
   const [viewerCount, setViewerCount] = useState(0);
   const [panelTab, setPanelTab] = useState("chat");
   const [activeSummaryTab, setActiveSummaryTab] = useState("summary");
-  const videoRef = useRef(null);
-  const [cameraStream, setCameraStream] = useState(null);
-  const [cameraError, setCameraError] = useState(null);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
