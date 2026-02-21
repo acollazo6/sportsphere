@@ -258,6 +258,7 @@ export default function Profile() {
             </div>
             <div className="flex-1">
               <h1 className="text-2xl font-bold text-slate-900">{user.full_name}</h1>
+              {user.username && <p className="text-blue-600 font-medium text-sm">@{user.username}</p>}
               <p className="text-slate-500 text-sm">{user.email}</p>
               {user.bio && <p className="text-sm text-slate-600 mt-2 max-w-md">{user.bio}</p>}
 
