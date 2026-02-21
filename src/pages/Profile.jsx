@@ -103,6 +103,18 @@ export default function Profile() {
     enabled: !!user,
   });
 
+  const { data: myStreams } = useQuery({
+    queryKey: ["my-streams", user?.email],
+    queryFn: () => base44.entities.LiveStream.filter({ host_email: user.email }, "-created_date", 20),
+    enabled: !!user,
+  });
+
+  const { data: followedCreators } = useQuery({
+    queryKey: ["my-following", user?.email],
+    queryFn: () => base44.entities.Follow.filter({ follower_email: user.email, status: "accepted" }),
+    enabled: !!user,
+  });
+
   const { data: userPoints } = useQuery({
     queryKey: ["user-points", user?.email],
     queryFn: async () => {
