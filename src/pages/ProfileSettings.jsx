@@ -167,7 +167,18 @@ export default function ProfileSettings() {
     toast.success("Cover photo updated");
   };
 
+  const handleUsernameChange = (val) => {
+    const cleaned = val.toLowerCase().replace(/[^a-z0-9_]/g, "");
+    setForm(prev => ({ ...prev, username: cleaned }));
+    if (cleaned && cleaned.length < 3) {
+      setUsernameError("Username must be at least 3 characters");
+    } else {
+      setUsernameError("");
+    }
+  };
+
   const handleSaveIdentity = async () => {
+    if (usernameError) return;
     setSaving(true);
     await base44.auth.updateMe(form);
     setUser(prev => ({ ...prev, ...form }));
