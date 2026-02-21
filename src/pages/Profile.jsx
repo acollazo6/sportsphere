@@ -390,6 +390,67 @@ export default function Profile() {
         </div>
       )}
 
+      {/* My Streams / VODs */}
+      {myStreams?.length > 0 && (
+        <div>
+          <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <Radio className="w-5 h-5 text-red-500" />
+            My Streams & VODs
+          </h2>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {myStreams.map(stream => (
+              <Link key={stream.id} to={createPageUrl("ViewLive") + `?id=${stream.id}`}>
+                <div className="bg-white rounded-2xl border border-slate-100 p-4 hover:shadow-md transition-shadow group">
+                  <div className="flex items-start gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center flex-shrink-0">
+                      {stream.status === "live" ? (
+                        <Radio className="w-5 h-5 text-red-400 animate-pulse" />
+                      ) : (
+                        <Video className="w-5 h-5 text-slate-400" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm text-slate-800 truncate group-hover:text-blue-700 transition-colors">{stream.title}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        {stream.status === "live" ? (
+                          <span className="text-xs font-bold text-red-600 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse inline-block" /> LIVE</span>
+                        ) : (
+                          <span className="text-xs text-slate-400">VOD</span>
+                        )}
+                        {stream.sport && <span className="text-xs text-slate-400">· {stream.sport}</span>}
+                        <span className="text-xs text-slate-400 flex items-center gap-1"><Users className="w-3 h-3" />{stream.viewers?.length || 0}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Followed Creators */}
+      {followedCreators?.length > 0 && (
+        <div>
+          <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <Users className="w-5 h-5 text-blue-500" />
+            Following ({followedCreators.length})
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {followedCreators.map(follow => (
+              <Link key={follow.id} to={createPageUrl("UserProfile") + `?email=${follow.following_email}`}>
+                <div className="bg-white rounded-xl border border-slate-100 px-3 py-2 flex items-center gap-2 hover:shadow-sm hover:border-blue-200 transition-all">
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-xs font-bold">
+                    {follow.following_email?.[0]?.toUpperCase()}
+                  </div>
+                  <span className="text-sm text-slate-700 font-medium">{follow.following_email}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Subscription Status */}
       {subscriptions?.length > 0 && (
         <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border border-purple-200 p-5">
