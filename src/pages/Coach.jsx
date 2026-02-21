@@ -390,6 +390,7 @@ export default function CoachPage() {
                     <VideoFormAnalysis
                       videoFile={videoFile}
                       onAnalysisComplete={setLastAnalysis}
+                      user={user}
                     />
                   </div>
                 </TabsContent>
