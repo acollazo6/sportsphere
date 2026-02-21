@@ -400,31 +400,44 @@ export default function Profile() {
           </h2>
           <div className="grid gap-3 sm:grid-cols-2">
             {myStreams.map(stream => (
-              <Link key={stream.id} to={createPageUrl("ViewLive") + `?id=${stream.id}`}>
-                <div className="bg-white rounded-2xl border border-slate-100 p-4 hover:shadow-md transition-shadow group">
-                  <div className="flex items-start gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center flex-shrink-0">
-                      {stream.status === "live" ? (
-                        <Radio className="w-5 h-5 text-red-400 animate-pulse" />
-                      ) : (
-                        <Video className="w-5 h-5 text-slate-400" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm text-slate-800 truncate group-hover:text-blue-700 transition-colors">{stream.title}</p>
-                      <div className="flex items-center gap-2 mt-1">
+              <div key={stream.id} className="relative group">
+                <Link to={createPageUrl("ViewLive") + `?id=${stream.id}`}>
+                  <div className="bg-white rounded-2xl border border-slate-100 p-4 hover:shadow-md transition-shadow">
+                    <div className="flex items-start gap-3">
+                      <div className="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center flex-shrink-0">
                         {stream.status === "live" ? (
-                          <span className="text-xs font-bold text-red-600 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse inline-block" /> LIVE</span>
+                          <Radio className="w-5 h-5 text-red-400 animate-pulse" />
                         ) : (
-                          <span className="text-xs text-slate-400">VOD</span>
+                          <Video className="w-5 h-5 text-slate-400" />
                         )}
-                        {stream.sport && <span className="text-xs text-slate-400">· {stream.sport}</span>}
-                        <span className="text-xs text-slate-400 flex items-center gap-1"><Users className="w-3 h-3" />{stream.viewers?.length || 0}</span>
+                      </div>
+                      <div className="flex-1 min-w-0 pr-6">
+                        <p className="font-semibold text-sm text-slate-800 truncate group-hover:text-blue-700 transition-colors">{stream.title}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          {stream.status === "live" ? (
+                            <span className="text-xs font-bold text-red-600 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse inline-block" /> LIVE</span>
+                          ) : (
+                            <span className="text-xs text-slate-400">VOD</span>
+                          )}
+                          {stream.sport && <span className="text-xs text-slate-400">· {stream.sport}</span>}
+                          <span className="text-xs text-slate-400 flex items-center gap-1"><Users className="w-3 h-3" />{stream.viewers?.length || 0}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+                <button
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    if (!confirm("Delete this stream?")) return;
+                    await base44.entities.LiveStream.delete(stream.id);
+                    queryClient.invalidateQueries({ queryKey: ["my-streams"] });
+                  }}
+                  className="absolute top-3 right-3 p-1.5 rounded-lg bg-white/80 opacity-0 group-hover:opacity-100 hover:bg-red-50 transition-all"
+                >
+                  <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                </button>
+              </div>
             ))}
           </div>
         </div>
