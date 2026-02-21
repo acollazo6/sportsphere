@@ -103,6 +103,7 @@ export default function ProfileSettings() {
       setUser(u);
       setForm({
         full_name: u.full_name || "",
+        username: u.username || "",
         bio: u.bio || "",
         cover_url: u.cover_url || "",
         location: u.location || "",
