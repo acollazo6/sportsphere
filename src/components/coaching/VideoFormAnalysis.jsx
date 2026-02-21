@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { AlertCircle, CheckCircle2, TrendingUp, Zap, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, TrendingUp, Zap, Loader2, Share2 } from "lucide-react";
 import { toast } from "sonner";
+import SocialShareDialog from "../sharing/SocialShareDialog";
 
 export default function VideoFormAnalysis({ videoFile, videoUrl, onAnalysisComplete }) {
   const [analyzing, setAnalyzing] = useState(false);
