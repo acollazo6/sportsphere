@@ -196,8 +196,7 @@ export default function ViewLive() {
     );
   }
 
-  const isHost = stream.host_email === user?.email;
-  const isLive = stream.status === "live";
+
 
   return (
     <div className="min-h-screen bg-slate-950">
