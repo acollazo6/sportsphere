@@ -832,7 +832,7 @@ export default function Profile() {
         ) : (
           <div className="space-y-4">
             {myPosts?.map(post => (
-              <PostCard key={post.id} post={post} currentUser={user} />
+              <PostCard key={post.id} post={post} currentUser={user} onDelete={() => queryClient.invalidateQueries({ queryKey: ["my-posts"] })} />
             ))}
           </div>
         )}
