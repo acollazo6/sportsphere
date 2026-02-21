@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { Dumbbell, Calendar, CheckCircle, Target, Loader2, ChevronDown, ChevronUp } from "lucide-react";
+import { Dumbbell, Calendar, CheckCircle, Target, Loader2, ChevronDown, ChevronUp, Share2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import SocialShareDialog from "../components/sharing/SocialShareDialog";
 
 export default function MyTraining() {
   const [user, setUser] = useState(null);
