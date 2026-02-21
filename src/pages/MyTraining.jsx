@@ -10,6 +10,7 @@ import SocialShareDialog from "../components/sharing/SocialShareDialog";
 export default function MyTraining() {
   const [user, setUser] = useState(null);
   const [expandedWeek, setExpandedWeek] = useState(0);
+  const [shareOpen, setShareOpen] = useState(false);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
