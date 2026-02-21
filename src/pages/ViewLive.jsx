@@ -157,6 +157,20 @@ export default function ViewLive() {
     queryClient.invalidateQueries({ queryKey: ["stream-chat", streamId] });
   };
 
+  // Start camera when host is viewing their own live stream with no external URL
+  useEffect(() => {
+    if (!isHost || !isLive || stream?.stream_url) return;
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then(s => {
+        setCameraStream(s);
+        if (cameraRef.current) cameraRef.current.srcObject = s;
+      })
+      .catch(err => setCameraError(err.message));
+    return () => {
+      cameraStream?.getTracks().forEach(t => t.stop());
+    };
+  }, [stream?.id, isHost, isLive]);
+
   const shareStream = () => {
     navigator.clipboard.writeText(window.location.href);
     toast.success("Stream link copied! 📋");
