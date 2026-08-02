@@ -1,0 +1,41 @@
+{
+  "name": "Purchase",
+  "type": "object",
+  "properties": {
+    "buyer_email": {
+      "type": "string",
+      "description": "User who made the purchase"
+    },
+    "product_id": {
+      "type": "string",
+      "description": "Product purchased"
+    },
+    "product_data": {
+      "type": "object",
+      "description": "Snapshot of product at time of purchase"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Purchase amount"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "completed",
+        "failed",
+        "refunded"
+      ],
+      "default": "completed"
+    },
+    "download_url": {
+      "type": "string",
+      "description": "Download link for digital products"
+    }
+  },
+  "required": [
+    "buyer_email",
+    "product_id",
+    "amount"
+  ]
+}

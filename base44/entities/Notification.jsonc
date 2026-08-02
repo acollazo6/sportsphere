@@ -1,0 +1,73 @@
+{
+  "name": "Notification",
+  "type": "object",
+  "properties": {
+    "recipient_email": {
+      "type": "string",
+      "description": "User receiving the notification"
+    },
+    "actor_email": {
+      "type": "string",
+      "description": "User who triggered the notification"
+    },
+    "actor_name": {
+      "type": "string"
+    },
+    "actor_avatar": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "like",
+        "comment",
+        "mention",
+        "follow",
+        "follow_request",
+        "challenge_joined",
+        "challenge_update",
+        "challenge_completed",
+        "live_stream",
+        "subscription",
+        "message",
+        "advice_request"
+      ],
+      "description": "Type of notification"
+    },
+    "post_id": {
+      "type": "string",
+      "description": "Related post ID if applicable"
+    },
+    "comment_id": {
+      "type": "string",
+      "description": "Related comment ID if applicable"
+    },
+    "challenge_id": {
+      "type": "string",
+      "description": "Related challenge ID if applicable"
+    },
+    "stream_id": {
+      "type": "string",
+      "description": "Related live stream ID if applicable"
+    },
+    "message": {
+      "type": "string",
+      "description": "Notification message"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false
+    },
+    "follow_resolved": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether a follow request has been accepted or denied"
+    }
+  },
+  "required": [
+    "recipient_email",
+    "actor_email",
+    "type",
+    "message"
+  ]
+}

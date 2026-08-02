@@ -1,0 +1,76 @@
+{
+  "name": "Forum",
+  "type": "object",
+  "properties": {
+    "author_email": {
+      "type": "string"
+    },
+    "author_name": {
+      "type": "string"
+    },
+    "author_avatar": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "description": "Forum topic title"
+    },
+    "content": {
+      "type": "string",
+      "description": "Initial post content"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "training_tips",
+        "workout_plans",
+        "nutrition",
+        "injury_prevention",
+        "gear_reviews",
+        "motivation",
+        "general_discussion"
+      ],
+      "description": "Forum category"
+    },
+    "sport": {
+      "type": "string",
+      "description": "Related sport"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Topic tags"
+    },
+    "replies_count": {
+      "type": "number",
+      "default": 0
+    },
+    "views": {
+      "type": "number",
+      "default": 0
+    },
+    "likes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "User emails who liked"
+    },
+    "is_pinned": {
+      "type": "boolean",
+      "default": false
+    },
+    "last_activity": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "author_email",
+    "title",
+    "content",
+    "category"
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "name": "Product",
+  "type": "object",
+  "properties": {
+    "creator_email": {
+      "type": "string",
+      "description": "Creator selling the product"
+    },
+    "name": {
+      "type": "string",
+      "description": "Product name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Product description"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "digital",
+        "physical",
+        "service"
+      ],
+      "description": "Product type"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "training_plan",
+        "ebook",
+        "video_course",
+        "merchandise",
+        "coaching_session",
+        "other"
+      ],
+      "description": "Product category"
+    },
+    "price": {
+      "type": "number",
+      "description": "Product price in USD"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Product image"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "Digital product file URL"
+    },
+    "stock": {
+      "type": "number",
+      "description": "Stock quantity (null for unlimited)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether product is available for purchase"
+    },
+    "sales_count": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "creator_email",
+    "name",
+    "type",
+    "price"
+  ]
+}

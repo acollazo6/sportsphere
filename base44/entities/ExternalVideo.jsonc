@@ -1,0 +1,90 @@
+{
+  "name": "ExternalVideo",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "User who imported the video"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "youtube",
+        "tiktok",
+        "instagram",
+        "facebook"
+      ],
+      "description": "Video source platform"
+    },
+    "platform_id": {
+      "type": "string",
+      "description": "Video ID on the platform"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "thumbnail": {
+      "type": "string",
+      "description": "Thumbnail image URL"
+    },
+    "embed_url": {
+      "type": "string",
+      "description": "Embeddable URL"
+    },
+    "video_url": {
+      "type": "string",
+      "description": "Direct video URL"
+    },
+    "sport": {
+      "type": "string",
+      "description": "Sport category"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "highlight",
+        "tutorial",
+        "training",
+        "motivation",
+        "analysis",
+        "other"
+      ],
+      "default": "highlight"
+    },
+    "channel": {
+      "type": "string",
+      "description": "Creator/channel name"
+    },
+    "published_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Original publish date"
+    },
+    "likes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "User emails who liked"
+    },
+    "saved_by": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "User emails who saved"
+    }
+  },
+  "required": [
+    "user_email",
+    "source",
+    "platform_id",
+    "title",
+    "sport"
+  ]
+}

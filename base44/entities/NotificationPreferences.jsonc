@@ -1,0 +1,100 @@
+{
+  "name": "NotificationPreferences",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string"
+    },
+    "likes_inapp": {
+      "type": "boolean",
+      "default": true
+    },
+    "likes_email": {
+      "type": "boolean",
+      "default": false
+    },
+    "comments_inapp": {
+      "type": "boolean",
+      "default": true
+    },
+    "comments_email": {
+      "type": "boolean",
+      "default": true
+    },
+    "mentions_inapp": {
+      "type": "boolean",
+      "default": true
+    },
+    "mentions_email": {
+      "type": "boolean",
+      "default": true
+    },
+    "follows_inapp": {
+      "type": "boolean",
+      "default": true
+    },
+    "follows_email": {
+      "type": "boolean",
+      "default": true
+    },
+    "follow_requests_inapp": {
+      "type": "boolean",
+      "default": true
+    },
+    "follow_requests_email": {
+      "type": "boolean",
+      "default": true
+    },
+    "messages_inapp": {
+      "type": "boolean",
+      "default": true
+    },
+    "messages_email": {
+      "type": "boolean",
+      "default": true
+    },
+    "stream_reminders_inapp": {
+      "type": "boolean",
+      "default": true
+    },
+    "stream_reminders_email": {
+      "type": "boolean",
+      "default": false
+    },
+    "advice_requests_inapp": {
+      "type": "boolean",
+      "default": true
+    },
+    "advice_requests_email": {
+      "type": "boolean",
+      "default": true
+    },
+    "challenge_updates_inapp": {
+      "type": "boolean",
+      "default": true
+    },
+    "challenge_updates_email": {
+      "type": "boolean",
+      "default": false
+    },
+    "tips_inapp": {
+      "type": "boolean",
+      "default": true
+    },
+    "tips_email": {
+      "type": "boolean",
+      "default": true
+    },
+    "subscriptions_inapp": {
+      "type": "boolean",
+      "default": true
+    },
+    "subscriptions_email": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "user_email"
+  ]
+}

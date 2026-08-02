@@ -1,0 +1,52 @@
+{
+  "name": "AthleteProgress",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "athlete_email": {
+      "type": "string"
+    },
+    "athlete_name": {
+      "type": "string"
+    },
+    "training_plan_id": {
+      "type": "string",
+      "description": "Related plan"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Related session if applicable"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "metric_type": {
+      "type": "string",
+      "description": "e.g. weight, speed, reps, score"
+    },
+    "metric_value": {
+      "type": "number"
+    },
+    "metric_unit": {
+      "type": "string",
+      "description": "e.g. kg, mph, count"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "logged_by": {
+      "type": "string",
+      "description": "Email of who logged this (athlete or coach)"
+    }
+  },
+  "required": [
+    "organization_id",
+    "athlete_email",
+    "date",
+    "metric_type",
+    "metric_value"
+  ]
+}

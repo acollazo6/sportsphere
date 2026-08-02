@@ -1,0 +1,49 @@
+{
+  "name": "OrgInvite",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "invited_email": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "coach",
+        "athlete",
+        "parent"
+      ]
+    },
+    "invited_by_email": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted",
+        "expired"
+      ],
+      "default": "pending"
+    },
+    "token": {
+      "type": "string",
+      "description": "Unique invite token"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "athlete_email": {
+      "type": "string",
+      "description": "For parent invites: the athlete they are linked to"
+    }
+  },
+  "required": [
+    "organization_id",
+    "invited_email",
+    "role"
+  ]
+}

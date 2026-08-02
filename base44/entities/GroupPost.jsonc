@@ -1,0 +1,51 @@
+{
+  "name": "GroupPost",
+  "type": "object",
+  "properties": {
+    "group_id": {
+      "type": "string"
+    },
+    "author_email": {
+      "type": "string"
+    },
+    "author_name": {
+      "type": "string"
+    },
+    "author_avatar": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "description": "Discussion title"
+    },
+    "content": {
+      "type": "string"
+    },
+    "media_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "replies_count": {
+      "type": "number",
+      "default": 0
+    },
+    "likes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "User emails who liked"
+    },
+    "is_pinned": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "group_id",
+    "author_email",
+    "content"
+  ]
+}

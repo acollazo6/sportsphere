@@ -1,0 +1,39 @@
+{
+  "name": "FeedPreferences",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "User email"
+    },
+    "preferred_sports": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of preferred sports"
+    },
+    "excluded_sports": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Sports to exclude from feed"
+    },
+    "show_live_streams": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether to show live streams in feed"
+    },
+    "content_types": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Preferred content categories"
+    }
+  },
+  "required": [
+    "user_email"
+  ]
+}

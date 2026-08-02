@@ -1,0 +1,33 @@
+{
+  "name": "Highlight",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string"
+    },
+    "item_type": {
+      "type": "string",
+      "enum": [
+        "post",
+        "stat"
+      ]
+    },
+    "item_id": {
+      "type": "string"
+    },
+    "item_data": {
+      "type": "object",
+      "description": "Snapshot of the highlighted content"
+    },
+    "is_pinned": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is the user's featured/pinned highlight"
+    }
+  },
+  "required": [
+    "user_email",
+    "item_type",
+    "item_id"
+  ]
+}

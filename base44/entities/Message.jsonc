@@ -1,0 +1,45 @@
+{
+  "name": "Message",
+  "type": "object",
+  "properties": {
+    "conversation_id": {
+      "type": "string"
+    },
+    "sender_email": {
+      "type": "string"
+    },
+    "sender_name": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "media_url": {
+      "type": "string"
+    },
+    "media_type": {
+      "type": "string"
+    },
+    "read_by": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Emails of users who have read this message",
+      "default": []
+    },
+    "shared_post_id": {
+      "type": "string",
+      "description": "ID of a shared post"
+    },
+    "shared_post_data": {
+      "type": "object",
+      "description": "Snapshot of the shared post data"
+    }
+  },
+  "required": [
+    "conversation_id",
+    "sender_email",
+    "content"
+  ]
+}

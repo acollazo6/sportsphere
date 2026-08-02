@@ -1,0 +1,52 @@
+{
+  "name": "SessionBooking",
+  "type": "object",
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Related coaching session"
+    },
+    "coach_email": {
+      "type": "string"
+    },
+    "client_email": {
+      "type": "string"
+    },
+    "client_name": {
+      "type": "string"
+    },
+    "booking_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Scheduled time slot"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "default": 60
+    },
+    "amount_paid": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "confirmed",
+        "completed",
+        "cancelled"
+      ],
+      "default": "confirmed"
+    },
+    "meeting_link": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Client's notes or goals"
+    }
+  },
+  "required": [
+    "coach_email",
+    "client_email",
+    "booking_date"
+  ]
+}

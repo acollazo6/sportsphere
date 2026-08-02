@@ -1,0 +1,50 @@
+{
+  "name": "StreamPoll",
+  "type": "object",
+  "properties": {
+    "stream_id": {
+      "type": "string"
+    },
+    "creator_email": {
+      "type": "string"
+    },
+    "question": {
+      "type": "string"
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "votes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of voter emails"
+          }
+        }
+      }
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "duration_seconds": {
+      "type": "number",
+      "default": 60
+    }
+  },
+  "required": [
+    "stream_id",
+    "creator_email",
+    "question",
+    "options"
+  ]
+}

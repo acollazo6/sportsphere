@@ -1,0 +1,86 @@
+{
+  "name": "Challenge",
+  "type": "object",
+  "properties": {
+    "creator_email": {
+      "type": "string",
+      "description": "Challenge creator"
+    },
+    "creator_name": {
+      "type": "string"
+    },
+    "creator_avatar": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "description": "Challenge title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Challenge description and rules"
+    },
+    "sport": {
+      "type": "string",
+      "description": "Sport category"
+    },
+    "duration_days": {
+      "type": "number",
+      "description": "Challenge duration in days"
+    },
+    "goal_description": {
+      "type": "string",
+      "description": "What participants should achieve"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Challenge start date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Challenge end date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "upcoming",
+        "active",
+        "completed"
+      ],
+      "default": "upcoming",
+      "description": "Challenge status"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced",
+        "expert"
+      ],
+      "description": "Difficulty level"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Challenge banner image"
+    },
+    "participants_count": {
+      "type": "number",
+      "default": 0
+    },
+    "is_premium": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether challenge requires premium subscription"
+    }
+  },
+  "required": [
+    "creator_email",
+    "title",
+    "description",
+    "duration_days",
+    "start_date"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "name": "SavedContent",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "User who saved the content"
+    },
+    "content_type": {
+      "type": "string",
+      "enum": [
+        "post",
+        "stream"
+      ],
+      "description": "Type of saved content"
+    },
+    "content_id": {
+      "type": "string",
+      "description": "ID of the saved post or stream"
+    },
+    "content_data": {
+      "type": "object",
+      "description": "Snapshot of the content"
+    }
+  },
+  "required": [
+    "user_email",
+    "content_type",
+    "content_id"
+  ]
+}

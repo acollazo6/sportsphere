@@ -1,0 +1,120 @@
+{
+  "name": "TrainingPlan",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "Org this plan belongs to"
+    },
+    "coach_email": {
+      "type": "string",
+      "description": "Coach who created the plan"
+    },
+    "coach_name": {
+      "type": "string"
+    },
+    "athlete_email": {
+      "type": "string",
+      "description": "Assigned athlete email"
+    },
+    "athlete_name": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "description": "Plan name"
+    },
+    "description": {
+      "type": "string"
+    },
+    "sport": {
+      "type": "string"
+    },
+    "goal": {
+      "type": "string",
+      "description": "Training goal or objective"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "active",
+        "completed",
+        "paused"
+      ],
+      "default": "draft"
+    },
+    "weeks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "week_number": {
+            "type": "number"
+          },
+          "days": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "day": {
+                  "type": "string"
+                },
+                "exercises": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "sets": {
+                        "type": "number"
+                      },
+                      "reps": {
+                        "type": "string"
+                      },
+                      "duration": {
+                        "type": "string"
+                      },
+                      "notes": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "notes": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "description": "Weekly training breakdown"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Coach notes"
+    },
+    "ai_generated": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this plan was AI-generated"
+    }
+  },
+  "required": [
+    "organization_id",
+    "coach_email",
+    "athlete_email",
+    "title"
+  ]
+}

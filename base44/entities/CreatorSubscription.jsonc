@@ -1,0 +1,58 @@
+{
+  "name": "CreatorSubscription",
+  "type": "object",
+  "properties": {
+    "subscriber_email": {
+      "type": "string",
+      "description": "User subscribing to the creator"
+    },
+    "creator_email": {
+      "type": "string",
+      "description": "Creator being subscribed to"
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "basic",
+        "pro",
+        "elite"
+      ],
+      "default": "basic",
+      "description": "Subscription tier"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Monthly subscription amount"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "cancelled",
+        "expired"
+      ],
+      "default": "active"
+    },
+    "benefits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of benefits for this tier"
+    },
+    "started_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "next_billing_date": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "subscriber_email",
+    "creator_email",
+    "tier",
+    "amount"
+  ]
+}

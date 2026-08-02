@@ -1,0 +1,76 @@
+{
+  "name": "Organization",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Organization/team/club name"
+    },
+    "slug": {
+      "type": "string",
+      "description": "Unique identifier slug for the org"
+    },
+    "logo_url": {
+      "type": "string",
+      "description": "Logo image URL"
+    },
+    "sport": {
+      "type": "string",
+      "description": "Primary sport"
+    },
+    "description": {
+      "type": "string",
+      "description": "Short org description"
+    },
+    "owner_email": {
+      "type": "string",
+      "description": "Admin/owner email"
+    },
+    "location": {
+      "type": "string",
+      "description": "City or region"
+    },
+    "subscription_plan": {
+      "type": "string",
+      "enum": [
+        "free",
+        "starter",
+        "pro",
+        "enterprise"
+      ],
+      "default": "free",
+      "description": "Billing plan"
+    },
+    "stripe_customer_id": {
+      "type": "string",
+      "description": "Stripe customer ID"
+    },
+    "stripe_subscription_id": {
+      "type": "string",
+      "description": "Stripe subscription ID"
+    },
+    "subscription_status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "trialing",
+        "past_due",
+        "cancelled"
+      ],
+      "default": "trialing"
+    },
+    "max_athletes": {
+      "type": "number",
+      "default": 10,
+      "description": "Max athletes allowed on plan"
+    },
+    "settings": {
+      "type": "object",
+      "description": "Org-level feature flags and config"
+    }
+  },
+  "required": [
+    "name",
+    "owner_email"
+  ]
+}

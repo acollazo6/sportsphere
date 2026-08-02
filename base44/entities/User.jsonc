@@ -1,0 +1,35 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "avatar_url": {
+      "type": "string"
+    },
+    "bio": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "username": {
+      "type": "string",
+      "description": "Unique username for the profile (e.g. @johndoe)"
+    },
+    "is_creator": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the user has opted in as a content creator"
+    },
+    "is_premium": {
+      "type": "boolean",
+      "default": false,
+      "description": "Premium subscription status for AI features"
+    },
+    "premium_expires": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Premium subscription expiry date"
+    }
+  },
+  "required": []
+}

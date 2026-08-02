@@ -1,0 +1,62 @@
+{
+  "name": "StatEntry",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user"
+    },
+    "sport_profile_id": {
+      "type": "string",
+      "description": "ID of the associated sport profile"
+    },
+    "sport": {
+      "type": "string",
+      "description": "Sport name"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the stat entry"
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Performance metrics for this entry"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes about the session"
+    },
+    "session_type": {
+      "type": "string",
+      "enum": [
+        "training",
+        "game",
+        "practice",
+        "competition",
+        "other"
+      ],
+      "description": "Type of session"
+    }
+  },
+  "required": [
+    "user_email",
+    "sport",
+    "date",
+    "metrics"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "name": "ForumReply",
+  "type": "object",
+  "properties": {
+    "forum_id": {
+      "type": "string",
+      "description": "Related forum topic"
+    },
+    "author_email": {
+      "type": "string"
+    },
+    "author_name": {
+      "type": "string"
+    },
+    "author_avatar": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "likes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "User emails who liked"
+    }
+  },
+  "required": [
+    "forum_id",
+    "author_email",
+    "content"
+  ]
+}

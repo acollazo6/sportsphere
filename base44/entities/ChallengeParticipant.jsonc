@@ -1,0 +1,49 @@
+{
+  "name": "ChallengeParticipant",
+  "type": "object",
+  "properties": {
+    "challenge_id": {
+      "type": "string",
+      "description": "Challenge ID"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "user_name": {
+      "type": "string"
+    },
+    "user_avatar": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "completed",
+        "dropped"
+      ],
+      "default": "active"
+    },
+    "progress_percentage": {
+      "type": "number",
+      "default": 0,
+      "description": "Completion percentage"
+    },
+    "days_completed": {
+      "type": "number",
+      "default": 0
+    },
+    "joined_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_date": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "challenge_id",
+    "user_email"
+  ]
+}

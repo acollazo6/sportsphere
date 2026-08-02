@@ -1,0 +1,52 @@
+{
+  "name": "SubscriptionPlan",
+  "type": "object",
+  "properties": {
+    "creator_email": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+      "description": "Plan name e.g. Bronze, Gold"
+    },
+    "description": {
+      "type": "string"
+    },
+    "price_monthly": {
+      "type": "number",
+      "default": 0
+    },
+    "price_yearly": {
+      "type": "number",
+      "default": 0
+    },
+    "benefits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of perks for this plan"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "color": {
+      "type": "string",
+      "default": "#7f1d1d"
+    },
+    "emoji": {
+      "type": "string",
+      "default": "\u2b50"
+    },
+    "subscriber_count": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "creator_email",
+    "name",
+    "price_monthly"
+  ]
+}

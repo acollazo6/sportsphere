@@ -1,0 +1,93 @@
+{
+  "name": "TrainingSession",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "coach_email": {
+      "type": "string"
+    },
+    "coach_name": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "description": "Session title"
+    },
+    "description": {
+      "type": "string"
+    },
+    "sport": {
+      "type": "string"
+    },
+    "session_type": {
+      "type": "string",
+      "enum": [
+        "practice",
+        "game",
+        "strength",
+        "recovery",
+        "review",
+        "meeting",
+        "other"
+      ],
+      "default": "practice"
+    },
+    "scheduled_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "default": 60
+    },
+    "location": {
+      "type": "string"
+    },
+    "is_virtual": {
+      "type": "boolean",
+      "default": false
+    },
+    "meeting_link": {
+      "type": "string"
+    },
+    "attendees": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Athlete emails invited"
+    },
+    "attended": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Emails who actually attended"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "scheduled",
+        "completed",
+        "cancelled"
+      ],
+      "default": "scheduled"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Coach session notes"
+    },
+    "training_plan_id": {
+      "type": "string",
+      "description": "Optional link to training plan"
+    }
+  },
+  "required": [
+    "organization_id",
+    "coach_email",
+    "title",
+    "scheduled_date"
+  ]
+}

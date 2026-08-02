@@ -1,0 +1,27 @@
+{
+  "name": "Follow",
+  "type": "object",
+  "properties": {
+    "follower_email": {
+      "type": "string",
+      "description": "User who is following"
+    },
+    "following_email": {
+      "type": "string",
+      "description": "User being followed"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted"
+      ],
+      "default": "pending",
+      "description": "Follow request status"
+    }
+  },
+  "required": [
+    "follower_email",
+    "following_email"
+  ]
+}

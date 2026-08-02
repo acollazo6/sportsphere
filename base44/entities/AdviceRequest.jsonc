@@ -1,0 +1,45 @@
+{
+  "name": "AdviceRequest",
+  "type": "object",
+  "properties": {
+    "from_email": {
+      "type": "string"
+    },
+    "from_name": {
+      "type": "string"
+    },
+    "to_email": {
+      "type": "string"
+    },
+    "to_name": {
+      "type": "string"
+    },
+    "sport": {
+      "type": "string"
+    },
+    "topic": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted",
+        "replied",
+        "declined"
+      ],
+      "default": "pending"
+    },
+    "reply": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "from_email",
+    "to_email",
+    "topic"
+  ]
+}

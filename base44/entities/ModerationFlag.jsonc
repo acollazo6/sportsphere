@@ -1,0 +1,88 @@
+{
+  "name": "ModerationFlag",
+  "type": "object",
+  "properties": {
+    "content_type": {
+      "type": "string",
+      "enum": [
+        "post",
+        "comment"
+      ],
+      "description": "Type of content flagged"
+    },
+    "content_id": {
+      "type": "string",
+      "description": "ID of the flagged content"
+    },
+    "content_text": {
+      "type": "string",
+      "description": "Snapshot of the flagged content text"
+    },
+    "author_email": {
+      "type": "string",
+      "description": "Email of the content author"
+    },
+    "author_name": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "ai",
+        "user_report"
+      ],
+      "description": "Who flagged it"
+    },
+    "violations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of violation categories detected"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "description": "Severity level"
+    },
+    "ai_confidence": {
+      "type": "number",
+      "description": "AI confidence score 0-1"
+    },
+    "ai_explanation": {
+      "type": "string",
+      "description": "AI explanation of why this was flagged"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "removed",
+        "dismissed"
+      ],
+      "default": "pending",
+      "description": "Moderation decision"
+    },
+    "reviewed_by": {
+      "type": "string",
+      "description": "Admin email who reviewed"
+    },
+    "review_note": {
+      "type": "string",
+      "description": "Admin note on the decision"
+    }
+  },
+  "required": [
+    "content_type",
+    "content_id",
+    "author_email",
+    "source",
+    "severity"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "name": "Conversation",
+  "type": "object",
+  "properties": {
+    "participants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Emails of participants"
+    },
+    "participant_names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "participant_avatars": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "last_message": {
+      "type": "string"
+    },
+    "last_message_time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "unread_by": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Emails of users with unread messages"
+    },
+    "is_group": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is a group conversation"
+    },
+    "group_name": {
+      "type": "string",
+      "description": "Name of the group chat"
+    }
+  },
+  "required": [
+    "participants"
+  ]
+}

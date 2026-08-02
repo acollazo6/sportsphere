@@ -1,0 +1,71 @@
+{
+  "name": "OrgMessage",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "sender_email": {
+      "type": "string"
+    },
+    "sender_name": {
+      "type": "string"
+    },
+    "sender_avatar": {
+      "type": "string"
+    },
+    "sender_role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "coach",
+        "athlete",
+        "parent"
+      ]
+    },
+    "recipient_email": {
+      "type": "string",
+      "description": "For direct messages"
+    },
+    "recipient_name": {
+      "type": "string"
+    },
+    "channel": {
+      "type": "string",
+      "description": "e.g. 'general', 'coaches', or athlete email for DMs"
+    },
+    "content": {
+      "type": "string"
+    },
+    "attachment_url": {
+      "type": "string"
+    },
+    "attachment_type": {
+      "type": "string",
+      "enum": [
+        "image",
+        "video",
+        "document",
+        "none"
+      ],
+      "default": "none"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false
+    },
+    "related_video_id": {
+      "type": "string",
+      "description": "Optional link to an athlete video"
+    },
+    "related_plan_id": {
+      "type": "string",
+      "description": "Optional link to a training plan"
+    }
+  },
+  "required": [
+    "organization_id",
+    "sender_email",
+    "content"
+  ]
+}

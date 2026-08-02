@@ -1,0 +1,43 @@
+{
+  "name": "UserPoints",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "User email"
+    },
+    "total_points": {
+      "type": "number",
+      "default": 0,
+      "description": "Total accumulated points"
+    },
+    "level": {
+      "type": "number",
+      "default": 1,
+      "description": "User level based on points"
+    },
+    "workouts_completed": {
+      "type": "number",
+      "default": 0
+    },
+    "sessions_attended": {
+      "type": "number",
+      "default": 0
+    },
+    "posts_created": {
+      "type": "number",
+      "default": 0
+    },
+    "challenges_completed": {
+      "type": "number",
+      "default": 0
+    },
+    "forum_contributions": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "user_email"
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "name": "SportProfile",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user who owns this profile"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "Display name"
+    },
+    "avatar_url": {
+      "type": "string",
+      "description": "Profile picture URL"
+    },
+    "sport": {
+      "type": "string",
+      "description": "Sport name"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "athlete",
+        "coach",
+        "trainer",
+        "instructor",
+        "fan"
+      ],
+      "description": "Role in this sport"
+    },
+    "level": {
+      "type": "string",
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced",
+        "professional",
+        "elite"
+      ],
+      "description": "Skill level"
+    },
+    "bio": {
+      "type": "string",
+      "description": "Bio for this sport profile"
+    },
+    "years_experience": {
+      "type": "number",
+      "description": "Years of experience"
+    },
+    "achievements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of achievements"
+    },
+    "stats": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Custom stats for this sport"
+    },
+    "team": {
+      "type": "string",
+      "description": "Current team or club"
+    },
+    "location": {
+      "type": "string",
+      "description": "City/region"
+    }
+  },
+  "required": [
+    "user_email",
+    "sport",
+    "role"
+  ]
+}

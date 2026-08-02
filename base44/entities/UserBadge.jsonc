@@ -1,0 +1,31 @@
+{
+  "name": "UserBadge",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string"
+    },
+    "badge_id": {
+      "type": "string",
+      "description": "Badge identifier"
+    },
+    "badge_name": {
+      "type": "string"
+    },
+    "badge_icon": {
+      "type": "string",
+      "description": "Emoji or icon"
+    },
+    "badge_description": {
+      "type": "string"
+    },
+    "earned_date": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "user_email",
+    "badge_id"
+  ]
+}

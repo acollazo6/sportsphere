@@ -1,0 +1,131 @@
+{
+  "name": "Post",
+  "type": "object",
+  "properties": {
+    "author_email": {
+      "type": "string"
+    },
+    "author_name": {
+      "type": "string"
+    },
+    "author_avatar": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string",
+      "description": "Text content of the post"
+    },
+    "media_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs of images or videos"
+    },
+    "media_type": {
+      "type": "string",
+      "enum": [
+        "image",
+        "video",
+        "mixed"
+      ],
+      "description": "Type of media attached"
+    },
+    "sport": {
+      "type": "string",
+      "description": "Sport tag"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "training",
+        "game",
+        "coaching",
+        "instruction",
+        "motivation",
+        "highlight",
+        "other"
+      ],
+      "description": "Content category"
+    },
+    "likes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Emails of users who liked"
+    },
+    "comments_count": {
+      "type": "number",
+      "default": 0
+    },
+    "views": {
+      "type": "number",
+      "default": 0
+    },
+    "shares": {
+      "type": "number",
+      "default": 0
+    },
+    "mentioned_users": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Emails of mentioned users"
+    },
+    "is_premium": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether post is premium/subscribers-only"
+    },
+    "comments_disabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether comments are disabled by the author"
+    },
+    "ai_summary": {
+      "type": "string",
+      "description": "AI-generated summary of video content"
+    },
+    "ai_transcript": {
+      "type": "string",
+      "description": "AI-generated transcript of video content"
+    },
+    "ai_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "AI-detected actions, objects, and key moments"
+    },
+    "ai_analysis": {
+      "type": "object",
+      "description": "Detailed AI analysis of video content",
+      "properties": {
+        "key_moments": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "techniques_detected": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "skills_shown": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "author_email",
+    "content"
+  ]
+}

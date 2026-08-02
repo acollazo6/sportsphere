@@ -1,0 +1,54 @@
+{
+  "name": "Transaction",
+  "type": "object",
+  "properties": {
+    "from_email": {
+      "type": "string",
+      "description": "User making payment"
+    },
+    "to_email": {
+      "type": "string",
+      "description": "User receiving payment"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "subscription",
+        "donation",
+        "group_membership"
+      ],
+      "description": "Type of transaction"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Amount in USD"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "completed",
+        "failed",
+        "refunded"
+      ],
+      "default": "pending"
+    },
+    "stripe_payment_id": {
+      "type": "string"
+    },
+    "group_id": {
+      "type": "string",
+      "description": "Group ID if group membership payment"
+    },
+    "message": {
+      "type": "string",
+      "description": "Optional message for donations"
+    }
+  },
+  "required": [
+    "from_email",
+    "to_email",
+    "type",
+    "amount"
+  ]
+}

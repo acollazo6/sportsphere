@@ -1,0 +1,125 @@
+{
+  "name": "CoachingSession",
+  "type": "object",
+  "properties": {
+    "host_email": {
+      "type": "string",
+      "description": "Coach/creator email"
+    },
+    "host_name": {
+      "type": "string"
+    },
+    "host_avatar": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "description": "Session title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Session description"
+    },
+    "sport": {
+      "type": "string",
+      "description": "Sport category"
+    },
+    "session_type": {
+      "type": "string",
+      "enum": [
+        "coaching",
+        "workshop",
+        "qa",
+        "training",
+        "masterclass",
+        "one-on-one"
+      ],
+      "description": "Type of session"
+    },
+    "scheduled_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When session starts"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "description": "Session duration"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "scheduled",
+        "live",
+        "ended",
+        "cancelled"
+      ],
+      "default": "scheduled"
+    },
+    "is_paid": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether session requires payment"
+    },
+    "price": {
+      "type": "number",
+      "default": 0,
+      "description": "Session price in USD"
+    },
+    "max_participants": {
+      "type": "number",
+      "description": "Maximum number of participants"
+    },
+    "participants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Emails of registered participants"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Session banner image"
+    },
+    "meeting_link": {
+      "type": "string",
+      "description": "Video call link or embed"
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "file_url": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Downloadable resources (workout plans, guides)"
+    },
+    "is_one_on_one": {
+      "type": "boolean",
+      "default": false,
+      "description": "True for 1-on-1 coaching slots"
+    },
+    "available_slots": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "description": "Available time slots for 1-on-1 bookings"
+    }
+  },
+  "required": [
+    "host_email",
+    "title",
+    "scheduled_date",
+    "duration_minutes"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "LiveChat",
+  "type": "object",
+  "properties": {
+    "stream_id": {
+      "type": "string",
+      "description": "ID of the live stream"
+    },
+    "sender_email": {
+      "type": "string"
+    },
+    "sender_name": {
+      "type": "string"
+    },
+    "sender_avatar": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "is_pinned": {
+      "type": "boolean",
+      "default": false,
+      "description": "Pinned by host"
+    }
+  },
+  "required": [
+    "stream_id",
+    "sender_email",
+    "sender_name",
+    "message"
+  ]
+}

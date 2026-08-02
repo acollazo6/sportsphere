@@ -1,0 +1,93 @@
+{
+  "name": "LiveStream",
+  "type": "object",
+  "properties": {
+    "host_email": {
+      "type": "string"
+    },
+    "host_name": {
+      "type": "string"
+    },
+    "host_avatar": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "sport": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "live",
+        "ended"
+      ],
+      "default": "live"
+    },
+    "viewers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Emails of current viewers"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ended_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "stream_url": {
+      "type": "string",
+      "description": "Video stream URL or embed code"
+    },
+    "is_premium": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether stream requires subscription"
+    },
+    "price": {
+      "type": "number",
+      "default": 0,
+      "description": "One-time access price (0 = free)"
+    },
+    "group_id": {
+      "type": "string",
+      "description": "Associated group if group stream"
+    },
+    "event_id": {
+      "type": "string",
+      "description": "Associated event if event stream"
+    },
+    "thumbnail_url": {
+      "type": "string",
+      "description": "Stream preview image"
+    },
+    "ai_summary": {
+      "type": "string",
+      "description": "AI-generated summary of the stream content"
+    },
+    "ai_transcript": {
+      "type": "string",
+      "description": "AI-generated transcript from chat and stream"
+    },
+    "ai_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "AI-detected topics, techniques, and highlights"
+    }
+  },
+  "required": [
+    "host_email",
+    "host_name",
+    "title"
+  ]
+}

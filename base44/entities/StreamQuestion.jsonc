@@ -1,0 +1,41 @@
+{
+  "name": "StreamQuestion",
+  "type": "object",
+  "properties": {
+    "stream_id": {
+      "type": "string"
+    },
+    "asker_email": {
+      "type": "string"
+    },
+    "asker_name": {
+      "type": "string"
+    },
+    "asker_avatar": {
+      "type": "string"
+    },
+    "question": {
+      "type": "string"
+    },
+    "is_highlighted": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_answered": {
+      "type": "boolean",
+      "default": false
+    },
+    "upvotes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Emails of users who upvoted"
+    }
+  },
+  "required": [
+    "stream_id",
+    "asker_email",
+    "question"
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "name": "Event",
+  "type": "object",
+  "properties": {
+    "creator_email": {
+      "type": "string"
+    },
+    "creator_name": {
+      "type": "string"
+    },
+    "creator_avatar": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "competition",
+        "workshop",
+        "meetup",
+        "training",
+        "tournament",
+        "other"
+      ],
+      "description": "Type of event"
+    },
+    "sport": {
+      "type": "string",
+      "description": "Sport category"
+    },
+    "date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "End time of event"
+    },
+    "location": {
+      "type": "string",
+      "description": "Event location address"
+    },
+    "city": {
+      "type": "string",
+      "description": "City name"
+    },
+    "country": {
+      "type": "string",
+      "description": "Country name"
+    },
+    "is_virtual": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether event is virtual/online"
+    },
+    "meeting_link": {
+      "type": "string",
+      "description": "Virtual meeting link if applicable"
+    },
+    "attendees": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Emails of users attending"
+    },
+    "max_attendees": {
+      "type": "number",
+      "description": "Maximum number of attendees (optional)"
+    },
+    "price": {
+      "type": "number",
+      "default": 0,
+      "description": "Entry fee (0 for free)"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Event banner image"
+    }
+  },
+  "required": [
+    "creator_email",
+    "title",
+    "date",
+    "event_type"
+  ]
+}

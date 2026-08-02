@@ -1,0 +1,35 @@
+{
+  "name": "SessionMessage",
+  "type": "object",
+  "properties": {
+    "session_id": {
+      "type": "string"
+    },
+    "sender_email": {
+      "type": "string"
+    },
+    "sender_name": {
+      "type": "string"
+    },
+    "sender_avatar": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "is_question": {
+      "type": "boolean",
+      "default": false,
+      "description": "Tagged as Q&A question"
+    },
+    "is_answered": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "session_id",
+    "sender_email",
+    "message"
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "name": "ScheduledStream",
+  "type": "object",
+  "properties": {
+    "host_email": {
+      "type": "string"
+    },
+    "host_name": {
+      "type": "string"
+    },
+    "host_avatar": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "sport": {
+      "type": "string"
+    },
+    "scheduled_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "default": 60
+    },
+    "is_premium": {
+      "type": "boolean",
+      "default": false
+    },
+    "price": {
+      "type": "number",
+      "default": 0
+    },
+    "thumbnail_url": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "upcoming",
+        "live",
+        "ended",
+        "cancelled"
+      ],
+      "default": "upcoming"
+    },
+    "notified_followers": {
+      "type": "boolean",
+      "default": false
+    },
+    "rsvp_emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Emails of users who RSVPed"
+    },
+    "stream_id": {
+      "type": "string",
+      "description": "Linked LiveStream id when it goes live"
+    }
+  },
+  "required": [
+    "host_email",
+    "title",
+    "scheduled_at"
+  ]
+}

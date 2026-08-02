@@ -1,0 +1,39 @@
+{
+  "name": "Subscription",
+  "type": "object",
+  "properties": {
+    "subscriber_email": {
+      "type": "string",
+      "description": "User who is subscribing"
+    },
+    "creator_email": {
+      "type": "string",
+      "description": "Creator being subscribed to"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "cancelled",
+        "expired"
+      ],
+      "default": "active"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Subscription amount in USD"
+    },
+    "stripe_subscription_id": {
+      "type": "string"
+    },
+    "current_period_end": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "subscriber_email",
+    "creator_email",
+    "amount"
+  ]
+}

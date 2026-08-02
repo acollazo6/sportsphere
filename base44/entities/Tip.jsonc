@@ -1,0 +1,50 @@
+{
+  "name": "Tip",
+  "type": "object",
+  "properties": {
+    "from_email": {
+      "type": "string",
+      "description": "User sending the tip"
+    },
+    "to_email": {
+      "type": "string",
+      "description": "Creator receiving the tip"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Tip amount in USD"
+    },
+    "message": {
+      "type": "string",
+      "description": "Optional message with the tip"
+    },
+    "context_type": {
+      "type": "string",
+      "enum": [
+        "post",
+        "stream",
+        "profile"
+      ],
+      "description": "Where the tip was sent from"
+    },
+    "context_id": {
+      "type": "string",
+      "description": "ID of the post/stream if applicable"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "completed",
+        "failed"
+      ],
+      "default": "completed"
+    }
+  },
+  "required": [
+    "from_email",
+    "to_email",
+    "amount",
+    "context_type"
+  ]
+}

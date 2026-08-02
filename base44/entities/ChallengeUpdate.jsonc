@@ -1,0 +1,45 @@
+{
+  "name": "ChallengeUpdate",
+  "type": "object",
+  "properties": {
+    "challenge_id": {
+      "type": "string"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "user_name": {
+      "type": "string"
+    },
+    "user_avatar": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string",
+      "description": "Update text"
+    },
+    "media_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Progress photos/videos"
+    },
+    "day_number": {
+      "type": "number",
+      "description": "Which day of the challenge"
+    },
+    "likes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "User emails who liked"
+    }
+  },
+  "required": [
+    "challenge_id",
+    "user_email",
+    "content"
+  ]
+}

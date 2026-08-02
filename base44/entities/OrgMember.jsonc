@@ -1,0 +1,85 @@
+{
+  "name": "OrgMember",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "Organization this member belongs to"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Member email"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "Member display name"
+    },
+    "avatar_url": {
+      "type": "string",
+      "description": "Profile picture"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "coach",
+        "athlete",
+        "parent"
+      ],
+      "description": "Role within the organization"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "invited",
+        "suspended"
+      ],
+      "default": "invited"
+    },
+    "sport": {
+      "type": "string",
+      "description": "Primary sport"
+    },
+    "position": {
+      "type": "string",
+      "description": "Position or specialty"
+    },
+    "date_of_birth": {
+      "type": "string",
+      "format": "date"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "parent_email": {
+      "type": "string",
+      "description": "For athletes: linked parent email"
+    },
+    "coach_emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Assigned coaches for this athlete"
+    },
+    "athlete_emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "For parents: list of child athlete emails"
+    },
+    "bio": {
+      "type": "string"
+    },
+    "emergency_contact": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "organization_id",
+    "user_email",
+    "role"
+  ]
+}

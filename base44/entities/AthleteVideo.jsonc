@@ -1,0 +1,89 @@
+{
+  "name": "AthleteVideo",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "athlete_email": {
+      "type": "string",
+      "description": "Uploader athlete email"
+    },
+    "athlete_name": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "video_url": {
+      "type": "string",
+      "description": "Uploaded video URL"
+    },
+    "thumbnail_url": {
+      "type": "string"
+    },
+    "sport": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Skill tags, e.g. dribbling, shooting"
+    },
+    "duration_seconds": {
+      "type": "number"
+    },
+    "visibility": {
+      "type": "string",
+      "enum": [
+        "private",
+        "coaches_only",
+        "org",
+        "public"
+      ],
+      "default": "coaches_only"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Optional link to a training session"
+    },
+    "training_plan_id": {
+      "type": "string",
+      "description": "Optional link to training plan"
+    },
+    "coach_reviewed": {
+      "type": "boolean",
+      "default": false
+    },
+    "coach_feedback": {
+      "type": "string",
+      "description": "Coach written feedback"
+    },
+    "coach_rating": {
+      "type": "number",
+      "description": "1-5 rating from coach"
+    },
+    "ai_summary": {
+      "type": "string",
+      "description": "AI-generated analysis of the video"
+    },
+    "ai_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "AI-detected techniques"
+    }
+  },
+  "required": [
+    "organization_id",
+    "athlete_email",
+    "title",
+    "video_url"
+  ]
+}

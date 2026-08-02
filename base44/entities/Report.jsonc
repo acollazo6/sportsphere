@@ -1,0 +1,57 @@
+{
+  "name": "Report",
+  "type": "object",
+  "properties": {
+    "reporter_email": {
+      "type": "string",
+      "description": "Email of user who reported"
+    },
+    "reported_item_type": {
+      "type": "string",
+      "enum": [
+        "post",
+        "comment",
+        "profile",
+        "message"
+      ],
+      "description": "Type of content reported"
+    },
+    "reported_item_id": {
+      "type": "string",
+      "description": "ID of the reported content"
+    },
+    "reason": {
+      "type": "string",
+      "enum": [
+        "politics",
+        "profanity",
+        "cyberbullying",
+        "harassment",
+        "spam",
+        "inappropriate",
+        "other"
+      ],
+      "description": "Reason for report"
+    },
+    "details": {
+      "type": "string",
+      "description": "Additional details from reporter"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "reviewed",
+        "action_taken",
+        "dismissed"
+      ],
+      "default": "pending"
+    }
+  },
+  "required": [
+    "reporter_email",
+    "reported_item_type",
+    "reported_item_id",
+    "reason"
+  ]
+}

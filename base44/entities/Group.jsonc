@@ -1,0 +1,70 @@
+{
+  "name": "Group",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Group name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Group description"
+    },
+    "sport": {
+      "type": "string",
+      "description": "Primary sport focus"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "sport_specific",
+        "training_goal",
+        "local_community",
+        "competition",
+        "social",
+        "other"
+      ],
+      "description": "Type of group"
+    },
+    "avatar_url": {
+      "type": "string",
+      "description": "Group avatar/banner image"
+    },
+    "creator_email": {
+      "type": "string"
+    },
+    "admins": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Admin user emails"
+    },
+    "members": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Member user emails"
+    },
+    "is_public": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether anyone can join"
+    },
+    "location": {
+      "type": "string",
+      "description": "City/region for local groups"
+    },
+    "membership_fee": {
+      "type": "number",
+      "default": 0,
+      "description": "One-time fee to join group in USD (0 = free)"
+    }
+  },
+  "required": [
+    "name",
+    "creator_email",
+    "category"
+  ]
+}
